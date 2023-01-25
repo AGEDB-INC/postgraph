@@ -75,6 +75,19 @@ bool ag_serialize_extended_type(StringInfo buffer, agtentry *agtentry,
         *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
         break;
 
+    case AGTV_TIMESTAMP:
+        padlen = ag_serialize_header(buffer, AGT_HEADER_TIMESTAMP);
+
+        /* copy in the int_value data */
+        numlen = sizeof(int64);
+        offset = reserve_from_buffer(buffer, numlen);
+        *((int64 *)(buffer->data + offset)) = scalar_val->val.int_value;
+
+        *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
+        break;
+
+
+
     case AGTV_VERTEX:
     {
         uint32 object_ae = 0;
@@ -156,6 +169,10 @@ void ag_deserialize_extended_type(char *base_addr, uint32 offset,
     {
     case AGT_HEADER_INTEGER:
         result->type = AGTV_INTEGER;
+        result->val.int_value = *((int64 *)(base + AGT_HEADER_SIZE));
+        break;
+    case AGT_HEADER_TIMESTAMP:
+        result->type = AGTV_TIMESTAMP;
         result->val.int_value = *((int64 *)(base + AGT_HEADER_SIZE));
         break;
 

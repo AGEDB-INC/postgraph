@@ -4025,6 +4025,13 @@ STABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.agtype_typecast_timestamp(agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME';
+
 -- original VLE function definition
 CREATE FUNCTION ag_catalog.age_vle(IN agtype, IN agtype, IN agtype, IN agtype,
                                    IN agtype, IN agtype, IN agtype,

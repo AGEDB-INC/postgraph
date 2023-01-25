@@ -56,6 +56,10 @@ INSERT INTO agtype_table VALUES ('float', '-100000000.000001');
 INSERT INTO agtype_table VALUES ('float', '0.00000000000000012345');
 INSERT INTO agtype_table VALUES ('float', '-0.00000000000000012345');
 
+INSERT INTO agtype_table VALUES ('timestamp', '"1997-12-17 07:37:16-08"::timestamp');
+INSERT INTO agtype_table VALUES ('timestamp', '"12/17/1997 07:37:16.00"::timestamp');
+INSERT INTO agtype_table VALUES ('timestamp', '"Wed Dec 17 07:37:16 1997"::timestamp');
+
 INSERT INTO agtype_table VALUES ('numeric', '100000000000.0000000000001::numeric');
 INSERT INTO agtype_table VALUES ('numeric', '-100000000000.0000000000001::numeric');
 
@@ -484,6 +488,19 @@ SELECT agtype_in('1.01') < 1.011::numeric;
 SELECT agtype_in('1.01') > 1.001::numeric;
 SELECT agtype_in('1.01') <= 1.011::numeric;
 SELECT agtype_in('1.01') >= 1.001::numeric;
+
+-- timestamp
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_timestamp();
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_timestamp();
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_timestamp();
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_timestamp();
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_timestamp();
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_timestamp();
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = agtype_in('"12/17/1997 07:37:16.00"::timestamp');
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = agtype_in('"12/17/1997 07:37:16.01"::timestamp');
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = agtype_in('"1997-12-17 07:37:16-00"::timestamp');
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = agtype_in('"Wed Dec 17 07:37:16 1997"::timestamp');
 
 -- Strings
 SELECT agtype_in('"a"') = '"a"';

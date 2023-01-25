@@ -301,6 +301,7 @@ typedef struct
 #define AGT_HEADER_VERTEX 0x00000002
 #define AGT_HEADER_EDGE 0x00000003
 #define AGT_HEADER_PATH 0x00000004
+#define AGT_HEADER_TIMESTAMP 0x00000005
 
 /*
  * IMPORTANT NOTE: For agtype_value_type, IS_A_AGTYPE_SCALAR() checks that the
@@ -319,6 +320,7 @@ enum agtype_value_type
     AGTV_VERTEX,
     AGTV_EDGE,
     AGTV_PATH,
+    AGTV_TIMESTAMP,
     /* Composite types */
     AGTV_ARRAY = 0x10,
     AGTV_OBJECT,

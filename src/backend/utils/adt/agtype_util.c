@@ -280,6 +280,7 @@ int compare_agtype_containers_orderability(agtype_container *a,
                 case AGTV_EDGE:
                 case AGTV_VERTEX:
                 case AGTV_PATH:
+                case AGTV_TIMESTAMP:
                     res = compare_agtype_scalar_values(&va, &vb);
                     break;
                 case AGTV_ARRAY:
@@ -1592,6 +1593,7 @@ int compare_agtype_scalar_values(agtype_value *a, agtype_value *b)
             else
                 return -1;
         case AGTV_INTEGER:
+        case AGTV_TIMESTAMP:
             if (a->val.int_value == b->val.int_value)
                 return 0;
             else if (a->val.int_value > b->val.int_value)

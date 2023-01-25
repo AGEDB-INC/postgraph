@@ -751,6 +751,19 @@ $$) AS r(result agtype);
 SELECT agtype_in('[NaN, {"e": 2.718281::numeric, "one": Infinity, "pie": 3.1415927}, 2::numeric, null]');
 
 --
+-- timestamp
+--
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '12/17/1997 07:37:16.00'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 'Wed Dec 17 07:37:16 1997'::timestamp
+$$) AS r(result agtype);
+
+--
 -- Test typecast :: transform and execution logic for object (vertex & edge)
 --
 SELECT * FROM cypher('expr', $$

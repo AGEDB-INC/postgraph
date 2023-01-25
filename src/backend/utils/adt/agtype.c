@@ -874,6 +874,11 @@ static void agtype_put_escaped_value(StringInfo out, agtype_value *scalar_val)
         if (is_decimal_needed(numstr))
             appendBinaryStringInfo(out, ".0", 2);
         break;
+    case AGTV_TIMESTAMP:
+        numstr = DatumGetCString(DirectFunctionCall1(
+            timestamp_out, TimestampGetDatum(scalar_val->val.int_value)));
+        appendStringInfoString(out, numstr);
+        break;
     case AGTV_BOOL:
         if (scalar_val->val.boolean)
             appendBinaryStringInfo(out, "true", 4);
@@ -986,6 +991,8 @@ static void agtype_in_scalar(void *pstate, char *token,
             tokentype = AGTYPE_TOKEN_INTEGER;
         else if (len == 5 && pg_strcasecmp(annotation, "float") == 0)
             tokentype = AGTYPE_TOKEN_FLOAT;
+        else if (len == 9 && pg_strcasecmp(annotation, "timestamp") == 0)
+            tokentype = AGTYPE_TOKEN_TIMESTAMP;
         else
             ereport(ERROR,
                     (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -1020,7 +1027,14 @@ static void agtype_in_scalar(void *pstate, char *token,
                                    Int32GetDatum(-1));
         v.val.numeric = DatumGetNumeric(numd);
         break;
-
+    case AGTYPE_TOKEN_TIMESTAMP:
+        Assert(token != NULL);
+        v.type = AGTV_TIMESTAMP;
+        v.val.int_value = DatumGetInt64(DirectFunctionCall3(timestamp_in,
+                                             CStringGetDatum(token),
+                                   ObjectIdGetDatum(InvalidOid),
+                                   Int32GetDatum(-1)));
+        break;
     case AGTYPE_TOKEN_TRUE:
         v.type = AGTV_BOOL;
         v.val.boolean = true;
@@ -1602,11 +1616,9 @@ static void datum_to_agtype(Datum val, bool is_null, agtype_in_state *result,
             agtv.val.string.len = strlen(agtv.val.string.val);
             break;
         case AGT_TYPE_TIMESTAMP:
-            agtv.type = AGTV_STRING;
-            agtv.val.string.val = agtype_encode_date_time(NULL, val,
-                                                          TIMESTAMPOID);
-            agtv.val.string.len = strlen(agtv.val.string.val);
-            break;
+        agtv.type = AGTV_TIMESTAMP;
+        agtv.val.int_value = DatumGetInt64(val);
+        break;
         case AGT_TYPE_TIMESTAMPTZ:
             agtv.type = AGTV_STRING;
             agtv.val.string.val = agtype_encode_date_time(NULL, val,
@@ -4056,6 +4068,39 @@ Datum agtype_typecast_int(PG_FUNCTION_ARGS)
     result_value.val.int_value = DatumGetInt64(d);
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&result_value));
+}
+
+      
+                
+PG_FUNCTION_INFO_V1(agtype_typecast_timestamp);
+/*                  
+ * Execute function to typecast an agtype to an agtype timestamp
+ */                 
+Datum agtype_typecast_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+    Timestamp t;
+
+    if (agtv->type == NULL)
+        PG_RETURN_NULL();
+
+
+    if (agtv->type == AGTV_TIMESTAMP)
+        AG_RETURN_AGTYPE_P(agt);
+
+    if (agtv->type != AGTV_STRING)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("typecastint to timestamp must be a timestamp or a string")));
+
+    t = DatumGetTimestamp(DirectFunctionCall3(timestamp_in, CStringGetDatum(agtv->val.string.val),
+                                                            ObjectIdGetDatum(InvalidOid),
+                                                            Int32GetDatum(-1)));
+    agtv->type = AGTV_TIMESTAMP;
+    agtv->val.int_value = (int64)t;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
 }
 
 PG_FUNCTION_INFO_V1(agtype_typecast_float);
@@ -8256,7 +8301,7 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     ms += (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 
     /* build the result */
-    agtv_result.type = AGTV_INTEGER;
+    agtv_result.type = AGTV_TIMESTAMP;
     agtv_result.val.int_value = ms;
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
