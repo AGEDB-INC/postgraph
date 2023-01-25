@@ -102,7 +102,7 @@
  *      3. the node contains filter properties
  */
 #define INCLUDE_NODE_IN_JOIN_TREE(path, node) \
-    (path->var_name || node->name || node->props)
+    (path->var_name || node->name || node->props || list_length(path->path) == 1)
 
 typedef Query *(*transform_method)(cypher_parsestate *cpstate,
                                    cypher_clause *clause);

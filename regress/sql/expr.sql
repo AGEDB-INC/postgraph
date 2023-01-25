@@ -2158,6 +2158,12 @@ SELECT * FROM cypher('UCSC', $$ RETURN avg() $$) AS (avg agtype);
 SELECT * FROM cypher('UCSC', $$ RETURN sum() $$) AS (sum agtype);
 SELECT * FROM cypher('UCSC', $$ RETURN count() $$) AS (count agtype);
 
+-- No variable
+SELECT * FROM cypher('UCSC', $$ 
+MATCH (:students) return count(*)
+$$) 
+AS (count_star agtype);
+
 --
 -- aggregate functions min() & max()
 --
