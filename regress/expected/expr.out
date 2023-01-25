@@ -5197,10 +5197,6 @@ AS (count_star agtype);
  9
 (1 row)
 
-SELECT count(DISTINCT *) FROM "UCSC"."students";
-ERROR:  syntax error at or near "*"
-LINE 1: SELECT count(DISTINCT *) FROM "UCSC"."students";
-                              ^
 --
 -- aggregate functions min() & max()
 --
