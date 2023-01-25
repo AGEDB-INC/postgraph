@@ -121,6 +121,21 @@ SELECT agtype_add('1.0', '-1.0');
 SELECT agtype_add('1', '-1.0::numeric');
 SELECT agtype_add('1.0', '-1.0::numeric');
 SELECT agtype_add('1::numeric', '-1.0::numeric');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"30 Seconds"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"45 Minutes"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"12 Hours"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"5 Days"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"2 Weeks"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"13 Months"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"10 Years"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"30 Seconds Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"45 Minutes Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"12 Hours Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"5 Days Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"2 Weeks Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"13 Months Ago"::interval');
+SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"10 Years Ago"::interval');
+
 
 SELECT agtype_sub('-1', '-1');
 SELECT agtype_sub('-1', '-1.0');

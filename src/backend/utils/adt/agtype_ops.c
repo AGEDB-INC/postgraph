@@ -28,6 +28,7 @@
 #include "catalog/pg_type_d.h"
 #include "fmgr.h"
 #include "utils/builtins.h"
+#include "utils/timestamp.h"
 #include "utils/numeric.h"
 
 #include "utils/agtype.h"
@@ -227,6 +228,16 @@ Datum agtype_add(PG_FUNCTION_ARGS)
 
         agtv_result.type = AGTV_NUMERIC;
         agtv_result.val.numeric = DatumGetNumeric(numd);
+    }
+    else if (agtv_lhs->type == AGTV_TIMESTAMP && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        Timestamp ts;
+
+        ts = DatumGetTimestamp(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(agtv_lhs->val.int_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = ts;
     }
     else
         /* Not a covered case, error out */
