@@ -506,6 +506,30 @@ SELECT agtype_neg('1::numeric');
  -1::numeric
 (1 row)
 
+SELECT agtype_neg('"1 Year"::interval');
+  agtype_neg  
+--------------
+ @ 1 year ago
+(1 row)
+
+SELECT agtype_neg('"20 Seconds"::interval');
+  agtype_neg   
+---------------
+ @ 20 secs ago
+(1 row)
+
+SELECT agtype_neg('"10 Minutes"::interval');
+  agtype_neg   
+---------------
+ @ 10 mins ago
+(1 row)
+
+SELECT agtype_neg('"59 Minutes"::interval');
+  agtype_neg   
+---------------
+ @ 59 mins ago
+(1 row)
+
 SELECT agtype_mul('-2', '3');
  agtype_mul 
 ------------

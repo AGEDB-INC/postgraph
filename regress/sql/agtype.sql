@@ -174,6 +174,10 @@ SELECT agtype_neg('0.0');
 SELECT agtype_neg('0::numeric');
 SELECT agtype_neg('-1::numeric');
 SELECT agtype_neg('1::numeric');
+SELECT agtype_neg('"1 Year"::interval');
+SELECT agtype_neg('"20 Seconds"::interval');
+SELECT agtype_neg('"10 Minutes"::interval');
+SELECT agtype_neg('"59 Minutes"::interval');
 
 SELECT agtype_mul('-2', '3');
 SELECT agtype_mul('2', '-3.0');
