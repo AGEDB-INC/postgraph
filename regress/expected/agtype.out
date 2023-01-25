@@ -332,6 +332,90 @@ SELECT agtype_sub('1::numeric', '-1.0::numeric');
  2.0::numeric
 (1 row)
 
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"30 Seconds"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 01 11:59:30 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"45 Minutes"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 01 11:15:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"12 Hours"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 01 00:00:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"5 Days"::interval');
+        agtype_sub        
+--------------------------
+ Mon Dec 27 12:00:00 1999
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2 Weeks"::interval');
+        agtype_sub        
+--------------------------
+ Sat Dec 18 12:00:00 1999
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"13 Months"::interval');
+        agtype_sub        
+--------------------------
+ Tue Dec 01 12:00:00 1998
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"10 Years"::interval');
+        agtype_sub        
+--------------------------
+ Mon Jan 01 12:00:00 1990
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"30 Seconds Ago"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 01 12:00:30 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"45 Minutes Ago"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 01 12:45:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"12 Hours Ago"::interval');
+        agtype_sub        
+--------------------------
+ Sun Jan 02 00:00:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"5 Days Ago"::interval');
+        agtype_sub        
+--------------------------
+ Thu Jan 06 12:00:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2 Weeks Ago"::interval');
+        agtype_sub        
+--------------------------
+ Sat Jan 15 12:00:00 2000
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"13 Months Ago"::interval');
+        agtype_sub        
+--------------------------
+ Thu Feb 01 12:00:00 2001
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"10 Years Ago"::interval');
+        agtype_sub        
+--------------------------
+ Fri Jan 01 12:00:00 2010
+(1 row)
+
 SELECT agtype_neg('-1');
  agtype_neg 
 ------------

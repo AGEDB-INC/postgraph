@@ -330,6 +330,16 @@ Datum agtype_sub(PG_FUNCTION_ARGS)
         agtv_result.type = AGTV_NUMERIC;
         agtv_result.val.numeric = DatumGetNumeric(numd);
     }
+    else if (agtv_lhs->type == AGTV_TIMESTAMP && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        Timestamp ts;
+
+        ts = DatumGetTimestamp(DirectFunctionCall2(timestamp_mi_interval, TimestampGetDatum(agtv_lhs->val.int_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = ts;
+    }
     else
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                         errmsg("Invalid input parameter types for agtype_sub")));
