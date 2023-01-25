@@ -229,6 +229,19 @@ Datum agtype_add(PG_FUNCTION_ARGS)
         agtv_result.type = AGTV_NUMERIC;
         agtv_result.val.numeric = DatumGetNumeric(numd);
     }
+    else if (agtv_lhs->type == AGTV_INTERVAL && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        Interval *interval;
+
+        interval = DatumGetIntervalP(DirectFunctionCall2(interval_pl,
+                                                   IntervalPGetDatum(&agtv_lhs->val.interval),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+    
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = interval->time;
+        agtv_result.val.interval.day = interval->day;
+        agtv_result.val.interval.month = interval->month;
+    }
     else if (agtv_lhs->type == AGTV_TIMESTAMP && agtv_rhs->type == AGTV_INTERVAL)
     {
         Timestamp ts;
@@ -329,6 +342,19 @@ Datum agtype_sub(PG_FUNCTION_ARGS)
 
         agtv_result.type = AGTV_NUMERIC;
         agtv_result.val.numeric = DatumGetNumeric(numd);
+    }
+    else if (agtv_lhs->type == AGTV_INTERVAL && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        Interval *interval;
+
+        interval = DatumGetIntervalP(DirectFunctionCall2(interval_mi,
+                                                   IntervalPGetDatum(&agtv_lhs->val.interval),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = interval->time;
+        agtv_result.val.interval.day = interval->day;
+        agtv_result.val.interval.month = interval->month;
     }
     else if (agtv_lhs->type == AGTV_TIMESTAMP && agtv_rhs->type == AGTV_INTERVAL)
     {

@@ -290,6 +290,30 @@ SELECT agtype_add('"2000-1-1 12:00:00"::timestamp', '"10 Years Ago"::interval');
  Mon Jan 01 12:00:00 1990
 (1 row)
 
+SELECT agtype_add('"1 Year"::interval', '"13 Months"::interval');
+   agtype_add    
+-----------------
+ @ 2 years 1 mon
+(1 row)
+
+SELECT agtype_add('"20 Seconds"::interval', '"10 Seconds Ago"::interval');
+ agtype_add 
+------------
+ @ 10 secs
+(1 row)
+
+SELECT agtype_add('"10 Minutes"::interval', '"1 Year Ago"::interval');
+      agtype_add       
+-----------------------
+ @ 1 year -10 mins ago
+(1 row)
+
+SELECT agtype_add('"59 Minutes"::interval', '"61 Seconds"::interval');
+   agtype_add   
+----------------
+ @ 1 hour 1 sec
+(1 row)
+
 SELECT agtype_sub('-1', '-1');
  agtype_sub 
 ------------
@@ -414,6 +438,30 @@ SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"10 Years Ago"::interval');
         agtype_sub        
 --------------------------
  Fri Jan 01 12:00:00 2010
+(1 row)
+
+SELECT agtype_sub('"1 Year"::interval', '"13 Months"::interval');
+ agtype_sub  
+-------------
+ @ 1 mon ago
+(1 row)
+
+SELECT agtype_sub('"20 Seconds"::interval', '"10 Seconds Ago"::interval');
+ agtype_sub 
+------------
+ @ 30 secs
+(1 row)
+
+SELECT agtype_sub('"10 Minutes"::interval', '"1 Year Ago"::interval');
+    agtype_sub    
+------------------
+ @ 1 year 10 mins
+(1 row)
+
+SELECT agtype_sub('"59 Minutes"::interval', '"61 Seconds"::interval');
+    agtype_sub     
+-------------------
+ @ 57 mins 59 secs
 (1 row)
 
 SELECT agtype_neg('-1');
