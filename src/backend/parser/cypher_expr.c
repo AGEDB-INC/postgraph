@@ -72,6 +72,7 @@ static Node *transform_A_Const(cypher_parsestate *cpstate, A_Const *ac);
 static Node *transform_ColumnRef(cypher_parsestate *cpstate, ColumnRef *cref);
 static Node *transform_A_Indirection(cypher_parsestate *cpstate,
                                      A_Indirection *a_ind);
+static Node *transform_a_expr_between(cypher_parsestate *cpstate, A_Expr *a);
 static Node *transform_AEXPR_OP(cypher_parsestate *cpstate, A_Expr *a);
 static Node *transform_BoolExpr(cypher_parsestate *cpstate, BoolExpr *expr);
 static Node *transform_cypher_bool_const(cypher_parsestate *cpstate,
@@ -146,6 +147,11 @@ static Node *transform_cypher_expr_recurse(cypher_parsestate *cpstate,
             return transform_AEXPR_OP(cpstate, a);
         case AEXPR_IN:
             return transform_AEXPR_IN(cpstate, a);
+        case AEXPR_BETWEEN:
+        case AEXPR_NOT_BETWEEN:
+        case AEXPR_BETWEEN_SYM:
+        case AEXPR_NOT_BETWEEN_SYM:
+             return transform_a_expr_between(cpstate, a);
         default:
             ereport(ERROR, (errmsg_internal("unrecognized A_Expr kind: %d",
                                             a->kind)));
@@ -457,6 +463,8 @@ static Node *transform_ColumnRef(cypher_parsestate *cpstate, ColumnRef *cref)
     return node;
 }
 
+
+
 static Node *transform_AEXPR_OP(cypher_parsestate *cpstate, A_Expr *a)
 {
     ParseState *pstate = (ParseState *)cpstate;
@@ -488,6 +496,65 @@ static Node *transform_AEXPR_IN(cypher_parsestate *cpstate, A_Expr *a)
 
     return (Node *)result;
 }
+
+static Node *transform_a_expr_between(cypher_parsestate *cpstate, A_Expr *a)
+{
+    Node *aexpr;
+    Node *bexpr;
+    Node *cexpr;
+    Node *result;
+    Node *sub1;
+    Node *sub2;
+    List *args;
+    
+    /* Deconstruct A_Expr into three subexprs */
+    aexpr = a->lexpr;
+    args = castNode(List, a->rexpr);
+    Assert(list_length(args) == 2);
+    bexpr = (Node *) linitial(args);
+    cexpr = (Node *) lsecond(args);
+    
+    switch (a->kind)
+    {   
+        case AEXPR_BETWEEN:
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, ">=", aexpr, bexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, "<=", aexpr, cexpr, a->location));
+            result = (Node *)makeBoolExpr(AND_EXPR, args, a->location);
+            break;
+        case AEXPR_NOT_BETWEEN:
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, "<", aexpr, bexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, ">", aexpr, cexpr, a->location));
+            result = (Node *)makeBoolExpr(OR_EXPR, args, a->location);
+            break;
+        case AEXPR_BETWEEN_SYM:
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, ">=", aexpr, bexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, "<=", aexpr, cexpr, a->location));
+            sub1 = (Node *)makeBoolExpr(AND_EXPR, args, a->location);
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, ">=", aexpr, cexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, "<=", aexpr, bexpr, a->location));
+            sub2 = (Node *)makeBoolExpr(AND_EXPR, args, a->location);
+            args = list_make2(sub1, sub2);
+            result = (Node *)makeBoolExpr(OR_EXPR, args, a->location);
+            break;
+       case AEXPR_NOT_BETWEEN_SYM:
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, "<", aexpr, bexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, ">", aexpr, cexpr, a->location));
+            sub1 = (Node *)makeBoolExpr(OR_EXPR, args, a->location);
+            args = list_make2(makeSimpleA_Expr(AEXPR_OP, "<", aexpr, cexpr, a->location),
+                              makeSimpleA_Expr(AEXPR_OP, ">", aexpr, bexpr, a->location));
+            sub2 = (Node *)makeBoolExpr(OR_EXPR, args, a->location);
+            args = list_make2(sub1, sub2);
+            result = (Node *)makeBoolExpr(AND_EXPR, args, a->location);
+            break;
+       default:
+            elog(ERROR, "unrecognized A_Expr kind: %d", a->kind);
+            result = NULL; /* keep compiler quiet */
+            break;
+        }
+
+    return transform_cypher_expr_recurse(cpstate, result);
+}
+
 
 static Node *transform_BoolExpr(cypher_parsestate *cpstate, BoolExpr *expr)
 {

@@ -145,6 +145,119 @@ $$RETURN null IN 'str' $$) AS r(c boolean);
 SELECT * FROM cypher('expr',
 $$RETURN 'str' IN 'str' $$) AS r(c boolean);
 
+--between
+SELECT * FROM cypher('expr', $$
+RETURN 1 BETWEEN 0 AND 2
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1 BETWEEN 0 AND 1
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1 BETWEEN 1 AND 2
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1 BETWEEN 2 AND 3
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1 BETWEEN -1 AND 0
+$$) AS r(result agtype);
+
+
+SELECT * FROM cypher('expr', $$
+RETURN 1.0 BETWEEN 0.0 AND 2.0
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0 BETWEEN 0.0 AND 1.0
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0 BETWEEN 1.0 AND 2.0
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0 BETWEEN 2.0 AND 3.0
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0 BETWEEN -1.0 AND 0.0
+$$) AS r(result agtype);
+
+
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 0.0::numeric AND 2.0::numeric
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 0.0::numeric AND 1.0::numeric
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 1.0::numeric AND 2.0::numeric
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 2.0::numeric AND 3.0::numeric
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN -1.0::numeric AND 0.0::numeric
+$$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 0 AND 2.0
+$$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN '0' AND 2.0
+$$) AS r(result agtype);
+
+
+SELECT * FROM cypher('expr', $$
+RETURN 1.0::numeric BETWEEN 'hello world' AND 2.0
+$$) AS r(result agtype);
+
+
+
+
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN '1996-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN '1998-12-17 07:37:16-08'::timestamp AND '1999-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN '1998-12-17 07:37:16-08'::timestamp AND '1996-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN '1999-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
+--not between
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN '1996-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN '1998-12-17 07:37:16-08'::timestamp AND '1999-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN '1998-12-17 07:37:16-08'::timestamp AND '1996-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN '1999-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
+
+--symetric between
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN SYMMETRIC '1998-12-17 07:37:16-08'::timestamp AND '1996-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp BETWEEN SYMMETRIC '1999-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
+--symtetric not between
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN SYMMETRIC '1998-12-17 07:37:16-08'::timestamp AND '1996-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp NOT BETWEEN SYMMETRIC '1999-12-17 07:37:16-08'::timestamp AND '1998-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+
 -- list access
 SELECT * FROM cypher('expr',
 $$RETURN [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10][0]$$) AS r(c agtype);

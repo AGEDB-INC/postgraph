@@ -78,7 +78,7 @@
 
 /* keywords in alphabetical order */
 %token <keyword> ALL ANALYZE AND AS ASC ASCENDING
-                 BY
+                 BETWEEN BY
                  CALL CASE COALESCE CONTAINS CREATE
                  DELETE DESC DESCENDING DETACH DISTINCT
                  ELSE END_P ENDS EXISTS EXPLAIN
@@ -89,7 +89,7 @@
                  NOT NULL_P
                  OPTIONAL OR ORDER
                  REMOVE RETURN
-                 SET SKIP STARTS
+                 SET SKIP STARTS SYMMETRIC
                  THEN TRUE_P
                  UNION UNWIND
                  VERBOSE
@@ -171,7 +171,7 @@
 %left '+' '-'
 %left '*' '/' '%'
 %left '^'
-%nonassoc IN IS
+%nonassoc BETWEEN IN IS
 %right UNARY_MINUS
 %nonassoc CONTAINS ENDS EQ_TILDE STARTS
 %left '[' ']' '(' ')'
@@ -1238,6 +1238,30 @@ expr:
         {
             $$ = (Node *)makeSimpleA_Expr(AEXPR_OP, "^", $1, $3, @2);
         }
+    | expr BETWEEN expr AND expr
+        {
+            $$ = (Node *) makeSimpleA_Expr(AEXPR_BETWEEN,
+                                           "BETWEEN",
+                                            $1, (Node *) list_make2($3, $5), @2);
+        }
+    | expr NOT BETWEEN expr AND expr
+        {
+            $$ = (Node *) makeSimpleA_Expr(AEXPR_NOT_BETWEEN,
+                                           "NOT BETWEEN",
+                                           $1, (Node *) list_make2($4, $6), @2);
+        }
+    | expr BETWEEN SYMMETRIC expr AND expr %prec BETWEEN
+        {
+            $$ = (Node *) makeSimpleA_Expr(AEXPR_BETWEEN_SYM,
+                                           "BETWEEN SYMMETRIC",
+                                           $1, (Node *) list_make2($4, $6), @2);
+        }
+    | expr NOT BETWEEN SYMMETRIC expr AND expr %prec NOT
+        {
+            $$ = (Node *) makeSimpleA_Expr(AEXPR_NOT_BETWEEN_SYM,
+                                           "NOT BETWEEN SYMMETRIC",
+                                           $1, (Node *)list_make2($5, $7), @2);
+        }
     | expr IN expr
         {
             $$ = (Node *)makeSimpleA_Expr(AEXPR_IN, "=", $1, $3, @2);
@@ -1769,6 +1793,7 @@ safe_keywords:
     | AS         { $$ = pnstrdup($1, 2); }
     | ASC        { $$ = pnstrdup($1, 3); }
     | ASCENDING  { $$ = pnstrdup($1, 9); }
+    | BETWEEN    { $$ = pnstrdup($1, 7); }
     | BY         { $$ = pnstrdup($1, 2); }
     | CALL       { $$ = pnstrdup($1, 4); }
     | CASE       { $$ = pnstrdup($1, 4); }
@@ -1798,6 +1823,7 @@ safe_keywords:
     | SET        { $$ = pnstrdup($1, 3); }
     | SKIP       { $$ = pnstrdup($1, 4); }
     | STARTS     { $$ = pnstrdup($1, 6); }
+    | SYMMETRIC  { $$ = pnstrdup($1, 9); }
     | THEN       { $$ = pnstrdup($1, 4); }
     | UNION      { $$ = pnstrdup($1, 5); }
     | WHEN       { $$ = pnstrdup($1, 4); }
