@@ -877,6 +877,35 @@ RETURN 'Wed Dec 17 07:37:16 1997'::timestamp
 $$) AS r(result agtype);
 
 --
+-- interval
+--  
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17 07:37:16-08'::timestamp
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '12/17/1997 07:37:16.00'::timestamp
+$$) AS r(result agtype); 
+SELECT * FROM cypher('expr', $$
+RETURN 'Wed Dec 17 07:37:16 1997'::timestamp
+$$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$ RETURN '30 Seconds'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '15 Minutes'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Hours'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '40 Days'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Weeks'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Months'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '3 Years'::interval $$) AS r(result agtype);
+
+SELECT * FROM cypher('expr', $$ RETURN '30 Seconds Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '15 Minutes Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Hours Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '40 Days Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Weeks Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '10 Months Ago'::interval $$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$ RETURN '3 Years Ago'::interval $$) AS r(result agtype);
+
+--
 -- Test typecast :: transform and execution logic for object (vertex & edge)
 --
 SELECT * FROM cypher('expr', $$

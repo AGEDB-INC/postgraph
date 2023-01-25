@@ -60,6 +60,23 @@ INSERT INTO agtype_table VALUES ('timestamp', '"1997-12-17 07:37:16-08"::timesta
 INSERT INTO agtype_table VALUES ('timestamp', '"12/17/1997 07:37:16.00"::timestamp');
 INSERT INTO agtype_table VALUES ('timestamp', '"Wed Dec 17 07:37:16 1997"::timestamp');
 
+
+INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Hours"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"40 Days"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Weeks"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Months"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"3 Years"::interval');
+
+INSERT INTO agtype_table VALUES ('interval', '"30 Seconds Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"15 Minutes Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Hours Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"40 Days Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Weeks Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"10 Months Ago"::interval');
+INSERT INTO agtype_table VALUES ('interval', '"3 Years Ago"::interval');
+
 INSERT INTO agtype_table VALUES ('numeric', '100000000000.0000000000001::numeric');
 INSERT INTO agtype_table VALUES ('numeric', '-100000000000.0000000000001::numeric');
 

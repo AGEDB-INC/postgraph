@@ -32,6 +32,7 @@
 #define AG_AGTYPE_H
 
 #include "access/htup_details.h"
+#include "datatype/timestamp.h"
 #include "fmgr.h"
 #include "lib/stringinfo.h"
 #include "nodes/pg_list.h"
@@ -302,6 +303,7 @@ typedef struct
 #define AGT_HEADER_EDGE 0x00000003
 #define AGT_HEADER_PATH 0x00000004
 #define AGT_HEADER_TIMESTAMP 0x00000005
+#define AGT_HEADER_INTERVAL 0x00000006
 
 /*
  * IMPORTANT NOTE: For agtype_value_type, IS_A_AGTYPE_SCALAR() checks that the
@@ -321,8 +323,9 @@ enum agtype_value_type
     AGTV_EDGE,
     AGTV_PATH,
     AGTV_TIMESTAMP,
+    AGTV_INTERVAL,
     /* Composite types */
-    AGTV_ARRAY = 0x10,
+    AGTV_ARRAY = 0x20,
     AGTV_OBJECT,
     /* Binary (i.e. struct agtype) AGTV_ARRAY/AGTV_OBJECT */
     AGTV_BINARY
@@ -349,6 +352,8 @@ struct agtype_value
             int len;
             char *val; /* Not necessarily null-terminated */
         } string; /* String primitive type */
+
+        Interval interval;
 
         struct
         {
