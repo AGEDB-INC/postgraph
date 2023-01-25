@@ -5187,6 +5187,20 @@ SELECT * FROM cypher('UCSC', $$ RETURN count() $$) AS (count agtype);
 ERROR:  pg_catalog.count(*) must be used to call a parameterless aggregate function
 LINE 1: SELECT * FROM cypher('UCSC', $$ RETURN count() $$) AS (count...
                                                ^
+-- No variable
+SELECT * FROM cypher('UCSC', $$ 
+MATCH (:students) return count(*)
+$$) 
+AS (count_star agtype);
+ count_star 
+------------
+ 9
+(1 row)
+
+SELECT count(DISTINCT *) FROM "UCSC"."students";
+ERROR:  syntax error at or near "*"
+LINE 1: SELECT count(DISTINCT *) FROM "UCSC"."students";
+                              ^
 --
 -- aggregate functions min() & max()
 --
