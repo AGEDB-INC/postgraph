@@ -18,7 +18,7 @@
  */
 
 --
--- AGTYPE data type regression tests
+-- agtype data type regression tests
 --
 
 --

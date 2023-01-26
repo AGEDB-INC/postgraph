@@ -8378,6 +8378,37 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_age);
+
+Datum age_age(PG_FUNCTION_ARGS)
+{
+    agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
+    agtype *arg2 = AG_GET_ARG_AGTYPE_P(1);
+    agtype_value agtv_result, *agtv1, *agtv2;
+    Interval *i;
+
+    if (is_agtype_null(arg1) || is_agtype_null(arg2))
+        PG_RETURN_NULL();
+
+    agtv1 = get_ith_agtype_value_from_container(&arg1->root, 0);
+    agtv2 = get_ith_agtype_value_from_container(&arg2->root, 0);
+
+    if (agtv1->type != AGTV_TIMESTAMP || agtv2->type != AGTV_TIMESTAMP)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype, agtype) only supports timestamps")));
+
+    i = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
+                                              TimestampGetDatum(agtv1->val.int_value),
+                                              TimestampGetDatum(agtv2->val.int_value)));
+
+    agtv_result.type = AGTV_INTERVAL;
+    agtv_result.val.interval.time = i->time;
+    agtv_result.val.interval.day = i->day;
+    agtv_result.val.interval.month = i->month;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 /*
  * Converts an agtype object or array to a binary agtype_value.
  */

@@ -17,7 +17,7 @@
  * under the License.
  */
 --
--- AGTYPE data type regression tests
+-- agtype data type regression tests
 --
 --
 -- Load extension and set path
