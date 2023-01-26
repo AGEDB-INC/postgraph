@@ -356,6 +356,48 @@ SELECT agtype_sub('1::numeric', '-1.0::numeric');
  2.0::numeric
 (1 row)
 
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2000-1-1 00:00:00"::timestamp');
+ agtype_sub 
+------------
+ @ 12 hours
+(1 row)
+
+SELECT agtype_sub('"2100-1-1 12:00:00"::timestamp', '"2000-1-1 12:00:00"::timestamp');
+  agtype_sub  
+--------------
+ @ 36525 days
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2000-2-1 12:00:00"::timestamp');
+  agtype_sub   
+---------------
+ @ 31 days ago
+(1 row)
+
+SELECT agtype_sub('"2000-1-10 12:00:00"::timestamp', '"2000-1-1 12:00:00"::timestamp');
+ agtype_sub 
+------------
+ @ 9 days
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2000-1-30 12:00:00"::timestamp');
+  agtype_sub   
+---------------
+ @ 29 days ago
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2000-1-1 12:59:00"::timestamp');
+  agtype_sub   
+---------------
+ @ 59 mins ago
+(1 row)
+
+SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"2000-1-1 12:00:30"::timestamp');
+  agtype_sub   
+---------------
+ @ 30 secs ago
+(1 row)
+
 SELECT agtype_sub('"2000-1-1 12:00:00"::timestamp', '"30 Seconds"::interval');
         agtype_sub        
 --------------------------

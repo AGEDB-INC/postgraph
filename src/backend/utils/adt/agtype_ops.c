@@ -375,6 +375,19 @@ Datum agtype_sub(PG_FUNCTION_ARGS)
         agtv_result.type = AGTV_TIMESTAMP;
         agtv_result.val.int_value = ts;
     }
+    else if (agtv_lhs->type == AGTV_TIMESTAMP && agtv_rhs->type == AGTV_TIMESTAMP)
+    {
+        Interval *i;
+
+        i = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
+                                                  TimestampGetDatum(agtv_lhs->val.int_value),
+                                                  TimestampGetDatum(agtv_rhs->val.int_value)));
+
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = i->time;
+        agtv_result.val.interval.day = i->day;
+        agtv_result.val.interval.month = i->month;
+    }
     else
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                         errmsg("Invalid input parameter types for agtype_sub")));
