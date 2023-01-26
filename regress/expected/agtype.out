@@ -572,6 +572,78 @@ SELECT agtype_mul('-2.0::numeric', '3::numeric');
  -6.0::numeric
 (1 row)
 
+SELECT agtype_mul('"1 Year"::interval', '5');
+ agtype_mul 
+------------
+ @ 5 years
+(1 row)
+
+SELECT agtype_mul('"20 Seconds"::interval', '10');
+    agtype_mul    
+------------------
+ @ 3 mins 20 secs
+(1 row)
+
+SELECT agtype_mul('"10 Minutes"::interval', '3');
+ agtype_mul 
+------------
+ @ 30 mins
+(1 row)
+
+SELECT agtype_mul('"59 Minutes"::interval', '6');
+    agtype_mul     
+-------------------
+ @ 5 hours 54 mins
+(1 row)
+
+SELECT agtype_mul('"1 Year"::interval', '0.5');
+ agtype_mul 
+------------
+ @ 6 mons
+(1 row)
+
+SELECT agtype_mul('"20 Seconds"::interval', '10.0');
+    agtype_mul    
+------------------
+ @ 3 mins 20 secs
+(1 row)
+
+SELECT agtype_mul('"10 Minutes"::interval', '1.0');
+ agtype_mul 
+------------
+ @ 10 mins
+(1 row)
+
+SELECT agtype_mul('"59 Minutes"::interval', '-5.9');
+          agtype_mul          
+------------------------------
+ @ 5 hours 48 mins 6 secs ago
+(1 row)
+
+SELECT agtype_mul('"1 Year"::interval', '0.5::numeric');
+ agtype_mul 
+------------
+ @ 6 mons
+(1 row)
+
+SELECT agtype_mul('"20 Seconds"::interval', '10.0::numeric');
+    agtype_mul    
+------------------
+ @ 3 mins 20 secs
+(1 row)
+
+SELECT agtype_mul('"10 Minutes"::interval', '1.0::numeric');
+ agtype_mul 
+------------
+ @ 10 mins
+(1 row)
+
+SELECT agtype_mul('"59 Minutes"::interval', '-5.9::numeric');
+          agtype_mul          
+------------------------------
+ @ 5 hours 48 mins 6 secs ago
+(1 row)
+
 SELECT agtype_div('-4', '3');
  agtype_div 
 ------------

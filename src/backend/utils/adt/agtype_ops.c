@@ -41,6 +41,8 @@ static agtype_value *iterator_concat(agtype_iterator **it1,
 static void concat_to_agtype_string(agtype_value *result, char *lhs, int llen,
                                     char *rhs, int rlen);
 static char *get_string_from_agtype_value(agtype_value *agtv, int *length);
+static bool is_agtype_number(agtype_value *agtv);
+static float8 agtype_number_to_float(agtype_value *agtv);
 
 static void concat_to_agtype_string(agtype_value *result, char *lhs, int llen,
                                     char *rhs, int rlen)
@@ -129,6 +131,13 @@ Datum get_numeric_datum_from_agtype_value(agtype_value *agtv)
 
     return 0;
 }
+
+static bool is_agtype_number(agtype_value *agtv)
+{   
+    if (agtv->type == AGTV_INTEGER || agtv->type == AGTV_NUMERIC || agtv->type == AGTV_FLOAT)
+        return true;
+    return false;
+}       
 
 bool is_numeric_result(agtype_value *lhs, agtype_value *rhs)
 {
@@ -515,6 +524,19 @@ Datum agtype_mul(PG_FUNCTION_ARGS)
 
         agtv_result.type = AGTV_NUMERIC;
         agtv_result.val.numeric = DatumGetNumeric(numd);
+    }
+    else if (agtv_lhs->type == AGTV_INTERVAL && is_agtype_number(agtv_rhs))
+    {
+        Interval *interval;
+
+        interval = DatumGetIntervalP(DirectFunctionCall2(interval_mul,
+                                                   IntervalPGetDatum(&agtv_lhs->val.interval),
+                                                   Float8GetDatum(agtype_number_to_float(agtv_rhs))));
+
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = interval->time;
+        agtv_result.val.interval.day = interval->day;
+        agtv_result.val.interval.month = interval->month;
     }
     else
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -1381,3 +1403,22 @@ static void ereport_op_str(const char *op, agtype *lhs, agtype *rhs)
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                     errmsg(msgfmt, lstr, op, rstr)));
 }
+
+static float8 agtype_number_to_float(agtype_value *agtv)
+{   
+    float8 result;
+        
+    Assert(is_agtype_number(agtv));
+
+    if (agtv->type == AGTV_INTEGER)
+        result = DatumGetFloat8(DirectFunctionCall1(i8tod,
+                                Int64GetDatum(agtv->val.int_value)));
+    else if (agtv->type == AGTV_FLOAT)
+        result = agtv->val.float_value;
+    else
+        result = DatumGetFloat8(DirectFunctionCall1(numeric_float8_no_overflow,
+                NumericGetDatum(agtv->val.numeric)));
+    
+    return result;
+}
+
