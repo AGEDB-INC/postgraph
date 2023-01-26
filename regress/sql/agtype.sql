@@ -214,6 +214,18 @@ SELECT agtype_div('4.0', '-3.0');
 SELECT agtype_div('4', '-3.0::numeric');
 SELECT agtype_div('-4.0', '3::numeric');
 SELECT agtype_div('4.0::numeric', '-3::numeric');
+SELECT agtype_div('"1 Year"::interval', '5');
+SELECT agtype_div('"20 Seconds"::interval', '10');
+SELECT agtype_div('"10 Minutes"::interval', '3');
+SELECT agtype_div('"59 Minutes"::interval', '6');
+SELECT agtype_div('"1 Year"::interval', '0.5');
+SELECT agtype_div('"20 Seconds"::interval', '10.0');
+SELECT agtype_div('"10 Minutes"::interval', '1.0');
+SELECT agtype_div('"59 Minutes"::interval', '-5.9');
+SELECT agtype_div('"1 Year"::interval', '0.5::numeric');
+SELECT agtype_div('"20 Seconds"::interval', '10.0::numeric');
+SELECT agtype_div('"10 Minutes"::interval', '1.0::numeric');
+SELECT agtype_div('"59 Minutes"::interval', '-5.9::numeric');
 
 SELECT agtype_mod('-11', '3');
 SELECT agtype_mod('11', '-3.0');
