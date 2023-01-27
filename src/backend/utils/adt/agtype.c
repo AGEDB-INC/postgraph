@@ -2098,8 +2098,7 @@ Datum _agtype_build_path(PG_FUNCTION_ARGS)
          */
         else if (is_zero_boundary_case == false)
         {
-            add_agtype(AGTYPE_P_GET_DATUM(agt), false, &result, types[i],
-                       false);
+            add_agtype(AGTYPE_P_GET_DATUM(agt), false, &result, AGTYPEOID, false);
         }
         /* If we got here, we had a zero boundary case. So, clear it */
         else
