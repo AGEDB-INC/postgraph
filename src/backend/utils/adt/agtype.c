@@ -2179,73 +2179,59 @@ Datum make_path(List *path)
     PG_RETURN_POINTER(agtype_value_to_agtype(result.res));
 }
 
-PG_FUNCTION_INFO_V1(_agtype_build_vertex);
 
-/*
- * SQL function agtype_build_vertex(graphid, cstring, agtype)
- */
+PG_FUNCTION_INFO_V1(_agtype_build_vertex);
+// agtype_build_vertex(graphid, cstring, agtype)
 Datum _agtype_build_vertex(PG_FUNCTION_ARGS)
 {
     agtype_in_state result;
-    graphid id;
 
     memset(&result, 0, sizeof(agtype_in_state));
 
-    result.res = push_agtype_value(&result.parse_state, WAGT_BEGIN_OBJECT,
-                                   NULL);
+    agtype_in_object_start(&result.parse_state);
 
-    /* process graphid */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("id"));
+    // graphid
+    agtype_in_object_field_start(&result.parse_state, "id", false);
 
     if (unlikely(PG_ARGISNULL(0)))
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                  errmsg("_agtype_build_vertex() graphid cannot be NULL")));
 
-    id = AG_GETARG_GRAPHID(0);
-    result.res = push_agtype_value(&result.parse_state, WAGT_VALUE,
-                                   integer_to_agtype_value(id));
+    add_agtype(PG_GETARG_DATUM(0), false, &result, GRAPHIDOID, false);
 
-    /* process label */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("label"));
+    // label
+    agtype_in_object_field_start(&result.parse_state, "label", false);
 
     if (unlikely(PG_ARGISNULL(1)))
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                         errmsg("_agtype_build_vertex() label cannot be NULL")));
 
-    result.res =
-        push_agtype_value(&result.parse_state, WAGT_VALUE,
-                          string_to_agtype_value(PG_GETARG_CSTRING(1)));
 
-    /* process properties */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("properties"));
+    add_agtype(PG_GETARG_DATUM(1), false, &result, CSTRINGOID, false);
+
+    // properties
+    agtype_in_object_field_start(&result.parse_state, "properties", false);    
 
     //if the properties object is null, push an empty object
     if (unlikely(PG_ARGISNULL(2)))
     {
-        result.res = push_agtype_value(&result.parse_state, WAGT_BEGIN_OBJECT,
-                                       NULL);
-        result.res = push_agtype_value(&result.parse_state, WAGT_END_OBJECT,
-                                       NULL);
+        agtype_in_object_start(&result.parse_state);
+        agtype_in_object_end(&result.parse_state);
     }
     else
     {
         agtype *properties = AG_GET_ARG_AGTYPE_P(2);
 
         if (unlikely(!AGT_ROOT_IS_OBJECT(properties)))
-            ereport(
-                ERROR,
+            ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-                 errmsg(
-                     "_agtype_build_vertex() properties argument must be an object")));
+                 errmsg("_agtype_build_vertex() properties argument must be an object")));
 
-        add_agtype((Datum)properties, false, &result, AGTYPEOID, false);
+        add_agtype(AGTYPE_P_GET_DATUM(properties), false, &result, AGTYPEOID, false);
     }
 
-    result.res = push_agtype_value(&result.parse_state, WAGT_END_OBJECT, NULL);
+    agtype_in_object_end(&result.parse_state);
 
     result.res->type = AGTV_VERTEX;
 
@@ -2262,98 +2248,76 @@ Datum make_vertex(Datum id, Datum label, Datum properties)
 }
 
 PG_FUNCTION_INFO_V1(_agtype_build_edge);
-
-/*
- * SQL function agtype_build_edge(graphid, graphid, graphid, cstring, agtype)
- */
+// agtype_build_edge(graphid, graphid, graphid, cstring, agtype)
 Datum _agtype_build_edge(PG_FUNCTION_ARGS)
 {
     agtype_in_state result;
-    graphid id, start_id, end_id;
 
     memset(&result, 0, sizeof(agtype_in_state));
 
-    result.res = push_agtype_value(&result.parse_state, WAGT_BEGIN_OBJECT,
-                                   NULL);
+    agtype_in_object_start(&result.parse_state);
 
-    /* process graph id */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("id"));
+    // id
+    agtype_in_object_field_start(&result.parse_state, "id", false);
 
     if (unlikely(PG_ARGISNULL(0)))
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                  errmsg("_agtype_build_edge() graphid cannot be NULL")));
 
-    id = AG_GETARG_GRAPHID(0);
-    result.res = push_agtype_value(&result.parse_state, WAGT_VALUE,
-                                   integer_to_agtype_value(id));
+    add_agtype(PG_GETARG_DATUM(0), false, &result, GRAPHIDOID, false);
 
-    /* process label */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("label"));
+    // label
+    agtype_in_object_field_start(&result.parse_state, "label", false);
 
     if (unlikely(PG_ARGISNULL(3)))
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                         errmsg("_agtype_build_vertex() label cannot be NULL")));
 
-    result.res =
-        push_agtype_value(&result.parse_state, WAGT_VALUE,
-                          string_to_agtype_value(PG_GETARG_CSTRING(3)));
+    add_agtype(PG_GETARG_DATUM(3), false, &result, CSTRINGOID, false);
 
-    /* process end_id */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("end_id"));
+    // end_id
+    agtype_in_object_field_start(&result.parse_state, "end_id", false);
 
     if (unlikely(PG_ARGISNULL(2)))
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                  errmsg("_agtype_build_edge() endid cannot be NULL")));
 
-    end_id = AG_GETARG_GRAPHID(2);
-    result.res = push_agtype_value(&result.parse_state, WAGT_VALUE,
-                                   integer_to_agtype_value(end_id));
+    add_agtype(PG_GETARG_DATUM(2), false, &result, GRAPHIDOID, false);
 
-    /* process start_id */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("start_id"));
+    // start_id
+    agtype_in_object_field_start(&result.parse_state, "start_id", false);
 
     if (unlikely(PG_ARGISNULL(1)))
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                  errmsg("_agtype_build_edge() startid cannot be NULL")));
 
-    start_id = AG_GETARG_GRAPHID(1);
-    result.res = push_agtype_value(&result.parse_state, WAGT_VALUE,
-                                   integer_to_agtype_value(start_id));
+    add_agtype(PG_GETARG_DATUM(1), false, &result, GRAPHIDOID, false);
 
-    /* process properties */
-    result.res = push_agtype_value(&result.parse_state, WAGT_KEY,
-                                   string_to_agtype_value("properties"));
+    // properties
+    agtype_in_object_field_start(&result.parse_state, "properties", false);
 
     /* if the properties object is null, push an empty object */
     if (unlikely(PG_ARGISNULL(4)))
     {
-        result.res = push_agtype_value(&result.parse_state, WAGT_BEGIN_OBJECT,
-                                       NULL);
-        result.res = push_agtype_value(&result.parse_state, WAGT_END_OBJECT,
-                                       NULL);
+        agtype_in_object_start(&result.parse_state);
+        agtype_in_object_end(&result.parse_state);
     }
     else
     {
         agtype *properties = AG_GET_ARG_AGTYPE_P(4);
 
-        if (!AGT_ROOT_IS_OBJECT(properties))
-            ereport(
-                ERROR,
+        if (unlikely(!AGT_ROOT_IS_OBJECT(properties)))
+            ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-                 errmsg(
-                     "_agtype_build_edge() properties argument must be an object")));
+                 errmsg("_agtype_build_edge() properties argument must be an object")));
 
-        add_agtype((Datum)properties, false, &result, AGTYPEOID, false);
+        add_agtype(AGTYPE_P_GET_DATUM(properties), false, &result, AGTYPEOID, false);
     }
 
-    result.res = push_agtype_value(&result.parse_state, WAGT_END_OBJECT, NULL);
+    agtype_in_object_end(&result.parse_state);
 
     result.res->type = AGTV_EDGE;
 
