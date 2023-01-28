@@ -25,6 +25,7 @@
 LOAD 'age';
 SET extra_float_digits = 0;
 SET search_path TO ag_catalog;
+set timezone TO 'GMT';
 --
 -- Create a table using the AGTYPE type
 --
@@ -50,6 +51,9 @@ INSERT INTO agtype_table VALUES ('float', '-0.00000000000000012345');
 INSERT INTO agtype_table VALUES ('timestamp', '"1997-12-17 07:37:16-08"::timestamp');
 INSERT INTO agtype_table VALUES ('timestamp', '"12/17/1997 07:37:16.00"::timestamp');
 INSERT INTO agtype_table VALUES ('timestamp', '"Wed Dec 17 07:37:16 1997"::timestamp');
+INSERT INTO agtype_table VALUES ('timestamptz', '"1997-12-17 07:37:16-06"::timestamptz');
+INSERT INTO agtype_table VALUES ('timestamptz', '"12/17/1997 07:37:16.00+00"::timestamptz');
+INSERT INTO agtype_table VALUES ('timestamptz', '"Wed Dec 17 07:37:16 1997+09"::timestamptz');
 INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"10 Hours"::interval');
@@ -103,6 +107,9 @@ SELECT * FROM agtype_table;
  timestamp       | Wed Dec 17 07:37:16 1997
  timestamp       | Wed Dec 17 07:37:16 1997
  timestamp       | Wed Dec 17 07:37:16 1997
+ timestamptz     | Wed Dec 17 13:37:16 1997 GMT
+ timestamptz     | Wed Dec 17 07:37:16 1997 GMT
+ timestamptz     | Tue Dec 16 22:37:16 1997 GMT
  interval        | @ 30 secs
  interval        | @ 15 mins
  interval        | @ 10 hours
@@ -129,7 +136,7 @@ SELECT * FROM agtype_table;
  float -Infinity | -Infinity
  float  inf      | Infinity
  float -inf      | -Infinity
-(44 rows)
+(47 rows)
 
 --
 -- These should fail

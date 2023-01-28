@@ -881,6 +881,11 @@ static void agtype_put_escaped_value(StringInfo out, agtype_value *scalar_val)
             timestamp_out, TimestampGetDatum(scalar_val->val.int_value)));
         appendStringInfoString(out, numstr);
         break;
+    case AGTV_TIMESTAMPTZ:
+        numstr = DatumGetCString(DirectFunctionCall1(
+            timestamptz_out, TimestampGetDatum(scalar_val->val.int_value)));
+        appendStringInfoString(out, numstr);
+        break;
     case AGTV_INTERVAL:
         numstr = DatumGetCString(DirectFunctionCall1(
             interval_out, IntervalPGetDatum(&scalar_val->val.interval)));
@@ -1000,6 +1005,8 @@ static void agtype_in_scalar(void *pstate, char *token,
             tokentype = AGTYPE_TOKEN_FLOAT;
         else if (len == 9 && pg_strcasecmp(annotation, "timestamp") == 0)
             tokentype = AGTYPE_TOKEN_TIMESTAMP;
+        else if (len == 11 && pg_strcasecmp(annotation, "timestamptz") == 0)
+            tokentype = AGTYPE_TOKEN_TIMESTAMPTZ;
         else if (len == 8 && pg_strcasecmp(annotation, "interval") == 0)
             tokentype = AGTYPE_TOKEN_INTERVAL;
         else
@@ -1040,6 +1047,13 @@ static void agtype_in_scalar(void *pstate, char *token,
         Assert(token != NULL);
         v.type = AGTV_TIMESTAMP;
         v.val.int_value = DatumGetInt64(DirectFunctionCall3(timestamp_in,
+                                        CStringGetDatum(token),
+                                        ObjectIdGetDatum(InvalidOid),
+                                        Int32GetDatum(-1)));
+        break;
+    case AGTYPE_TOKEN_TIMESTAMPTZ:
+        v.type = AGTV_TIMESTAMPTZ;
+        v.val.int_value = DatumGetInt64(DirectFunctionCall3(timestamptz_in,
                                         CStringGetDatum(token),
                                         ObjectIdGetDatum(InvalidOid),
                                         Int32GetDatum(-1)));
@@ -1650,11 +1664,9 @@ static void datum_to_agtype(Datum val, bool is_null, agtype_in_state *result,
             agtv.val.int_value = DatumGetInt64(val);
             break;
         case AGT_TYPE_TIMESTAMPTZ:
-            agtv.type = AGTV_STRING;
-            agtv.val.string.val = agtype_encode_date_time(NULL, val,
-                                                          TIMESTAMPTZOID);
-            agtv.val.string.len = strlen(agtv.val.string.val);
-            break;
+            agtv.type = AGTV_TIMESTAMPTZ;
+            agtv.val.int_value = DatumGetInt64(val);
+            break;   
         case AGT_TYPE_INTERVAL:
             {
                 Interval *i = DatumGetIntervalP(val);
@@ -1703,7 +1715,6 @@ static void datum_to_agtype(Datum val, bool is_null, agtype_in_state *result,
              * val is actually jsonb datum but we can handle it as an agtype
              * datum because agtype is currently an extension of jsonb.
              */
-
             it = agtype_iterator_init(&jsonb->root);
 
             if (AGT_ROOT_IS_SCALAR(jsonb))
@@ -4140,6 +4151,37 @@ Datum agtype_typecast_timestamp(PG_FUNCTION_ARGS)
 
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
 }
+
+PG_FUNCTION_INFO_V1(agtype_typecast_timestamptz);
+/*                  
+ * Execute function to typecast an agtype to an agtype timestamp
+ */                 
+Datum agtype_typecast_timestamptz(PG_FUNCTION_ARGS)
+{               
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+    TimestampTz tz;
+            
+    if (agtv->type == AGTV_NULL)
+        PG_RETURN_NULL();
+        
+    if (agtv->type == AGTV_TIMESTAMPTZ)
+        AG_RETURN_AGTYPE_P(agt);
+
+    if (agtv->type != AGTV_STRING)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("typecastint to timestamptz must be a string")));
+            
+    tz = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_in, CStringGetDatum(agtv->val.string.val),
+                                                            ObjectIdGetDatum(InvalidOid),
+                                                            Int32GetDatum(-1)));
+    agtv->type = AGTV_TIMESTAMPTZ;
+    agtv->val.int_value = (int64)tz;
+            
+    PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+}           
+
 
 PG_FUNCTION_INFO_V1(agtype_typecast_interval);
 /*                  

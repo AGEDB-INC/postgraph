@@ -27,7 +27,7 @@
 LOAD 'age';
 SET extra_float_digits = 0;
 SET search_path TO ag_catalog;
-
+set timezone TO 'GMT';
 --
 -- Create a table using the AGTYPE type
 --
@@ -60,6 +60,9 @@ INSERT INTO agtype_table VALUES ('timestamp', '"1997-12-17 07:37:16-08"::timesta
 INSERT INTO agtype_table VALUES ('timestamp', '"12/17/1997 07:37:16.00"::timestamp');
 INSERT INTO agtype_table VALUES ('timestamp', '"Wed Dec 17 07:37:16 1997"::timestamp');
 
+INSERT INTO agtype_table VALUES ('timestamptz', '"1997-12-17 07:37:16-06"::timestamptz');
+INSERT INTO agtype_table VALUES ('timestamptz', '"12/17/1997 07:37:16.00+00"::timestamptz');
+INSERT INTO agtype_table VALUES ('timestamptz', '"Wed Dec 17 07:37:16 1997+09"::timestamptz');
 
 INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
