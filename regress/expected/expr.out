@@ -1998,6 +1998,34 @@ $$) AS r(result agtype);
  12-17-1997
 (1 row)
 
+--  
+-- timestamp
+--
+SELECT * FROM cypher('expr', $$ 
+RETURN '07:37:16-08'::time
+$$) AS r(result agtype);
+  result  
+----------
+ 07:37:16
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16.00'::time
+$$) AS r(result agtype);
+  result  
+----------
+ 07:37:16
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16'::time
+$$) AS r(result agtype);
+  result  
+----------
+ 07:37:16
+(1 row)
+
+    
 --
 -- interval
 --  

@@ -904,6 +904,19 @@ SELECT * FROM cypher('expr', $$
 RETURN 'Wed Dec 17 1997'::date
 $$) AS r(result agtype);
 
+--  
+-- timestamp
+--
+SELECT * FROM cypher('expr', $$ 
+RETURN '07:37:16-08'::time
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16.00'::time
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16'::time
+$$) AS r(result agtype);
+    
 --
 -- interval
 --  

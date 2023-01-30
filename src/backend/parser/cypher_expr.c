@@ -65,6 +65,7 @@
 #define FUNC_AGTYPE_TYPECAST_TIMESTAMP "agtype_typecast_timestamp"
 #define FUNC_AGTYPE_TYPECAST_TIMESTAMPTZ "agtype_typecast_timestamptz"
 #define FUNC_AGTYPE_TYPECAST_DATE "agtype_typecast_date"
+#define FUNC_AGTYPE_TYPECAST_TIME "agtype_typecast_time"
 #define FUNC_AGTYPE_TYPECAST_INTERVAL "agtype_typecast_interval"
 #define FUNC_AGTYPE_TYPECAST_PG_FLOAT8 "agtype_to_float8"
 #define FUNC_AGTYPE_TYPECAST_PG_BIGINT "agtype_to_int8"
@@ -1074,6 +1075,10 @@ static Node *transform_cypher_typecast(cypher_parsestate *cpstate,
     else if (pg_strcasecmp(ctypecast->typecast, "date") == 0)
     {                                      
         fname = lappend(fname, makeString(FUNC_AGTYPE_TYPECAST_DATE));
+    }
+    else if (pg_strcasecmp(ctypecast->typecast, "time") == 0)
+    {
+        fname = lappend(fname, makeString(FUNC_AGTYPE_TYPECAST_TIME));
     }
     else if (pg_strcasecmp(ctypecast->typecast, "interval") == 0)
     {                              
