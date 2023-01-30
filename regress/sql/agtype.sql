@@ -64,6 +64,10 @@ INSERT INTO agtype_table VALUES ('timestamptz', '"1997-12-17 07:37:16-06"::times
 INSERT INTO agtype_table VALUES ('timestamptz', '"12/17/1997 07:37:16.00+00"::timestamptz');
 INSERT INTO agtype_table VALUES ('timestamptz', '"Wed Dec 17 07:37:16 1997+09"::timestamptz');
 
+INSERT INTO agtype_table VALUES ('date', '"1997-12-17"::date');
+INSERT INTO agtype_table VALUES ('date', '"12/17/1997"::date');
+INSERT INTO agtype_table VALUES ('date', '"Wed Dec 17 1997"::date');
+
 INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"10 Hours"::interval');

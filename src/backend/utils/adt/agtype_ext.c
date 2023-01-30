@@ -85,6 +85,18 @@ bool ag_serialize_extended_type(StringInfo buffer, agtentry *agtentry,
 
         *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
         break;
+
+    case AGTV_DATE:
+        padlen = ag_serialize_header(buffer, AGT_HEADER_DATE);
+
+        /* copy in the int32_value data */
+        numlen = sizeof(int32);
+        offset = reserve_from_buffer(buffer, numlen);
+        *((int32 *)(buffer->data + offset)) = scalar_val->val.int32_value;
+
+        *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
+        break;
+
     case AGTV_TIMESTAMPTZ:
         padlen = ag_serialize_header(buffer, AGT_HEADER_TIMESTAMPTZ);
 
@@ -203,6 +215,11 @@ void ag_deserialize_extended_type(char *base_addr, uint32 offset,
     case AGT_HEADER_TIMESTAMPTZ:
         result->type = AGTV_TIMESTAMPTZ;
         result->val.int_value = *((int64 *)(base + AGT_HEADER_SIZE));
+        break;
+
+    case AGT_HEADER_DATE:
+        result->type = AGTV_DATE;
+        result->val.int32_value = *((int32 *)(base + AGT_HEADER_SIZE));
         break;
 
     case AGT_HEADER_FLOAT:

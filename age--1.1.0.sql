@@ -4047,6 +4047,13 @@ IMMUTABLE
 PARALLEL SAFE 
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.agtype_typecast_date(agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION ag_catalog.agtype_typecast_interval(agtype)
 RETURNS agtype
 LANGUAGE c

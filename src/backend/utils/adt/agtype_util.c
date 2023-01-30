@@ -1600,6 +1600,13 @@ int compare_agtype_scalar_values(agtype_value *a, agtype_value *b)
                 return 1;
             else
                 return -1;
+        case AGTV_DATE:
+            if (a->val.int32_value == b->val.int32_value)
+                return 0;
+            else if (a->val.int32_value > b->val.int32_value)
+                return 1;
+            else
+                return -1;
         case AGTV_FLOAT:
             return compare_two_floats_orderability(a->val.float_value,
                                                    b->val.float_value);

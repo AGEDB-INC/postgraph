@@ -54,6 +54,9 @@ INSERT INTO agtype_table VALUES ('timestamp', '"Wed Dec 17 07:37:16 1997"::times
 INSERT INTO agtype_table VALUES ('timestamptz', '"1997-12-17 07:37:16-06"::timestamptz');
 INSERT INTO agtype_table VALUES ('timestamptz', '"12/17/1997 07:37:16.00+00"::timestamptz');
 INSERT INTO agtype_table VALUES ('timestamptz', '"Wed Dec 17 07:37:16 1997+09"::timestamptz');
+INSERT INTO agtype_table VALUES ('date', '"1997-12-17"::date');
+INSERT INTO agtype_table VALUES ('date', '"12/17/1997"::date');
+INSERT INTO agtype_table VALUES ('date', '"Wed Dec 17 1997"::date');
 INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"10 Hours"::interval');
@@ -110,6 +113,9 @@ SELECT * FROM agtype_table;
  timestamptz     | Wed Dec 17 13:37:16 1997 GMT
  timestamptz     | Wed Dec 17 07:37:16 1997 GMT
  timestamptz     | Tue Dec 16 22:37:16 1997 GMT
+ date            | 12-17-1997
+ date            | 12-17-1997
+ date            | 12-17-1997
  interval        | @ 30 secs
  interval        | @ 15 mins
  interval        | @ 10 hours
@@ -136,7 +142,7 @@ SELECT * FROM agtype_table;
  float -Infinity | -Infinity
  float  inf      | Infinity
  float -inf      | -Infinity
-(47 rows)
+(50 rows)
 
 --
 -- These should fail

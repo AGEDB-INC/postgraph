@@ -886,6 +886,11 @@ static void agtype_put_escaped_value(StringInfo out, agtype_value *scalar_val)
             timestamptz_out, TimestampGetDatum(scalar_val->val.int_value)));
         appendStringInfoString(out, numstr);
         break;
+    case AGTV_DATE:
+        numstr = DatumGetCString(DirectFunctionCall1(
+            date_out, DateADTGetDatum(scalar_val->val.int32_value)));
+        appendStringInfoString(out, numstr);
+        break;
     case AGTV_INTERVAL:
         numstr = DatumGetCString(DirectFunctionCall1(
             interval_out, IntervalPGetDatum(&scalar_val->val.interval)));
@@ -1007,6 +1012,8 @@ static void agtype_in_scalar(void *pstate, char *token,
             tokentype = AGTYPE_TOKEN_TIMESTAMP;
         else if (len == 11 && pg_strcasecmp(annotation, "timestamptz") == 0)
             tokentype = AGTYPE_TOKEN_TIMESTAMPTZ;
+        else if (len == 4 && pg_strcasecmp(annotation, "date") == 0)
+            tokentype = AGTYPE_TOKEN_DATE;
         else if (len == 8 && pg_strcasecmp(annotation, "interval") == 0)
             tokentype = AGTYPE_TOKEN_INTERVAL;
         else
@@ -1057,6 +1064,10 @@ static void agtype_in_scalar(void *pstate, char *token,
                                         CStringGetDatum(token),
                                         ObjectIdGetDatum(InvalidOid),
                                         Int32GetDatum(-1)));
+        break;
+    case AGTYPE_TOKEN_DATE:
+        v.type = AGTV_DATE;
+        v.val.int32_value = DatumGetInt32(DirectFunctionCall1(date_in, CStringGetDatum(token)));
         break;
     case AGTYPE_TOKEN_INTERVAL:
         {
@@ -1655,9 +1666,8 @@ static void datum_to_agtype(Datum val, bool is_null, agtype_in_state *result,
             }
             break;
         case AGT_TYPE_DATE:
-            agtv.type = AGTV_STRING;
-            agtv.val.string.val = agtype_encode_date_time(NULL, val, DATEOID);
-            agtv.val.string.len = strlen(agtv.val.string.val);
+            agtv.type = AGTV_DATE;
+            agtv.val.int32_value = DatumGetInt32(val);
             break;
         case AGT_TYPE_TIMESTAMP:
             agtv.type = AGTV_TIMESTAMP;
@@ -4205,7 +4215,7 @@ Datum agtype_typecast_interval(PG_FUNCTION_ARGS)
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                  errmsg("typecastint to interval must be a string")));
     
-    i = DatumGetTimestamp(DirectFunctionCall3(interval_in, CStringGetDatum(agtv->val.string.val),
+    i = DatumGetIntervalP(DirectFunctionCall3(interval_in, CStringGetDatum(agtv->val.string.val),
                                                            ObjectIdGetDatum(InvalidOid),
                                                            Int32GetDatum(-1)));
     agtv->type = AGTV_INTERVAL;
@@ -4215,6 +4225,36 @@ Datum agtype_typecast_interval(PG_FUNCTION_ARGS)
         
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
 }   
+
+PG_FUNCTION_INFO_V1(agtype_typecast_date);
+/*                  
+ * Execute function to typecast an agtype to an agtype interval
+ */
+Datum agtype_typecast_date(PG_FUNCTION_ARGS)
+{
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+    DateADT *dte;
+
+    if (agtv->type == AGTV_NULL)
+        PG_RETURN_NULL();
+
+
+    if (agtv->type == AGTV_DATE)
+        AG_RETURN_AGTYPE_P(agt);
+
+    if (agtv->type != AGTV_STRING)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("typecast to date must be a string")));
+
+    dte = DatumGetDateADT(DirectFunctionCall1(date_in, CStringGetDatum(agtv->val.string.val)));
+
+    agtv->type = AGTV_DATE;
+    agtv->val.int32_value = dte;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+}  
 
 PG_FUNCTION_INFO_V1(agtype_typecast_float);
 /*

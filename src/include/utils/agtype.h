@@ -37,6 +37,7 @@
 #include "lib/stringinfo.h"
 #include "nodes/pg_list.h"
 #include "utils/array.h"
+#include "utils/date.h"
 #include "utils/numeric.h"
 #include "utils/syscache.h"
 
@@ -304,7 +305,9 @@ typedef struct
 #define AGT_HEADER_PATH 0x00000004
 #define AGT_HEADER_TIMESTAMP 0x00000005
 #define AGT_HEADER_TIMESTAMPTZ 0x00000006
-#define AGT_HEADER_INTERVAL 0x00000007
+#define AGT_HEADER_DATE 0x00000007
+#define AGT_HEADER_INTERVAL 0x00000008
+
 
 /*
  * IMPORTANT NOTE: For agtype_value_type, IS_A_AGTYPE_SCALAR() checks that the
@@ -325,6 +328,7 @@ enum agtype_value_type
     AGTV_PATH,
     AGTV_TIMESTAMP,
     AGTV_TIMESTAMPTZ,
+    AGTV_DATE,
     AGTV_INTERVAL,
     /* Composite types */
     AGTV_ARRAY = 0x20,
@@ -346,6 +350,7 @@ struct agtype_value
     union
     {
         int64 int_value; /* Cypher 8 byte Integer */
+        int32 int32_value; // used to store dateADT
         float8 float_value; /* Cypher 8 byte Float */
         Numeric numeric;
         bool boolean;
