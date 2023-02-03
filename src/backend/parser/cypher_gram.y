@@ -256,64 +256,6 @@ stmt:
                 yyerror(&yylloc, scanner, extra, "syntax error");
 
             extra->result = $1;
-            extra->extra = NULL;
-        }
-    | EXPLAIN cypher_stmt semicolon_opt
-        {
-            ExplainStmt *estmt = NULL;
-
-            if (yychar != YYEOF)
-                yyerror(&yylloc, scanner, extra, "syntax error");
-
-            extra->result = $2;
-
-            estmt = makeNode(ExplainStmt);
-            estmt->query = NULL;
-            estmt->options = NIL;
-            extra->extra = (Node *)estmt;
-        }
-    | EXPLAIN VERBOSE cypher_stmt semicolon_opt
-        {
-            ExplainStmt *estmt = NULL;
-
-            if (yychar != YYEOF)
-                yyerror(&yylloc, scanner, extra, "syntax error");
-
-            extra->result = $3;
-
-            estmt = makeNode(ExplainStmt);
-            estmt->query = NULL;
-            estmt->options = list_make1(makeDefElem("verbose", NULL, @2));;
-            extra->extra = (Node *)estmt;
-        }
-    | EXPLAIN ANALYZE cypher_stmt semicolon_opt
-        {
-            ExplainStmt *estmt = NULL;
-
-            if (yychar != YYEOF)
-                yyerror(&yylloc, scanner, extra, "syntax error");
-
-            extra->result = $3;
-
-            estmt = makeNode(ExplainStmt);
-            estmt->query = NULL;
-            estmt->options = list_make1(makeDefElem("analyze", NULL, @2));;
-            extra->extra = (Node *)estmt;
-        }
-    | EXPLAIN ANALYZE VERBOSE cypher_stmt semicolon_opt
-        {
-            ExplainStmt *estmt = NULL;
-
-            if (yychar != YYEOF)
-                yyerror(&yylloc, scanner, extra, "syntax error");
-
-            extra->result = $4;
-
-            estmt = makeNode(ExplainStmt);
-            estmt->query = NULL;
-            estmt->options = list_make2(makeDefElem("analyze", NULL, @2),
-                                        makeDefElem("verbose", NULL, @3));;
-            extra->extra = (Node *)estmt;
         }
     ;
 
@@ -1764,7 +1706,6 @@ reserved_keyword:
 
 safe_keywords:
     ALL          { $$ = pnstrdup($1, 3); }
-    | ANALYZE    { $$ = pnstrdup($1, 7); }
     | AND        { $$ = pnstrdup($1, 3); }
     | AS         { $$ = pnstrdup($1, 2); }
     | ASC        { $$ = pnstrdup($1, 3); }
@@ -1783,7 +1724,6 @@ safe_keywords:
     | ELSE       { $$ = pnstrdup($1, 4); }
     | ENDS       { $$ = pnstrdup($1, 4); }
     | EXISTS     { $$ = pnstrdup($1, 6); }
-    | EXPLAIN    { $$ = pnstrdup($1, 7); }
     | IN         { $$ = pnstrdup($1, 2); }
     | IS         { $$ = pnstrdup($1, 2); }
     | LIMIT      { $$ = pnstrdup($1, 6); }
@@ -1801,7 +1741,6 @@ safe_keywords:
     | THEN       { $$ = pnstrdup($1, 4); }
     | UNION      { $$ = pnstrdup($1, 5); }
     | WHEN       { $$ = pnstrdup($1, 4); }
-    | VERBOSE    { $$ = pnstrdup($1, 7); }
     | WHERE      { $$ = pnstrdup($1, 5); }
     | WITH       { $$ = pnstrdup($1, 4); }
     | XOR        { $$ = pnstrdup($1, 3); }

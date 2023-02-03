@@ -27,6 +27,8 @@
 #include "parser/cypher_keywords.h"
 #include "parser/cypher_parser.h"
 
+int cypher_yyparse(ag_scanner_t scanner, cypher_yy_extra *extra);
+
 int cypher_yylex(YYSTYPE *lvalp, YYLTYPE *llocp, ag_scanner_t scanner)
 {
     /*
@@ -118,9 +120,6 @@ void cypher_yyerror(YYLTYPE *llocp, ag_scanner_t scanner,
                     ag_scanner_errposition(*llocp, scanner)));
 }
 
-/* declaration to make mac os x compiler happy */
-int cypher_yyparse(ag_scanner_t scanner, cypher_yy_extra *extra);
-
 List *parse_cypher(const char *s)
 {
     ag_scanner_t scanner;
@@ -129,7 +128,6 @@ List *parse_cypher(const char *s)
 
     scanner = ag_scanner_create(s);
     extra.result = NIL;
-    extra.extra = NULL;
 
     yyresult = cypher_yyparse(scanner, &extra);
 
@@ -146,5 +144,5 @@ List *parse_cypher(const char *s)
      * Append the extra node node regardless of its value. Currently the extra
      * node is only used by EXPLAIN
     */
-    return lappend(extra.result, extra.extra);
+    return extra.result;
 }
