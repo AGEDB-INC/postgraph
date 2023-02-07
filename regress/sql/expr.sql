@@ -2667,6 +2667,25 @@ SELECT * from cypher('list', $$RETURN labels(NULL)$$) as (Labels agtype);
 SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 
 
+SELECT create_graph('time');
+
+SELECT * from cypher('time', $$RETURN make_date(0, 7, 15)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_date(2013, 2, 30)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_date(2013, 13, 1)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_date(-44, 3, 15)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_date(2013, 11, -1)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_date(2013, 7, 15)$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN make_time(8, 20, 0.0)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_time(10, 55, 100.1)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_time(24, 0, 2.1)$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN make_timestamp(2023, 2, 14, 5, 30, 0.0)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'KST')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT')$$) as (range agtype);
+
+
 --
 -- Cleanup
 --
@@ -2682,6 +2701,7 @@ SELECT drop_graph('expr', true);
 SELECT drop_graph('regex', true);
 SELECT drop_graph('keys', true);
 SELECT drop_graph('list', true);
+SELECT drop_graph('time', true);
 
 --
 -- End of tests

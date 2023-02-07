@@ -8500,6 +8500,219 @@ Datum age_sqrt(PG_FUNCTION_ARGS)
 /*
  * Time Functions
  */
+PG_FUNCTION_INFO_V1(age_make_date);
+
+Datum age_make_date(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_year, *agtv_month, *agtv_day;
+    agtype *agt_year = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_month = AG_GET_ARG_AGTYPE_P(1);
+    agtype *agt_day = AG_GET_ARG_AGTYPE_P(2);
+
+    if (is_agtype_null(agt_year) || is_agtype_null(agt_month) || is_agtype_null(agt_day))
+        PG_RETURN_NULL();
+
+    agtv_year = get_ith_agtype_value_from_container(&agt_year->root, 0);
+    agtv_month = get_ith_agtype_value_from_container(&agt_month->root, 0);
+    agtv_day = get_ith_agtype_value_from_container(&agt_day->root, 0);
+
+
+    if (agtv_year->type != AGTV_INTEGER || agtv_month->type != AGTV_INTEGER || agtv_day->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_date(agtype, agtype, agtype) only supports integer arugments")));
+
+
+    agtv.type = AGTV_DATE;
+    agtv.val.int32_value = DatumGetDateADT(DirectFunctionCall3(make_date,
+                                                               Int32GetDatum((int32)agtv_year->val.int_value),
+                                                               Int32GetDatum((int32)agtv_month->val.int_value),
+                                                               Int32GetDatum((int32)agtv_day->val.int_value)));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_make_time);
+
+Datum age_make_time(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_hour, *agtv_minute, *agtv_second;
+    agtype *agt_hour = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_minute = AG_GET_ARG_AGTYPE_P(1);
+    agtype *agt_second = AG_GET_ARG_AGTYPE_P(2);
+
+    if (is_agtype_null(agt_hour) || is_agtype_null(agt_minute) || is_agtype_null(agt_second))
+        PG_RETURN_NULL();
+
+    agtv_hour = get_ith_agtype_value_from_container(&agt_hour->root, 0);
+    agtv_minute = get_ith_agtype_value_from_container(&agt_minute->root, 0);
+    agtv_second = get_ith_agtype_value_from_container(&agt_second->root, 0);
+
+
+    if (agtv_hour->type != AGTV_INTEGER || agtv_minute->type != AGTV_INTEGER || agtv_second->type != AGTV_FLOAT)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_time(agtype, agtype, agtype) only supports integer arugments")));
+                        
+
+    agtv.type = AGTV_TIME;
+    agtv.val.int_value = DatumGetTimeADT(DirectFunctionCall3(make_time,
+                                                          Int32GetDatum((int32)agtv_hour->val.int_value),
+                                                          Int32GetDatum((int32)agtv_minute->val.int_value),
+                                                          Float8GetDatum(agtv_second->val.float_value)));
+ 
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_make_timestamp);
+
+Datum age_make_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    agtype_value *agtv_hour, *agtv_minute, *agtv_second;
+    agtype_value *agtv_year, *agtv_month, *agtv_day;
+
+    agtype *agt_year = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_month = AG_GET_ARG_AGTYPE_P(1);
+    agtype *agt_day = AG_GET_ARG_AGTYPE_P(2);    
+    agtype *agt_hour = AG_GET_ARG_AGTYPE_P(3);
+    agtype *agt_minute = AG_GET_ARG_AGTYPE_P(4);
+    agtype *agt_second = AG_GET_ARG_AGTYPE_P(5);
+
+    if (is_agtype_null(agt_year) || is_agtype_null(agt_month) || is_agtype_null(agt_day) ||
+        is_agtype_null(agt_hour) || is_agtype_null(agt_minute) || is_agtype_null(agt_second))
+        PG_RETURN_NULL();
+
+    agtv_year = get_ith_agtype_value_from_container(&agt_year->root, 0);
+    agtv_month = get_ith_agtype_value_from_container(&agt_month->root, 0);
+    agtv_day = get_ith_agtype_value_from_container(&agt_day->root, 0);
+    agtv_hour = get_ith_agtype_value_from_container(&agt_hour->root, 0);
+    agtv_minute = get_ith_agtype_value_from_container(&agt_minute->root, 0);
+    agtv_second = get_ith_agtype_value_from_container(&agt_second->root, 0);
+
+    if (agtv_year->type != AGTV_INTEGER || agtv_month->type != AGTV_INTEGER || agtv_day->type != AGTV_INTEGER ||
+        agtv_hour->type != AGTV_INTEGER || agtv_minute->type != AGTV_INTEGER || agtv_second->type != AGTV_FLOAT)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_time(agtype, agtype, agtype) only supports integer arugments")));
+
+
+    agtv.type = AGTV_TIMESTAMP;
+    agtv.val.int_value = DatumGetTimestamp(DirectFunctionCall6(make_timestamp,
+                                                               Int32GetDatum((int32)agtv_year->val.int_value),
+                                                               Int32GetDatum((int32)agtv_month->val.int_value),
+                                                               Int32GetDatum((int32)agtv_day->val.int_value),
+                                                               Int32GetDatum((int32)agtv_hour->val.int_value),
+                                                               Int32GetDatum((int32)agtv_minute->val.int_value),
+                                                               Float8GetDatum(agtv_second->val.float_value)));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_make_timestamptz);
+
+Datum age_make_timestamptz(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    agtype_value *agtv_hour, *agtv_minute, *agtv_second;
+    agtype_value *agtv_year, *agtv_month, *agtv_day;
+    
+    agtype *agt_year = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_month = AG_GET_ARG_AGTYPE_P(1);
+    agtype *agt_day = AG_GET_ARG_AGTYPE_P(2);
+    agtype *agt_hour = AG_GET_ARG_AGTYPE_P(3);
+    agtype *agt_minute = AG_GET_ARG_AGTYPE_P(4);
+    agtype *agt_second = AG_GET_ARG_AGTYPE_P(5);
+
+    if (is_agtype_null(agt_year) || is_agtype_null(agt_month) || is_agtype_null(agt_day) ||
+        is_agtype_null(agt_hour) || is_agtype_null(agt_minute) || is_agtype_null(agt_second))
+        PG_RETURN_NULL();
+
+    agtv_year = get_ith_agtype_value_from_container(&agt_year->root, 0);
+    agtv_month = get_ith_agtype_value_from_container(&agt_month->root, 0);
+    agtv_day = get_ith_agtype_value_from_container(&agt_day->root, 0);
+    agtv_hour = get_ith_agtype_value_from_container(&agt_hour->root, 0);
+    agtv_minute = get_ith_agtype_value_from_container(&agt_minute->root, 0);
+    agtv_second = get_ith_agtype_value_from_container(&agt_second->root, 0);
+
+    if (agtv_year->type != AGTV_INTEGER || agtv_month->type != AGTV_INTEGER || agtv_day->type != AGTV_INTEGER ||
+        agtv_hour->type != AGTV_INTEGER || agtv_minute->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_timestamptz expected an integer arugment")));
+
+
+    if (agtv_second->type != AGTV_FLOAT)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_timestamptz second arguement expects a float")));
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = DatumGetTimestampTz(DirectFunctionCall6(make_timestamp,
+                                                               Int32GetDatum((int32)agtv_year->val.int_value),
+                                                               Int32GetDatum((int32)agtv_month->val.int_value),
+                                                               Int32GetDatum((int32)agtv_day->val.int_value),
+                                                               Int32GetDatum((int32)agtv_hour->val.int_value),
+                                                               Int32GetDatum((int32)agtv_minute->val.int_value),
+                                                               Float8GetDatum(agtv_second->val.float_value)));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_make_timestamptz_wtimezone);
+
+Datum age_make_timestamptz_wtimezone(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    agtype_value *agtv_hour, *agtv_minute, *agtv_second;
+    agtype_value *agtv_year, *agtv_month, *agtv_day;
+    agtype_value *agtv_timezone;   
+    agtype *agt_year = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_month = AG_GET_ARG_AGTYPE_P(1);
+    agtype *agt_day = AG_GET_ARG_AGTYPE_P(2);
+    agtype *agt_hour = AG_GET_ARG_AGTYPE_P(3);
+    agtype *agt_minute = AG_GET_ARG_AGTYPE_P(4);
+    agtype *agt_second = AG_GET_ARG_AGTYPE_P(5);
+    agtype *agt_timezone = AG_GET_ARG_AGTYPE_P(6);
+
+    if (is_agtype_null(agt_year) || is_agtype_null(agt_month) || is_agtype_null(agt_day) ||
+        is_agtype_null(agt_hour) || is_agtype_null(agt_minute) || is_agtype_null(agt_second) ||
+        is_agtype_null(agt_timezone))
+        PG_RETURN_NULL();
+
+    agtv_year = get_ith_agtype_value_from_container(&agt_year->root, 0);
+    agtv_month = get_ith_agtype_value_from_container(&agt_month->root, 0);
+    agtv_day = get_ith_agtype_value_from_container(&agt_day->root, 0);
+    agtv_hour = get_ith_agtype_value_from_container(&agt_hour->root, 0);
+    agtv_minute = get_ith_agtype_value_from_container(&agt_minute->root, 0);
+    agtv_second = get_ith_agtype_value_from_container(&agt_second->root, 0);
+    agtv_timezone = get_ith_agtype_value_from_container(&agt_timezone->root, 0);
+
+    if (agtv_year->type != AGTV_INTEGER || agtv_month->type != AGTV_INTEGER || agtv_day->type != AGTV_INTEGER ||
+        agtv_hour->type != AGTV_INTEGER || agtv_minute->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_timestamptz expected an integer arugment")));
+
+
+    if (agtv_second->type != AGTV_FLOAT)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_timestamptz second arguement expects a float")));
+
+    if (agtv_timezone->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("make_timestamptz timezone arguemnent must be a string")));
+
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = DatumGetTimestampTz(DirectFunctionCall7(make_timestamptz_at_timezone,
+                                                               Int32GetDatum((int32)agtv_year->val.int_value),
+                                                               Int32GetDatum((int32)agtv_month->val.int_value),
+                                                               Int32GetDatum((int32)agtv_day->val.int_value),
+                                                               Int32GetDatum((int32)agtv_hour->val.int_value),
+                                                               Int32GetDatum((int32)agtv_minute->val.int_value),
+                                                               Float8GetDatum(agtv_second->val.float_value),
+                                                               PointerGetDatum(cstring_to_text_with_len(agtv_timezone->val.string.val,
+                                                                                                        agtv_timezone->val.string.len))));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+
 PG_FUNCTION_INFO_V1(age_timestamp);
 
 Datum age_timestamp(PG_FUNCTION_ARGS)

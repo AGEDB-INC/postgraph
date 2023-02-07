@@ -6724,6 +6724,67 @@ SELECT * from cypher('list', $$RETURN labels(NULL)$$) as (Labels agtype);
 -- should return an error
 SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 ERROR:  labels() argument must be a vertex
+SELECT create_graph('time');
+NOTICE:  graph "time" has been created
+ create_graph 
+--------------
+ 
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_date(0, 7, 15)$$) as (range agtype);
+ERROR:  date field value out of range: 0-07-15
+SELECT * from cypher('time', $$RETURN make_date(2013, 2, 30)$$) as (range agtype);
+ERROR:  date field value out of range: 2013-02-30
+SELECT * from cypher('time', $$RETURN make_date(2013, 13, 1)$$) as (range agtype);
+ERROR:  date field value out of range: 2013-13-01
+SELECT * from cypher('time', $$RETURN make_date(-44, 3, 15)$$) as (range agtype);
+     range     
+---------------
+ 03-15-0044 BC
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_date(2013, 11, -1)$$) as (range agtype);
+ERROR:  date field value out of range: 2013-11--1
+SELECT * from cypher('time', $$RETURN make_date(2013, 7, 15)$$) as (range agtype);
+   range    
+------------
+ 07-15-2013
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_time(8, 20, 0.0)$$) as (range agtype);
+  range   
+----------
+ 08:20:00
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_time(10, 55, 100.1)$$) as (range agtype);
+ERROR:  time field value out of range: 10:55:100.1
+SELECT * from cypher('time', $$RETURN make_time(24, 0, 2.1)$$) as (range agtype);
+ERROR:  time field value out of range: 24:00:2.1
+SELECT * from cypher('time', $$RETURN make_timestamp(2023, 2, 14, 5, 30, 0.0)$$) as (range agtype);
+          range           
+--------------------------
+ Tue Feb 14 05:30:00 2023
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0)$$) as (range agtype);
+            range             
+------------------------------
+ Tue Feb 14 05:30:00 2023 GMT
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'KST')$$) as (range agtype);
+            range             
+------------------------------
+ Mon Feb 13 20:30:00 2023 GMT
+(1 row)
+
+SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT')$$) as (range agtype);
+            range             
+------------------------------
+ Tue Feb 14 05:30:00 2023 GMT
+(1 row)
+
 --
 -- Cleanup
 --
@@ -6865,6 +6926,16 @@ drop cascades to table list.knows
 drop cascades to table list."People"
 drop cascades to table list."Cars"
 NOTICE:  graph "list" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
+SELECT drop_graph('time', true);
+NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to table "time"._ag_label_vertex
+drop cascades to table "time"._ag_label_edge
+NOTICE:  graph "time" has been dropped
  drop_graph 
 ------------
  

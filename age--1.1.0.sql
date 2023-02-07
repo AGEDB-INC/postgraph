@@ -3776,14 +3776,50 @@ AS 'MODULE_PATHNAME';
 --
 -- Time Functions
 --
-CREATE FUNCTION ag_catalog.age_timestamp()
+CREATE FUNCTION age_make_date(agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_make_time(agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_make_timestamp(agtype, agtype, agtype, agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_make_timestamptz(agtype, agtype, agtype, agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_make_timestamptz(agtype, agtype, agtype, agtype, agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME','age_make_timestamptz_wtimezone';
+
+
+CREATE FUNCTION age_timestamp()
 RETURNS agtype
 LANGUAGE c
 VOLATILE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
-CREATE FUNCTION ag_catalog.age_clock_timestamp()
+CREATE FUNCTION age_clock_timestamp()
 RETURNS agtype
 LANGUAGE c
 VOLATILE
