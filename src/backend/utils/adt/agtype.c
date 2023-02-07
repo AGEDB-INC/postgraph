@@ -31,6 +31,7 @@
 #include "postgres.h"
 
 #include <math.h>
+#include <sys/time.h>
 
 #include "access/genam.h"
 #include "access/heapam.h"
@@ -50,6 +51,7 @@
 #include "libpq/pqformat.h"
 #include "miscadmin.h"
 #include "parser/parse_coerce.h"
+#include "port.h"
 #include "nodes/pg_list.h"
 #include "utils/builtins.h"
 #include "utils/float.h"
@@ -58,6 +60,8 @@
 #include "utils/lsyscache.h"
 #include "utils/rel.h"
 #include "utils/snapmgr.h"
+#include "utils/date.h"          
+#include "utils/datetime.h"
 #include "utils/timestamp.h"
 #include "utils/typcache.h"
 
@@ -8493,6 +8497,9 @@ Datum age_sqrt(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+/*
+ * Time Functions
+ */
 PG_FUNCTION_INFO_V1(age_timestamp);
 
 Datum age_timestamp(PG_FUNCTION_ARGS)
@@ -8506,10 +8513,193 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     ms += (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 
     /* build the result */
-    agtv_result.type = AGTV_TIMESTAMP;
+    agtv_result.type = AGTV_INTEGER;
     agtv_result.val.int_value = ms;
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_clock_timestamp);
+
+Datum age_clock_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    struct timespec ts;
+    long ms = 0;
+
+    /* get the system time and convert it to milliseconds */
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ms += (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
+
+    /* build the result */
+    agtv_result.type = AGTV_TIMESTAMPTZ;
+    agtv_result.val.int_value = ms;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_current_timestamp);
+
+Datum age_current_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = TimestampTzGetDatum(GetSQLCurrentTimestamp(-1));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_current_timestamp_wprecision);
+
+Datum age_current_timestamp_wprecision(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_precision;
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    
+    if (is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv_precision = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv_precision->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype, agtype) only supports timestamps")));
+
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = TimestampTzGetDatum(GetSQLCurrentTimestamp(agtv_precision->val.int_value));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_local_timestamp);
+
+Datum age_local_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    
+    agtv.type = AGTV_TIMESTAMP;
+    agtv.val.int_value = TimestampGetDatum(GetSQLLocalTimestamp(-1));
+    
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_local_timestamp_wprecision);
+
+Datum age_local_timestamp_wprecision(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_precision;
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+   
+    if (is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv_precision = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv_precision->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype, agtype) only supports timestamps")));
+
+
+    agtv.type = AGTV_TIMESTAMP;
+    agtv.val.int_value = TimestampGetDatum(GetSQLLocalTimestamp(agtv_precision->val.int_value));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_now);
+
+Datum age_now(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = TimestampTzGetDatum(GetCurrentTransactionStartTimestamp());
+   
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_transaction_timestamp);
+
+Datum age_transaction_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = TimestampTzGetDatum(GetCurrentTransactionStartTimestamp());
+   
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_statement_timestamp);
+
+Datum age_statement_timestamp(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIMESTAMPTZ;
+    agtv.val.int_value = TimestampTzGetDatum(GetCurrentStatementStartTimestamp());
+  
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_timeofday);
+
+Datum age_timeofday(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    struct timeval tp;
+    char templ[128];
+    char buf[128];
+    pg_time_t tt;
+
+    gettimeofday(&tp, NULL);
+    tt = (pg_time_t) tp.tv_sec;
+    pg_strftime(templ, sizeof(templ), "%a %b %d %H:%M:%S.%%06d %Y %Z",
+                pg_localtime(&tt, session_timezone));
+    snprintf(buf, sizeof(buf), templ, tp.tv_usec);
+
+    agtv.type = AGTV_STRING;
+    agtv.val.string.val = buf;
+    agtv.val.string.len = strlen(buf);
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_localtime);
+
+Datum age_localtime(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIME;
+    agtv.val.int_value = TimeADTGetDatum(GetSQLLocalTime(-1));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_localtime_wprecision);
+
+Datum age_localtime_wprecision(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_precision;
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+
+    if (is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv_precision = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv_precision->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("locatime(agtype) only supports agtype integer")));
+
+
+    agtv.type = AGTV_TIME;
+    agtv.val.int_value = TimeADTGetDatum(GetSQLLocalTime(agtv_precision->val.int_value));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
 }
 
 PG_FUNCTION_INFO_V1(age_age);
@@ -8542,6 +8732,56 @@ Datum age_age(PG_FUNCTION_ARGS)
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
+
+
+PG_FUNCTION_INFO_V1(age_current_date);
+
+Datum age_current_date(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_DATE;
+    agtv.val.int32_value = DateADTGetDatum(GetSQLCurrentDate());
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+/*
+PG_FUNCTION_INFO_V1(age_current_time);
+
+Datum age_current_time(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+
+    agtv.type = AGTV_TIMETZ;
+    agtv.val.int_value = TimeTzADTPGetDatum(GetSQLCurrentTime(-1));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_current_time_wprecision);
+
+Datum age_current_time_wprecision(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv, *agtv_precision;
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    
+    if (is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv_precision = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv_precision->type != AGTV_INTEGER)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype, agtype) only supports timestamps")));
+
+
+    agtv.type = AGTV_TIMETZ;
+    agtv.val.int_value = TimeTzADTPGetDatum(GetSQLCurrentTime(4));
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+*/
 
 /*
  * Converts an agtype object or array to a binary agtype_value.

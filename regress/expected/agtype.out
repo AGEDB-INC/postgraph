@@ -2424,6 +2424,186 @@ SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_timestamp();
  f
 (1 row)
 
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_current_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_current_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_current_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_current_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_current_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_current_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_clock_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_clock_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_clock_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_clock_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_clock_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_clock_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_now();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_now();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_now();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_now();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_now();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_now();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_transaction_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_transaction_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_transaction_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_transaction_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_transaction_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_transaction_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = age_statement_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <> age_statement_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') > age_statement_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') < age_statement_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') <= age_statement_timestamp();
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') >= age_statement_timestamp();
+ ?column? 
+----------
+ t
+(1 row)
+
 SELECT agtype_in('"1997-12-17 07:37:16-08"::timestamp') = agtype_in('"12/17/1997 07:37:16.00"::timestamp');
  ?column? 
 ----------

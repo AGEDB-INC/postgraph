@@ -6727,7 +6727,7 @@ ERROR:  labels() argument must be a vertex
 --
 -- Cleanup
 --
-SELECT * FROM drop_graph('chained', true);
+SELECT drop_graph('chained', true);
 NOTICE:  drop cascades to 3 other objects
 DETAIL:  drop cascades to table chained._ag_label_vertex
 drop cascades to table chained._ag_label_edge
@@ -6738,7 +6738,7 @@ NOTICE:  graph "chained" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('VLE', true);
+SELECT drop_graph('VLE', true);
 NOTICE:  drop cascades to 9 other objects
 DETAIL:  drop cascades to table "VLE"._ag_label_vertex
 drop cascades to table "VLE"._ag_label_edge
@@ -6755,7 +6755,7 @@ NOTICE:  graph "VLE" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('case_statement', true);
+SELECT drop_graph('case_statement', true);
 NOTICE:  drop cascades to 2 other objects
 DETAIL:  drop cascades to table case_statement._ag_label_vertex
 drop cascades to table case_statement._ag_label_edge
@@ -6765,7 +6765,7 @@ NOTICE:  graph "case_statement" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('opt_forms', true);
+SELECT drop_graph('opt_forms', true);
 NOTICE:  drop cascades to 4 other objects
 DETAIL:  drop cascades to table opt_forms._ag_label_vertex
 drop cascades to table opt_forms._ag_label_edge
@@ -6777,7 +6777,7 @@ NOTICE:  graph "opt_forms" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('type_coercion', true);
+SELECT drop_graph('type_coercion', true);
 NOTICE:  drop cascades to 3 other objects
 DETAIL:  drop cascades to table type_coercion._ag_label_vertex
 drop cascades to table type_coercion._ag_label_edge
@@ -6788,7 +6788,7 @@ NOTICE:  graph "type_coercion" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('order_by', true);
+SELECT drop_graph('order_by', true);
 NOTICE:  drop cascades to 2 other objects
 DETAIL:  drop cascades to table order_by._ag_label_vertex
 drop cascades to table order_by._ag_label_edge
@@ -6798,7 +6798,7 @@ NOTICE:  graph "order_by" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('group_by', true);
+SELECT drop_graph('group_by', true);
 NOTICE:  drop cascades to 4 other objects
 DETAIL:  drop cascades to table group_by._ag_label_vertex
 drop cascades to table group_by._ag_label_edge
@@ -6810,7 +6810,7 @@ NOTICE:  graph "group_by" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('UCSC', true);
+SELECT drop_graph('UCSC', true);
 NOTICE:  drop cascades to 3 other objects
 DETAIL:  drop cascades to table "UCSC"._ag_label_vertex
 drop cascades to table "UCSC"._ag_label_edge
@@ -6821,7 +6821,7 @@ NOTICE:  graph "UCSC" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('expr', true);
+SELECT drop_graph('expr', true);
 NOTICE:  drop cascades to 5 other objects
 DETAIL:  drop cascades to table expr._ag_label_vertex
 drop cascades to table expr._ag_label_edge
@@ -6834,7 +6834,7 @@ NOTICE:  graph "expr" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('regex', true);
+SELECT drop_graph('regex', true);
 NOTICE:  drop cascades to 3 other objects
 DETAIL:  drop cascades to table regex._ag_label_vertex
 drop cascades to table regex._ag_label_edge
@@ -6845,7 +6845,7 @@ NOTICE:  graph "regex" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('keys', true);
+SELECT drop_graph('keys', true);
 NOTICE:  drop cascades to 4 other objects
 DETAIL:  drop cascades to table keys._ag_label_vertex
 drop cascades to table keys._ag_label_edge
@@ -6857,7 +6857,7 @@ NOTICE:  graph "keys" has been dropped
  
 (1 row)
 
-SELECT * FROM drop_graph('list', true);
+SELECT drop_graph('list', true);
 NOTICE:  drop cascades to 5 other objects
 DETAIL:  drop cascades to table list._ag_label_vertex
 drop cascades to table list._ag_label_edge

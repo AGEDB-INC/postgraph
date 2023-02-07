@@ -3773,6 +3773,9 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+--
+-- Time Functions
+--
 CREATE FUNCTION ag_catalog.age_timestamp()
 RETURNS agtype
 LANGUAGE c
@@ -3780,7 +3783,56 @@ VOLATILE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
-CREATE FUNCTION ag_catalog.age_age(agtype, agtype)
+CREATE FUNCTION ag_catalog.age_clock_timestamp()
+RETURNS agtype
+LANGUAGE c
+VOLATILE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_current_timestamp()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_current_timestamp(agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME', 'age_current_timestamp_wprecision';
+
+CREATE FUNCTION age_local_timestamp()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_local_timestamp(agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME', 'age_local_timestamp_wprecision';
+
+CREATE FUNCTION age_localtime()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_localtime(agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME', 'age_localtime_wprecision';
+
+CREATE FUNCTION age_age(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
@@ -3788,6 +3840,58 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION age_current_date()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_now()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_transaction_timestamp()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_statement_timestamp()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_timeofday()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+
+
+/*
+CREATE FUNCTION ag_catalog.age_current_time()
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_current_time(agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME', 'age_current_time_wprecision';
+*/
 --
 -- aggregate function components for stdev(internal, agtype)
 -- and stdevp(internal, agtype)

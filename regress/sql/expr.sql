@@ -2665,21 +2665,23 @@ SELECT * from cypher('list', $$MATCH (u) RETURN labels(u), u$$) as (Labels agtyp
 SELECT * from cypher('list', $$RETURN labels(NULL)$$) as (Labels agtype);
 -- should return an error
 SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
+
+
 --
 -- Cleanup
 --
-SELECT * FROM drop_graph('chained', true);
-SELECT * FROM drop_graph('VLE', true);
-SELECT * FROM drop_graph('case_statement', true);
-SELECT * FROM drop_graph('opt_forms', true);
-SELECT * FROM drop_graph('type_coercion', true);
-SELECT * FROM drop_graph('order_by', true);
-SELECT * FROM drop_graph('group_by', true);
-SELECT * FROM drop_graph('UCSC', true);
-SELECT * FROM drop_graph('expr', true);
-SELECT * FROM drop_graph('regex', true);
-SELECT * FROM drop_graph('keys', true);
-SELECT * FROM drop_graph('list', true);
+SELECT drop_graph('chained', true);
+SELECT drop_graph('VLE', true);
+SELECT drop_graph('case_statement', true);
+SELECT drop_graph('opt_forms', true);
+SELECT drop_graph('type_coercion', true);
+SELECT drop_graph('order_by', true);
+SELECT drop_graph('group_by', true);
+SELECT drop_graph('UCSC', true);
+SELECT drop_graph('expr', true);
+SELECT drop_graph('regex', true);
+SELECT drop_graph('keys', true);
+SELECT drop_graph('list', true);
 
 --
 -- End of tests
