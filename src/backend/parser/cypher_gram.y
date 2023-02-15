@@ -151,7 +151,7 @@
 %type <node> expr_case expr_case_when expr_case_default
 %type <list> expr_case_when_list
 
-%type <node> expr_var expr_func expr_func_norm expr_func_subexpr
+%type <node> expr_var expr_func
 %type <list> expr_list expr_list_opt map_keyval_list_opt map_keyval_list
 
 /* names */
@@ -328,14 +328,14 @@ cypher_stmt:
     ;
 
 call_stmt:
-    CALL expr_func_norm
+    CALL expr_func
         {
             ereport(ERROR,
                     (errcode(ERRCODE_SYNTAX_ERROR),
                      errmsg("CALL not supported yet"),
                      ag_scanner_errposition(@1, scanner)));
         }
-    | CALL expr_func_norm YIELD yield_item_list where_opt
+    | CALL expr_func YIELD yield_item_list where_opt
         {
             ereport(ERROR,
                     (errcode(ERRCODE_SYNTAX_ERROR),
@@ -1172,7 +1172,11 @@ properties_opt:
  * expression
  */
 expr:
-    expr OR expr
+    '(' expr ')'
+        {
+            $$ = $2;
+        }
+    | expr OR expr
         {
             $$ = make_or_expr($1, $3, @2);
         }
@@ -1307,6 +1311,7 @@ expr:
             $$ = make_function_expr(list_make1(makeString("eq_tilde")),
                                     list_make2($1, $3), @2);
         }
+    | expr_atom
     | expr '[' expr ']'  %prec '.'
         {
             A_Indices *i;
@@ -1356,7 +1361,6 @@ expr:
         {
             $$ = make_typecast_expr($1, $3, @2);
         }
-    | expr_atom
     ;
 
 expr_opt:
@@ -1387,11 +1391,6 @@ expr_list_opt:
     ;
 
 expr_func:
-    expr_func_norm
-    | expr_func_subexpr
-    ;
-
-expr_func_norm:
     func_name '(' ')'
         {
             $$ = make_function_expr($1, NIL, @1);
@@ -1424,10 +1423,7 @@ expr_func_norm:
             n->agg_distinct = true;
             $$ = (Node *)n;
         }
-    ;
-
-expr_func_subexpr:
-    COALESCE '(' expr_list ')'
+    | COALESCE '(' expr_list ')'
         {
             CoalesceExpr *c;
 
@@ -1454,6 +1450,17 @@ expr_func_subexpr:
             n->location = @1;
             $$ = (Node *) n;
         }
+    | EXISTS '(' expr_var '.' expr ')'
+        {
+            NullTest *n;
+
+            n = makeNode(NullTest);
+            n->arg = (Expr *)append_indirection($3, $5);
+            n->nulltesttype = IS_NOT_NULL;
+            n->location = @2;
+
+            $$ = (Node *)n;
+        }
     ;
 
 
@@ -1468,10 +1475,6 @@ expr_atom:
             n->location = @1;
 
             $$ = (Node *)n;
-        }
-    | '(' expr ')'
-        {
-            $$ = $2;
         }
     | expr_case
     | expr_var

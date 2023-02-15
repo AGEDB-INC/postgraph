@@ -329,6 +329,10 @@ SELECT * FROM cypher('cypher_match',
  $$MATCH (u)-[e]->(v) WHERE EXISTS((u)-[e]->(u)) RETURN u, e, v $$)
 AS (u agtype, e agtype, v agtype);
 
+SELECT * FROM cypher('cypher_match',
+ $$MATCH (u) RETURN u, EXISTS(u.i) $$)
+AS (u agtype, exist boolean);
+
 -- Create a loop
 SELECT * FROM cypher('cypher_match', $$
         CREATE (u:loop {id:'initial'})-[:self]->(u)

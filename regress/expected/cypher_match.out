@@ -623,6 +623,27 @@ AS (u agtype, e agtype, v agtype);
 ---+---+---
 (0 rows)
 
+SELECT * FROM cypher('cypher_match',
+ $$MATCH (u) RETURN u, EXISTS(u.i) $$)
+AS (u agtype, exist boolean);
+                                                                                    u                                                                                    | exist 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------
+ {"id": 281474976710657, "label": "", "properties": {"int_key": 1, "map_key": {"key": "value"}, "list_key": [1, 2, 3], "float_key": 3.14, "string_key": "test"}}::vertex | f
+ {"id": 281474976710658, "label": "", "properties": {"lst": [1, null, 3.14, "string", {"key": "value"}, []]}}::vertex                                                    | f
+ {"id": 844424930131969, "label": "v", "properties": {}}::vertex                                                                                                         | f
+ {"id": 844424930131970, "label": "v", "properties": {"i": 0}}::vertex                                                                                                   | t
+ {"id": 844424930131971, "label": "v", "properties": {"i": 1}}::vertex                                                                                                   | t
+ {"id": 1125899906842625, "label": "v1", "properties": {"id": "initial"}}::vertex                                                                                        | f
+ {"id": 1125899906842626, "label": "v1", "properties": {"id": "middle"}}::vertex                                                                                         | f
+ {"id": 1125899906842627, "label": "v1", "properties": {"id": "end"}}::vertex                                                                                            | f
+ {"id": 1688849860263937, "label": "v2", "properties": {"id": "initial"}}::vertex                                                                                        | f
+ {"id": 1688849860263938, "label": "v2", "properties": {"id": "middle"}}::vertex                                                                                         | f
+ {"id": 1688849860263939, "label": "v2", "properties": {"id": "end"}}::vertex                                                                                            | f
+ {"id": 2251799813685249, "label": "v3", "properties": {"id": "initial"}}::vertex                                                                                        | f
+ {"id": 2251799813685250, "label": "v3", "properties": {"id": "middle"}}::vertex                                                                                         | f
+ {"id": 2251799813685251, "label": "v3", "properties": {"id": "end"}}::vertex                                                                                            | f
+(14 rows)
+
 -- Create a loop
 SELECT * FROM cypher('cypher_match', $$
         CREATE (u:loop {id:'initial'})-[:self]->(u)
