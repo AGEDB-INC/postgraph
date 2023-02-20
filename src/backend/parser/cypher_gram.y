@@ -79,23 +79,26 @@
 /* keywords in alphabetical order */
 %token <keyword> ALL ANALYZE AND AS ASC ASCENDING
                  BETWEEN BY
-                 CALL CASE COALESCE CONTAINS CREATE
-                 DELETE DESC DESCENDING DETACH DISTINCT
-                 ELSE END_P ENDS EXISTS EXPLAIN
-                 FALSE_P
-                 IN IS
+                 CALL CASE CENTURY COALESCE CONTAINS CREATE
+                 DATE DAY DECADE DELETE DESC DESCENDING DETACH DISTINCT DOW DOY
+                 ELSE END_P ENDS EPOCH EXISTS EXPLAIN EXTRACT
+                 FALSE_P FROM
+                 HOUR
+                 IN INTERVAL IS
+                 JULIAN
                  LIMIT
-                 MATCH MERGE
+                 MATCH MERGE MICROSECONDS MILLENIUM MILLISECONDS MINUTE MONTH
                  NOT NULL_P
                  OPTIONAL OR ORDER
                  REMOVE RETURN
-                 SET SKIP STARTS SYMMETRIC
-                 THEN TRUE_P
+                 SECOND SET SKIP STARTS SYMMETRIC
+                 TIME TIMESTAMP TIMESTAMPTZ THEN TRUE_P
                  UNION UNWIND
                  VERBOSE
-                 WHEN WHERE WITH
+                 WEEK WHEN WHERE WITH
                  XOR
-                 YIELD
+                 YEAR YIELD
+                 ZONE
 
 /* query */
 %type <node> stmt
@@ -150,6 +153,7 @@
 
 %type <node> expr_case expr_case_when expr_case_default
 %type <list> expr_case_when_list
+%type <string> exist_field_expr time_ident typecast_ident 
 
 %type <node> expr_var expr_func expr_func_norm expr_func_subexpr
 %type <list> expr_list expr_list_opt map_keyval_list_opt map_keyval_list
@@ -1444,6 +1448,24 @@ expr:
         {
             $$ = make_typecast_expr($1, $3, @2);
         }
+    | expr TYPECAST time_ident
+        {
+            $$ = make_typecast_expr($1, $3, @2);
+        }
+    | typecast_ident expr %prec TYPECAST
+        {
+            $$ = make_typecast_expr($2, $1, @1);
+        }
+    | PARAMETER
+        {
+            cypher_param *n;
+
+            n = make_ag_node(cypher_param);
+            n->name = $1;
+            n->location = @1;
+
+            $$ = (Node *)n;
+        }
     | expr_atom
     ;
 
@@ -1547,6 +1569,14 @@ expr_func_subexpr:
             $$ = make_function_expr(list_make1(makeString("exists")),
                                     list_make1($3), @2);
         }
+    | EXTRACT '(' exist_field_expr FROM expr  ')'
+        {
+            $$ = make_function_expr(list_make1(makeString("extract")), list_make2(make_string_const($3, @3), $5), @1);
+        }
+    | EXTRACT '(' expr ',' expr  ')'
+        {
+            $$ = make_function_expr(list_make1(makeString("extract")), list_make2($3, $5), @1);
+        }
     ;
 
 property_value:
@@ -1556,18 +1586,120 @@ property_value:
         }
     ;
 
+typecast_ident:
+        DATE
+        {
+             $$ = pnstrdup($1, 4);
+        }
+        | INTERVAL
+        {
+              $$ = pnstrdup($1, 8);
+        }
+        | TIMESTAMP
+        {
+              $$ = pnstrdup($1, 9);
+        }
+        | TIMESTAMPTZ
+        {
+              $$ = pnstrdup($1, 11);
+        }
+        | TIME
+        {
+              $$ = pnstrdup($1, 4);
+        }
+
+time_ident:
+        DATE
+        {
+             $$ = pnstrdup($1, 4);
+        }
+        | INTERVAL
+        {
+              $$ = pnstrdup($1, 8);
+        }
+        | TIMESTAMP
+        {
+              $$ = pnstrdup($1, 9);
+        }
+        | TIMESTAMPTZ
+        {
+              $$ = pnstrdup($1, 11);
+        }
+        | TIME
+        {
+              $$ = pnstrdup($1, 4);
+        }
+   ;
+
+exist_field_expr:
+    SECOND
+        {
+            $$ = pnstrdup($1, 6);
+        }
+    | DAY
+       {
+            $$ = pnstrdup($1, 3);
+       } 
+    | DECADE      
+       {
+            $$ = pnstrdup($1, 6);
+       }   
+    | DOW      
+       {
+            $$ = pnstrdup($1, 3);
+       } 
+    | DOY      
+       {
+            $$ = pnstrdup($1, 3);
+       }      
+    | EPOCH      
+       {
+            $$ = pnstrdup($1, 5);
+       }     
+    | HOUR      
+       {
+            $$ = pnstrdup($1, 4);
+       } 
+    | JULIAN      
+       {
+            $$ = pnstrdup($1, 6);
+       }
+    | MICROSECONDS      
+       {
+            $$ = pnstrdup($1, 12);
+       }
+    | MILLENIUM      
+       {
+            $$ = pnstrdup($1, 9);
+       }
+    | MILLISECONDS      
+       {
+            $$ = pnstrdup($1, 12);
+       }
+    | MINUTE      
+       {
+            $$ = pnstrdup($1, 6);
+       }
+    | MONTH      
+       {
+            $$ = pnstrdup($1, 5);
+       }
+    | WEEK      
+       {
+            $$ = pnstrdup($1, 4);
+       }
+    | YEAR      
+       {
+            $$ = pnstrdup($1, 4);
+       }
+    | CENTURY
+       {
+            $$ = pnstrdup($1, 7);
+       } 
+    ;
+
 expr_atom:
     expr_literal
-    | PARAMETER
-        {
-            cypher_param *n;
-
-            n = make_ag_node(cypher_param);
-            n->name = $1;
-            n->location = @1;
-
-            $$ = (Node *)n;
-        }
     | '(' expr ')'
         {
             $$ = $2;

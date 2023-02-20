@@ -8500,6 +8500,135 @@ Datum age_sqrt(PG_FUNCTION_ARGS)
 /*
  * Time Functions
  */
+PG_FUNCTION_INFO_V1(age_date_part);
+Datum age_date_part(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    agtype_value *agtv_part, *agtv_time;
+    agtype *agt_part = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_time = AG_GET_ARG_AGTYPE_P(1);
+
+    if (is_agtype_null(agt_part) || is_agtype_null(agt_time))
+        PG_RETURN_NULL();
+
+    agtv_part = get_ith_agtype_value_from_container(&agt_part->root, 0);
+    agtv_time = get_ith_agtype_value_from_container(&agt_time->root, 0);
+
+    if (agtv_part->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_part requires a string")));
+
+    if (agtv_time->type == AGTV_TIMESTAMPTZ)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(timestamptz_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampTzGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIMESTAMP)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(timestamp_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIME)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(time_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimeADTGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_DATE)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(timestamp_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampGetDatum(date2timestamp_no_overflow(agtv_time->val.int32_value))));
+    }
+    else if (agtv_time->type == AGTV_INTERVAL)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(interval_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 IntervalPGetDatum(&agtv_time->val.interval)));
+    }
+    else
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_part invalid arguement")));
+    }
+
+    agtv.type = AGTV_FLOAT;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+PG_FUNCTION_INFO_V1(age_extract);
+Datum age_extract(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv;
+    agtype_value *agtv_part, *agtv_time;
+    agtype *agt_part = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_time = AG_GET_ARG_AGTYPE_P(1);
+
+    if (is_agtype_null(agt_part) || is_agtype_null(agt_time))
+        PG_RETURN_NULL();
+
+    agtv_part = get_ith_agtype_value_from_container(&agt_part->root, 0);
+    agtv_time = get_ith_agtype_value_from_container(&agt_time->root, 0);
+
+    if (agtv_part->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_part requires a string")));
+
+    if (agtv_time->type == AGTV_TIMESTAMPTZ)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_timestamptz,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampTzGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIMESTAMP)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_timestamp,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIME)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_time,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimeADTGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_DATE)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_timestamp,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 TimestampGetDatum(date2timestamp_no_overflow(agtv_time->val.int32_value))));
+    }
+    else if (agtv_time->type == AGTV_INTERVAL)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_interval,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 IntervalPGetDatum(&agtv_time->val.interval)));
+    }
+    else
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_part invalid arguement")));
+    }
+
+    agtv.type = AGTV_NUMERIC;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
+}
+
+
 PG_FUNCTION_INFO_V1(age_make_date);
 
 Datum age_make_date(PG_FUNCTION_ARGS)

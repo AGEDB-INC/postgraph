@@ -2669,6 +2669,48 @@ SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 
 SELECT create_graph('time');
 
+SELECT * from cypher('time', $$
+     RETURN extract(SECOND FROM make_timestamp(2023, 2, 14, 5, 30, 45.1234567890))
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(SECOND FROM TIMESTAMP '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(DAY FROM TIMESTAMP '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(MONTH FROM TIMESTAMP '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(YEAR FROM TIMESTAMP '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(EPOCH FROM TIMESTAMP '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(EPOCH FROM TIMESTAMPTZ '2001-02-16 20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(DAY FROM DATE '2001-02-16')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(HOUR FROM TIME '20:38:40')
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN EXTRACT(HOUR FROM INTERVAL '12 Years 6 Months 15 Days 16 Hours 10 Minutes 45 Seconds')
+$$) as (range agtype);
+
+
+
 SELECT * from cypher('time', $$RETURN make_date(0, 7, 15)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN make_date(2013, 2, 30)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN make_date(2013, 13, 1)$$) as (range agtype);
@@ -2684,6 +2726,62 @@ SELECT * from cypher('time', $$RETURN make_timestamp(2023, 2, 14, 5, 30, 0.0)$$)
 SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'KST')$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT')$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN date_part('Year',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Month',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Day',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Hour',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Minutes',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Second',make_date(2023, 2, 14))$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN date_part('Year',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Month',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Day',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Hour',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Minutes',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_part('Second',make_time(5, 30, 0.0))$$) as (range agtype);
+
+
+SELECT * from cypher('time', $$RETURN extract('Year',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Month',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Day',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Hour',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Minutes',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Second',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN extract('Year',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Month',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Day',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Hour',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Minutes',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Second',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN extract('Year',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Month',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Day',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Hour',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Minutes',make_timestamp(2023, 2, 14, 5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$
+     RETURN extract('Second' FROM make_timestamp(2023, 2, 14, 5, 30, 0.0))
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$
+     RETURN extract(SECOND FROM make_timestamp(2023, 2, 14, 5, 30, 0.0))
+$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN extract('Year',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Month',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Day',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Hour',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Minutes',make_date(2023, 2, 14))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Second',make_date(2023, 2, 14))$$) as (range agtype);
+
+SELECT * from cypher('time', $$RETURN extract('Year',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Month',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Day',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Hour',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Minutes',make_time(5, 30, 0.0))$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN extract('Second',make_time(5, 30, 0.0))$$) as (range agtype);
 
 
 --
