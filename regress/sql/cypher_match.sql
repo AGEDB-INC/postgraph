@@ -239,7 +239,6 @@ SELECT * FROM cypher('cypher_match',
  $$MATCH (n  {string_key: "wrong value"}) RETURN n $$)
 AS (n agtype);
 
-
 SELECT * FROM cypher('cypher_match', $$
     MATCH (n {string_key: "test", int_key: 1, float_key: 3.14, map_key: {key: "value"}, list_key: [1, 2, 3]})
     RETURN n $$)

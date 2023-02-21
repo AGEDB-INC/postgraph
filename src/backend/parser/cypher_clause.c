@@ -3145,6 +3145,102 @@ static A_Expr *filter_vertices_on_label_id(cypher_parsestate *cpstate,
     return makeSimpleA_Expr(AEXPR_OP, "=", (Node *)fc, (Node *)n, -1);
 }
 
+static Node *append_indirection(Node *expr, Node *selector)
+{               
+    A_Indirection *indir;
+                
+    if (IsA(expr, A_Indirection))
+    {           
+        indir = (A_Indirection *)expr;
+        indir->indirection = lappend(indir->indirection, selector);
+            
+        return expr;
+    }           
+    else    
+    {   
+        indir = makeNode(A_Indirection);
+        indir->arg = expr;
+        indir->indirection = list_make1(selector);
+        
+        return (Node *)indir;
+    }
+}
+
+static Node *make_string_const(char *s, int location);
+static List *convert_containment_to_equality(cypher_parsestate *cpstate,
+                                             List *keyvals,
+                                             transform_entity *entity);
+/*
+ * Convert MATCH (n {prop1: value1 ..., propn: valuen}
+ * to
+ * MATCH (n) WHERE n.prop1 = value1 && ... && n.propn = valuen
+ */
+static List *convert_containment_to_equality(cypher_parsestate *cpstate,
+                                             List *keyvals,
+                                             transform_entity *entity)
+{
+    ParseState *pstate = (ParseState *)cpstate;
+    Node *last_srf = pstate->p_last_srf;
+    List *exprs = NIL;
+    List *access_op, *equal_op;
+    int i;
+
+    Assert (keyvals->length % 2 == 0);
+
+    access_op = list_make1(makeString("->"));
+    equal_op = list_make1(makeString("="));
+
+    for (i = 0; i < keyvals->length; i += 2)
+    {
+        Node *prop = (Node *)keyvals->elements[i].ptr_value;
+        Node *value = (Node *)keyvals->elements[i + 1].ptr_value;
+        Node *prop_string_const = make_string_const(((Value *)prop)->val.str, -1);
+        Node *prop_expr;
+        Node *left_arg, *right_arg;
+
+
+
+            ColumnRef *cr1;
+
+            cr1 = makeNode(ColumnRef);
+            cr1->fields = list_make1(makeString(entity->entity.node->name));
+            cr1->location = -1;
+
+            ColumnRef *cr;
+
+            cr = makeNode(ColumnRef);
+            cr->fields = list_make1(makeString(((Value *)prop)->val.str));
+            cr->location = -1;
+                
+
+        left_arg = transform_cypher_expr(cpstate, append_indirection(cr1, cr), EXPR_KIND_WHERE);
+
+        right_arg = transform_cypher_expr(cpstate, value, EXPR_KIND_WHERE);
+
+        Node *n1 = (Node *)make_op(pstate, equal_op, left_arg, right_arg, last_srf, -1);
+
+        exprs = lappend(exprs,n1);
+    }
+
+    if (list_length(exprs) > 1)
+    return makeBoolExpr(AND_EXPR, exprs, -1);
+    else
+    return linitial(exprs);
+
+}
+
+static Node *make_string_const(char *s, int location)
+{
+    A_Const *n;
+
+    n = makeNode(A_Const);
+    n->val.type = T_String;
+    n->val.val.str = s;
+    n->location = location;
+
+    return (Node *)n;
+}
+
 /*
  * Creates the Contains operator to process property contraints for a vertex/
  * edge in a MATCH clause. creates the agtype @> with the enitity's properties
@@ -3160,6 +3256,9 @@ static Node *create_property_constraints(cypher_parsestate *cpstate,
     Node *prop_expr, *const_expr;
     Node *last_srf = pstate->p_last_srf;
     ParseNamespaceItem *pnsi;
+
+    Assert(is_ag_node(property_constraints, cypher_map) ||
+           is_ag_node(property_constraints, cypher_param));
 
     cr = makeNode(ColumnRef);
 
@@ -3177,12 +3276,25 @@ static Node *create_property_constraints(cypher_parsestate *cpstate,
         prop_expr = transformExpr(pstate, (Node *)cr, EXPR_KIND_WHERE);
     }
 
-    // use cypher to get the constraints' transform node
-    const_expr = transform_cypher_expr(cpstate, property_constraints,
-                                       EXPR_KIND_WHERE);
+    if (is_ag_node(property_constraints, cypher_param))
+    {
+        // use cypher to get the constraints' transform node
+        const_expr = transform_cypher_expr(cpstate, property_constraints,
+                                           EXPR_KIND_WHERE);
 
-    return (Node *)make_op(pstate, list_make1(makeString("@>")), prop_expr,
-                           const_expr, last_srf, -1);
+        return (Node *)make_op(pstate, list_make1(makeString("@>")), prop_expr,
+                               const_expr, last_srf, -1);
+    }
+    else 
+    {
+        cypher_map *props = (cypher_map *)property_constraints;
+        const_expr = transform_cypher_expr(cpstate, property_constraints,
+                                           EXPR_KIND_WHERE);
+
+        //return convert_containment_to_equality(cpstate, props->keyvals, entity);
+
+    return makeBoolExpr(AND_EXPR, list_make2(convert_containment_to_equality(cpstate, props->keyvals, entity), make_op(pstate, list_make1(makeString("@>")), prop_expr, const_expr, last_srf, -1)), -1);
+    }
 }
 
 

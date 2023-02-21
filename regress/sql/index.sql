@@ -253,7 +253,6 @@ SELECT COUNT(*) FROM cypher('cypher_index', $$
     RETURN a
 $$) as (n agtype);
 
-
 --
 -- General Cleanup
 --
