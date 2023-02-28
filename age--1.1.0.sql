@@ -31,6 +31,8 @@ CREATE TABLE ag_graph (
   namespace regnamespace NOT NULL
 );
 
+SELECT pg_catalog.pg_extension_config_dump('ag_graph', '');
+
 CREATE UNIQUE INDEX ag_graph_graphid_index ON ag_graph USING btree (graphid);
 
 CREATE UNIQUE INDEX ag_graph_name_index ON ag_graph USING btree (name);
@@ -55,6 +57,8 @@ CREATE TABLE ag_label (
     FOREIGN KEY(graph)
     REFERENCES ag_graph(graphid)
 );
+
+SELECT pg_catalog.pg_extension_config_dump('ag_label', '');
 
 CREATE UNIQUE INDEX ag_label_name_graph_index
 ON ag_label
