@@ -32,6 +32,7 @@
 #include "nodes/parsenodes.h"
 #include "nodes/value.h"
 #include "optimizer/tlist.h"
+#include "optimizer/optimizer.h"
 #include "parser/parse_coerce.h"
 #include "parser/parse_collate.h"
 #include "parser/parse_expr.h"
@@ -72,6 +73,7 @@ static Node *transform_ColumnRef(cypher_parsestate *cpstate, ColumnRef *cref);
 static Node *transform_A_Indirection(cypher_parsestate *cpstate,
                                      A_Indirection *a_ind);
 static Node *transform_AEXPR_OP(cypher_parsestate *cpstate, A_Expr *a);
+static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a);
 static Node *transform_BoolExpr(cypher_parsestate *cpstate, BoolExpr *expr);
 static Node *transform_cypher_bool_const(cypher_parsestate *cpstate,
                                          cypher_bool_const *bc);
@@ -141,6 +143,8 @@ static Node *transform_cypher_expr_recurse(cypher_parsestate *cpstate,
         {
         case AEXPR_OP:
             return transform_AEXPR_OP(cpstate, a);
+        case AEXPR_IN:
+            return transform_a_expr_in(cpstate, a);
         default:
             ereport(ERROR, (errmsg_internal("unrecognized A_Expr kind: %d",
                                             a->kind)));
@@ -208,7 +212,6 @@ static Node *transform_A_Const(cypher_parsestate *cpstate, A_Const *ac)
     bool is_null = false;
     Const *c;
 
-    setup_parser_errposition_callback(&pcbstate, pstate, ac->location);
     switch (nodeTag(v))
     {
     case T_Integer:
@@ -242,7 +245,6 @@ static Node *transform_A_Const(cypher_parsestate *cpstate, A_Const *ac)
                 (errmsg_internal("unrecognized node type: %d", nodeTag(v))));
         return NULL;
     }
-    cancel_parser_errposition_callback(&pcbstate);
 
     // typtypmod, typcollation, typlen, and typbyval of agtype are hard-coded.
     c = makeConst(AGTYPEOID, -1, InvalidOid, -1, d, is_null, false);
@@ -286,6 +288,114 @@ static Node *transform_WholeRowRef(ParseState *pstate, ParseNamespaceItem *pnsi,
      return (Node *)result;
 }
 
+static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a)
+{
+    ParseState *pstate = (ParseState *)cpstate;
+    cypher_list *rexpr;
+    Node *result = NULL;
+    Node *lexpr;
+    List *rexprs;
+    List *rvars;
+    List *rnonvars;
+    bool useOr;
+    ListCell *l;
+
+    if (!is_ag_node(a->rexpr, cypher_list)) {
+
+        if (nodeTag(a->rexpr) == T_Null) {
+            return makeConst(AGTYPEOID, -1, InvalidOid, -1, NULL, true, false);
+        }
+
+        return makeConst(AGTYPEOID, -1, InvalidOid, -1, boolean_to_agtype(false), false, false);
+    }
+
+    Assert(is_ag_node(a->rexpr, cypher_list));
+
+    // If the operator is <>, combine with AND not OR.
+    if (strcmp(strVal(linitial(a->name)), "<>") == 0)
+        useOr = false;
+    else
+        useOr = true;
+
+    lexpr = transform_cypher_expr_recurse(pstate, a->lexpr);
+
+    rexprs = rvars = rnonvars = NIL;
+
+    rexpr = (cypher_list *)a->rexpr;
+
+    foreach(l, (List *) rexpr->elems)
+    {
+        Node *rexpr = transform_cypher_expr_recurse(pstate, lfirst(l));
+
+        rexprs = lappend(rexprs, rexpr);
+                if (contain_vars_of_level(rexpr, 0))
+                        rvars = lappend(rvars, rexpr);
+                else
+                        rnonvars = lappend(rnonvars, rexpr);
+    }
+
+
+    /*
+     * ScalarArrayOpExpr is only going to be useful if there's more than one
+     * non-Var righthand item.
+     */
+    if (list_length(rnonvars) > 1)
+    {
+        List *allexprs;
+        Oid scalar_type;
+        Oid array_type;
+        allexprs = list_concat(list_make1(lexpr), rnonvars);
+        scalar_type = AGTYPEOID;
+        Assert (verify_common_type(scalar_type, allexprs));
+        /*
+         * coerce all the right-hand non-Var inputs to the common type
+         * and build an ArrayExpr for them.
+         */
+        List *aexprs;
+        ArrayExpr *newa;
+
+        aexprs = NIL;
+        foreach(l, rnonvars)
+        {
+            Node *rexpr = (Node *) lfirst(l);
+
+            rexpr = coerce_to_common_type(pstate, rexpr, AGTYPEOID, "IN");
+            aexprs = lappend(aexprs, rexpr);
+        }
+        newa = makeNode(ArrayExpr);
+        newa->array_typeid = get_array_type(AGTYPEOID);
+        /* array_collid will be set by parse_collate.c */
+        newa->element_typeid = AGTYPEOID;
+        newa->elements = aexprs;
+        newa->multidims = false;
+        result = (Node *) make_scalar_array_op(pstate, a->name, useOr,
+                                               lexpr, (Node *) newa, a->location);
+
+        /* Consider only the Vars (if any) in the loop below */
+        rexprs = rvars;
+    }
+
+    // Must do it the hard way, with a boolean expression tree.
+    foreach(l, rexprs)
+    {
+        Node *rexpr = (Node *) lfirst(l);
+        Node *cmp;
+
+        // Ordinary scalar operator
+        cmp = (Node *) make_op(pstate, a->name, copyObject(lexpr), rexpr,
+                               pstate->p_last_srf, a->location);
+
+        cmp = coerce_to_boolean(pstate, cmp, "IN");
+        if (result == NULL)
+            result = cmp;
+        else
+            result = (Node *) makeBoolExpr(useOr ? OR_EXPR : AND_EXPR,
+                                           list_make2(result, cmp),
+                                           a->location);
+    }
+
+    return result;
+}
 
 /*
  * Function to transform a ColumnRef node from the grammar into a Var node

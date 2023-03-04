@@ -108,7 +108,24 @@ $$) AS t(i agtype);
 SELECT * FROM cypher('expr',
 $$RETURN ['str', 1, 1.0] + [true, null]$$) AS r(c agtype);
 
---list IN (contains), should all be true
+--list IN (contains)
+SELECT * FROM cypher('expr',
+$$RETURN 1 IN ['str', 1, 1.0, true]$$) AS r(c agtype);
+SELECT c::boolean FROM cypher('expr',
+$$RETURN 1 IN ['str', 1, 1.0, true]$$) AS r(c agtype);
+SELECT * FROM cypher('expr',
+$$RETURN 1 IN ['str', 1, 1.0, true]$$) AS r(c boolean);
+SELECT * FROM cypher('expr',
+$$RETURN 'str' IN ['str', 1, 1.0, true]$$) AS r(c boolean);
+SELECT * FROM cypher('expr',
+$$RETURN 1.0 IN ['str', 1, 1.0, true]$$) AS r(c boolean);
+SELECT * FROM cypher('expr',
+$$RETURN true IN ['str', 1, 1.0, true]$$) AS r(c boolean);
+SELECT * FROM cypher('expr',
+$$RETURN [1,3,5,[2,4,6]] IN ['str', 1, 1.0, true, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
+SELECT * FROM cypher('expr',
+$$RETURN {bool: true, int: 1} IN ['str', 1, 1.0, true, {bool: true, int: 1}, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
+-- should return SQL null, nothing
 SELECT * FROM cypher('expr',
 $$RETURN 1 IN ['str', 1, 1.0, true, null]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
@@ -121,7 +138,6 @@ SELECT * FROM cypher('expr',
 $$RETURN [1,3,5,[2,4,6]] IN ['str', 1, 1.0, true, null, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
 $$RETURN {bool: true, int: 1} IN ['str', 1, 1.0, true, null, {bool: true, int: 1}, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
--- should return SQL null, nothing
 SELECT * FROM cypher('expr',
 $$RETURN null IN ['str', 1, 1.0, true, null]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
@@ -130,13 +146,13 @@ SELECT * FROM cypher('expr',
 $$RETURN 'str' IN null $$) AS r(c boolean);
 -- should all return false
 SELECT * FROM cypher('expr',
-$$RETURN 0 IN ['str', 1, 1.0, true, null]$$) AS r(c boolean);
+$$RETURN 0 IN ['str', 1, 1.0, true]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
-$$RETURN 1.1 IN ['str', 1, 1.0, true, null]$$) AS r(c boolean);
+$$RETURN 1.1 IN ['str', 1, 1.0, true]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
-$$RETURN 'Str' IN ['str', 1, 1.0, true, null]$$) AS r(c boolean);
+$$RETURN 'Str' IN ['str', 1, 1.0, true]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
-$$RETURN [1,3,5,[2,4,5]] IN ['str', 1, 1.0, true, null, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
+$$RETURN [1,3,5,[2,4,5]] IN ['str', 1, 1.0, true, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
 SELECT * FROM cypher('expr',
 $$RETURN {bool: true, int: 2} IN ['str', 1, 1.0, true, null, {bool: true, int: 1}, [1,3,5,[2,4,6]]]$$) AS r(c boolean);
 -- should error - ERROR:  object of IN must be a list
