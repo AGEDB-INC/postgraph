@@ -72,6 +72,10 @@ INSERT INTO agtype_table VALUES ('time', '"07:37:16-08"::time');
 INSERT INTO agtype_table VALUES ('time', '"07:37:16.00"::time');
 INSERT INTO agtype_table VALUES ('time', '"07:37:16"::time');
 
+INSERT INTO agtype_table VALUES ('timetz', '"07:37:16-08"::timetz');
+INSERT INTO agtype_table VALUES ('timetz', '"07:37:16.00"::timetz');
+INSERT INTO agtype_table VALUES ('timetz', '"07:37:16"::timetz');
+
 INSERT INTO agtype_table VALUES ('interval', '"30 Seconds"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"15 Minutes"::interval');
 INSERT INTO agtype_table VALUES ('interval', '"10 Hours"::interval');

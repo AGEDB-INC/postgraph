@@ -307,7 +307,8 @@ typedef struct
 #define AGT_HEADER_TIMESTAMPTZ 0x00000006
 #define AGT_HEADER_DATE 0x00000007
 #define AGT_HEADER_TIME 0x00000008
-#define AGT_HEADER_INTERVAL 0x00000009
+#define AGT_HEADER_TIMETZ 0x00000009
+#define AGT_HEADER_INTERVAL 0x0000000A
 
 
 /*
@@ -331,6 +332,7 @@ enum agtype_value_type
     AGTV_TIMESTAMPTZ,
     AGTV_DATE,
     AGTV_TIME,
+    AGTV_TIMETZ,
     AGTV_INTERVAL,
     /* Composite types */
     AGTV_ARRAY = 0x20,
@@ -382,6 +384,8 @@ struct agtype_value
             int len;
             agtype_container *data;
         } binary; /* Array or object, in on-disk format */
+        
+        TimeTzADT timetz; /* used to store Time with Timezone */
     } val;
 };
 

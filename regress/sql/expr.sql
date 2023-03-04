@@ -916,6 +916,19 @@ $$) AS r(result agtype);
 SELECT * FROM cypher('expr', $$
 RETURN '07:37:16'::time
 $$) AS r(result agtype);
+
+--
+-- timetz
+--
+SELECT * FROM cypher('expr', $$ 
+RETURN '07:37:16-08'::timetz
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16.00'::timetz
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '07:37:16'::timetz
+$$) AS r(result agtype);
     
 --
 -- interval

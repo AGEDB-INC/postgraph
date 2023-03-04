@@ -96,6 +96,7 @@ typedef enum /* type categories for datum_to_agtype */
     AGT_TYPE_NUMERIC, /* numeric (ditto) */
     AGT_TYPE_DATE, /* we use special formatting for datetimes */
     AGT_TYPE_TIME,
+    AGT_TYPE_TIMETZ,
     AGT_TYPE_TIMESTAMP, /* agtype extends jsonb to support timestamps */ 
     AGT_TYPE_TIMESTAMPTZ, /* we use special formatting for timestamptz */
     AGT_TYPE_INTERVAL, /* agtype extends jsonb to support interval */
@@ -901,6 +902,11 @@ static void agtype_put_escaped_value(StringInfo out, agtype_value *scalar_val)
             time_out, TimeADTGetDatum(scalar_val->val.int_value)));
         appendStringInfoString(out, numstr);
         break;
+    case AGTV_TIMETZ:
+        numstr = DatumGetCString(DirectFunctionCall1(
+            timetz_out, DatumGetTimeTzADTP(&scalar_val->val.timetz)));
+        appendStringInfoString(out, numstr);
+        break;
     case AGTV_INTERVAL:
         numstr = DatumGetCString(DirectFunctionCall1(
             interval_out, IntervalPGetDatum(&scalar_val->val.interval)));
@@ -1026,6 +1032,8 @@ static void agtype_in_scalar(void *pstate, char *token,
             tokentype = AGTYPE_TOKEN_DATE;
         else if (len == 4 && pg_strcasecmp(annotation, "time") == 0)
             tokentype = AGTYPE_TOKEN_TIME;
+        else if (len == 6 && pg_strcasecmp(annotation, "timetz") == 0)
+            tokentype = AGTYPE_TOKEN_TIMETZ;
         else if (len == 8 && pg_strcasecmp(annotation, "interval") == 0)
             tokentype = AGTYPE_TOKEN_INTERVAL;
         else
@@ -1088,6 +1096,15 @@ static void agtype_in_scalar(void *pstate, char *token,
                                         CStringGetDatum(token),
                                         ObjectIdGetDatum(InvalidOid),
                                         Int32GetDatum(-1)));
+        break;
+    case AGTYPE_TOKEN_TIMETZ:
+        v.type = AGTV_TIMETZ;
+        TimeTzADT * timetz= DatumGetTimeTzADTP(DirectFunctionCall3(timetz_in,
+                                        CStringGetDatum(token),
+                                        ObjectIdGetDatum(InvalidOid),
+                                        Int32GetDatum(-1)));
+        v.val.timetz.time = timetz->time;
+        v.val.timetz.zone = timetz->zone;
         break;
     case AGTYPE_TOKEN_INTERVAL:
         {
@@ -1700,6 +1717,12 @@ static void datum_to_agtype(Datum val, bool is_null, agtype_in_state *result,
         case AGT_TYPE_TIME:
             agtv.type = AGTV_TIME;
             agtv.val.int_value = DatumGetInt64(val);
+            break;
+        case AGT_TYPE_TIMETZ:
+            agtv.type = AGTV_TIMETZ;
+            TimeTzADT * timetz= DatumGetTimeTzADTP(val);
+            agtv.val.timetz.time = timetz->time;
+            agtv.val.timetz.zone = timetz->zone;
             break;   
         case AGT_TYPE_INTERVAL:
             {
@@ -4309,7 +4332,39 @@ Datum agtype_typecast_time(PG_FUNCTION_ARGS)
     agtv->val.int_value = (int64)t;
         
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
-}   
+}
+
+PG_FUNCTION_INFO_V1(agtype_typecast_timetz);
+/*                  
+ * Execute function to typecast an agtype to an agtype timetz
+ */                 
+Datum agtype_typecast_timetz(PG_FUNCTION_ARGS)
+{   
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+    TimeTzADT* t;
+        
+    if (agtv->type == AGTV_NULL)
+        PG_RETURN_NULL();
+    
+    
+    if (agtv->type == AGTV_TIMETZ)
+        AG_RETURN_AGTYPE_P(agt);
+        
+    if (agtv->type != AGTV_STRING)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("typecastint to timetz must be a string")));
+        
+    t = DatumGetTimeTzADTP(DirectFunctionCall3(timetz_in, CStringGetDatum(agtv->val.string.val),
+                                                            ObjectIdGetDatum(InvalidOid),
+                                                            Int32GetDatum(-1)));
+    agtv->type = AGTV_TIMETZ;
+    agtv->val.timetz.time = t->time;
+    agtv->val.timetz.zone = t->zone;
+        
+    PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+} 
     
 
 PG_FUNCTION_INFO_V1(agtype_typecast_float);
