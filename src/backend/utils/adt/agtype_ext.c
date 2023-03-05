@@ -119,6 +119,18 @@ bool ag_serialize_extended_type(StringInfo buffer, agtentry *agtentry,
         *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
         break;
 
+    case AGTV_TIMETZ:
+        padlen = ag_serialize_header(buffer, AGT_HEADER_TIMETZ);
+
+        /* copy in the timetz data */
+        numlen = sizeof(TimeTzADT);
+        offset = reserve_from_buffer(buffer, numlen);
+        *((TimeADT *)(buffer->data + offset)) = scalar_val->val.timetz.time;
+        *((int32 *)(buffer->data + offset + sizeof(TimeADT))) = scalar_val->val.timetz.zone;
+
+        *agtentry = AGTENTRY_IS_AGTYPE | (padlen + numlen + AGT_HEADER_SIZE);
+        break;
+
     case AGTV_INTERVAL:
         padlen = ag_serialize_header(buffer, AGT_HEADER_INTERVAL);
 
@@ -237,6 +249,12 @@ void ag_deserialize_extended_type(char *base_addr, uint32 offset,
         result->type = AGTV_TIME;
         result->val.int_value = *((int64 *)(base + AGT_HEADER_SIZE));
         break;
+
+    case AGT_HEADER_TIMETZ:
+        result->type = AGTV_TIMETZ;
+        result->val.timetz.time = *((TimeADT*)(base + AGT_HEADER_SIZE));
+        result->val.timetz.zone = *((int32*)(base + AGT_HEADER_SIZE + sizeof(TimeADT)));
+        break;        
 
     case AGT_HEADER_FLOAT:
         result->type = AGTV_FLOAT;
