@@ -772,6 +772,10 @@ static Node *transform_column_ref_for_indirection(cypher_parsestate *cpstate, Co
     Assert(IsA(field1, String));
     relname = strVal(field1);
 
+    if (cpstate->inSubLink)
+        return transform_cypher_expr_recurse(cpstate, (Node *)cr);
+
+
     // locate the referenced RTE
     pnsi = refnameNamespaceItem(pstate, NULL, relname, cr->location, &levels_up);
     /*
@@ -1318,12 +1322,14 @@ static Node *transform_SubLink(cypher_parsestate *cpstate, SubLink *sublink)
                  parser_errposition(pstate, sublink->location)));
 
     pstate->p_hasSubLinks = true;
+    cpstate->inSubLink = true;
     /*
      * OK, let's transform the sub-SELECT.
      */
     qtree = cypher_parse_sub_analyze(sublink->subselect, cpstate, NULL, false,
                                      true);
 
+    cpstate->inSubLink = false;
     /*
      * Check that we got a SELECT.  Anything else should be impossible given
      * restrictions of the grammar, but check anyway.

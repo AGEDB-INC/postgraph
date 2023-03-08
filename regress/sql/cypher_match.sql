@@ -510,6 +510,20 @@ SELECT * FROM cypher('cypher_match', $$
     RETURN n
 $$) as (n agtype);
 
+--here
+select * from cypher('cypher_match', $$
+ match (v2)
+ where exists((v2 {i: 1}))
+ return v2
+$$) as (v agtype);
+
+select * from cypher('cypher_match', $$
+        match (v)-[e]->(v2)
+        with v2, count(*) as cnt
+        where cnt > 1
+        return v2
+$$) as (v agtype);
+
 --
 -- Clean up
 --
