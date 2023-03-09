@@ -61,6 +61,11 @@ cypher_parsestate *make_cypher_parsestate(cypher_parsestate *parent_cpstate)
         cpstate->graph_name = parent_cpstate->graph_name;
         cpstate->graph_oid = parent_cpstate->graph_oid;
         cpstate->params = parent_cpstate->params;
+        cpstate->inSubLink = parent_cpstate->inSubLink;
+    }
+    else
+    {
+        cpstate->inSubLink = false;
     }
 
     return cpstate;

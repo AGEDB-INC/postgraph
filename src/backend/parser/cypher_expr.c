@@ -205,8 +205,6 @@ static Node *transform_cypher_expr_recurse(cypher_parsestate *cpstate,
 
 static Node *transform_A_Const(cypher_parsestate *cpstate, A_Const *ac)
 {
-    ParseState *pstate = (ParseState *)cpstate;
-    ParseCallbackState pcbstate;
     Value *v = &ac->val;
     Datum d = (Datum)0;
     bool is_null = false;
@@ -303,10 +301,10 @@ static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a)
     if (!is_ag_node(a->rexpr, cypher_list)) {
 
         if (nodeTag(a->rexpr) == T_Null) {
-            return makeConst(AGTYPEOID, -1, InvalidOid, -1, NULL, true, false);
+            return (Node *)makeConst(AGTYPEOID, -1, InvalidOid, -1, (Datum)NULL, true, false);
         }
 
-        return makeConst(AGTYPEOID, -1, InvalidOid, -1, boolean_to_agtype(false), false, false);
+        return (Node *)makeConst(AGTYPEOID, -1, InvalidOid, -1, boolean_to_agtype(false), false, false);
     }
 
     Assert(is_ag_node(a->rexpr, cypher_list));
@@ -317,7 +315,7 @@ static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a)
     else
         useOr = true;
 
-    lexpr = transform_cypher_expr_recurse(pstate, a->lexpr);
+    lexpr = transform_cypher_expr_recurse(cpstate, a->lexpr);
 
     rexprs = rvars = rnonvars = NIL;
 
@@ -325,7 +323,7 @@ static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a)
 
     foreach(l, (List *) rexpr->elems)
     {
-        Node *rexpr = transform_cypher_expr_recurse(pstate, lfirst(l));
+        Node *rexpr = transform_cypher_expr_recurse(cpstate, lfirst(l));
 
         rexprs = lappend(rexprs, rexpr);
                 if (contain_vars_of_level(rexpr, 0))
@@ -343,9 +341,11 @@ static Node *transform_a_expr_in(cypher_parsestate *cpstate, A_Expr *a)
     {
         List *allexprs;
         Oid scalar_type;
-        Oid array_type;
+
         allexprs = list_concat(list_make1(lexpr), rnonvars);
+
         scalar_type = AGTYPEOID;
+
         Assert (verify_common_type(scalar_type, allexprs));
         /*
          * coerce all the right-hand non-Var inputs to the common type
@@ -439,36 +439,10 @@ static Node *transform_ColumnRef(cypher_parsestate *cpstate, ColumnRef *cref)
                     break;
                 }
 
-                /*
-                 * Not known as a column of any range-table entry.
-                 * Try to find the name as a relation.  Note that only
-                 * relations already entered into the rangetable will be
-                 * recognized.
-                 *
-                 * This is a hack for backwards compatibility with
-                 * PostQUEL-inspired syntax.  The preferred form now is
-                 * "rel.*".
-                 */
-                pnsi = refnameNamespaceItem(pstate, NULL, colname,
-                                           cref->location, &levels_up);
-                if (pnsi)
-                {
-                    node = transform_WholeRowRef(pstate, pnsi, cref->location);
-                }
-                else
-                {
-                    ereport(ERROR,
-                                (errcode(ERRCODE_UNDEFINED_COLUMN),
-                                 errmsg("could not find rte for %s", colname),
-                                 parser_errposition(pstate, cref->location)));
-                }
-
-                if (node == NULL)
-                {
-                    ereport(ERROR, (errcode(ERRCODE_DATA_EXCEPTION),
-                            errmsg("unable to transform whole row for %s", colname),
-                             parser_errposition(pstate, cref->location)));
-                }
+                ereport(ERROR,
+                        (errcode(ERRCODE_UNDEFINED_COLUMN),
+                         errmsg("could not find rte for %s", colname),
+                         parser_errposition(pstate, cref->location)));
 
                 break;
             }
@@ -778,7 +752,8 @@ static Node *transform_column_ref_for_indirection(cypher_parsestate *cpstate, Co
      * This column ref is referencing something that was created in
      * a previous query and is a variable.
      */
-    if (!pnsi)
+
+    if (!pnsi || levels_up > 0)
         return transform_cypher_expr_recurse(cpstate, (Node *)cr);
 
     // try to identify the properties column of the RTE
@@ -1318,12 +1293,14 @@ static Node *transform_SubLink(cypher_parsestate *cpstate, SubLink *sublink)
                  parser_errposition(pstate, sublink->location)));
 
     pstate->p_hasSubLinks = true;
+    cpstate->inSubLink = true;
     /*
      * OK, let's transform the sub-SELECT.
      */
     qtree = cypher_parse_sub_analyze(sublink->subselect, cpstate, NULL, false,
                                      true);
 
+    cpstate->inSubLink = false;
     /*
      * Check that we got a SELECT.  Anything else should be impossible given
      * restrictions of the grammar, but check anyway.

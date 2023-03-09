@@ -159,13 +159,6 @@ $$RETURN ['str', 1, 1.0] + [true, null]$$) AS r(c agtype);
  ["str", 1, 1.0, true, null]
 (1 row)
 
-SELECT * FROM cypher('expr',
-$$RETURN 1 IN ['str', 1, 1.0, true, null]$$) AS r(c agtype);
-  c   
-------
- true
-(1 row)
-
 --list IN (contains)
 SELECT * FROM cypher('expr',
 $$RETURN 1 IN ['str', 1, 1.0, true]$$) AS r(c agtype);

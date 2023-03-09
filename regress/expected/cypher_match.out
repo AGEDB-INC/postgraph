@@ -1001,6 +1001,26 @@ $$) as (n agtype);
  {"id": 281474976710662, "label": "", "properties": {"i": 1, "j": 2, "k": 3}}::vertex
 (1 row)
 
+--here
+select * from cypher('cypher_match', $$
+ match (v2)
+ where exists((v2 {i: 1}))
+ return v2
+$$) as (v agtype);
+ERROR:  could not find rte for v2
+LINE 1: select * from cypher('cypher_match', $$
+                                              ^
+select * from cypher('cypher_match', $$
+        match (v)-[e]->(v2)
+        with v2, count(*) as cnt
+        where cnt > 1
+        return v2
+$$) as (v agtype);
+                                     v                                     
+---------------------------------------------------------------------------
+ {"id": 281474976710661, "label": "", "properties": {"name": "T"}}::vertex
+(1 row)
+
 --
 -- Clean up
 --

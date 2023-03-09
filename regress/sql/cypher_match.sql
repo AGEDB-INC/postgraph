@@ -239,7 +239,6 @@ SELECT * FROM cypher('cypher_match',
  $$MATCH (n  {string_key: "wrong value"}) RETURN n $$)
 AS (n agtype);
 
-
 SELECT * FROM cypher('cypher_match', $$
     MATCH (n {string_key: "test", int_key: 1, float_key: 3.14, map_key: {key: "value"}, list_key: [1, 2, 3]})
     RETURN n $$)
@@ -509,6 +508,20 @@ SELECT * FROM cypher('cypher_match', $$
     WHERE n.i = 1
     RETURN n
 $$) as (n agtype);
+
+--here
+select * from cypher('cypher_match', $$
+ match (v2)
+ where exists((v2 {i: 1}))
+ return v2
+$$) as (v agtype);
+
+select * from cypher('cypher_match', $$
+        match (v)-[e]->(v2)
+        with v2, count(*) as cnt
+        where cnt > 1
+        return v2
+$$) as (v agtype);
 
 --
 -- Clean up
