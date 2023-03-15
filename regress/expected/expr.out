@@ -6952,6 +6952,48 @@ SELECT * from cypher('time', $$RETURN date_part('Second',make_time(5, 30, 0.0))$
  0.0
 (1 row)
 
+SELECT * from cypher('time', $$RETURN date_part('Year','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "year" not recognized
+SELECT * from cypher('time', $$RETURN date_part('Month','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "month" not recognized
+SELECT * from cypher('time', $$RETURN date_part('Day','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "day" not recognized
+SELECT * from cypher('time', $$RETURN date_part('Hour','20:38:40-06:40'::timetz)$$) as (range agtype);
+ range 
+-------
+ 20.0
+(1 row)
+
+SELECT * from cypher('time', $$RETURN date_part('Minutes','20:38:40-06:40'::timetz)$$) as (range agtype);
+ range 
+-------
+ 38.0
+(1 row)
+
+SELECT * from cypher('time', $$RETURN date_part('Second','20:38:40-06:40'::timetz)$$) as (range agtype);
+ range 
+-------
+ 40.0
+(1 row)
+
+SELECT * from cypher('time', $$RETURN date_part('Timezone','20:38:40-06:40'::timetz)$$) as (range agtype);
+  range   
+----------
+ -24000.0
+(1 row)
+
+SELECT * from cypher('time', $$RETURN date_part('Timezone_hour','20:38:40-06:40'::timetz)$$) as (range agtype);
+ range 
+-------
+ -6.0
+(1 row)
+
+SELECT * from cypher('time', $$RETURN date_part('Timezone_minute','20:38:40-06:40'::timetz)$$) as (range agtype);
+ range 
+-------
+ -40.0
+(1 row)
+
 SELECT * from cypher('time', $$RETURN extract('Year',make_timestamptz(2023, 2, 14, 5, 30, 0.0, 'GMT'))$$) as (range agtype);
      range     
 ---------------
@@ -7126,6 +7168,48 @@ SELECT * from cypher('time', $$RETURN extract('Second',make_time(5, 30, 0.0))$$)
        range       
 -------------------
  0.000000::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Year','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "year" not recognized
+SELECT * from cypher('time', $$RETURN extract('Month','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "month" not recognized
+SELECT * from cypher('time', $$RETURN extract('Day','20:38:40-06:40'::timetz)$$) as (range agtype);
+ERROR:  "time with time zone" units "day" not recognized
+SELECT * from cypher('time', $$RETURN extract('Hour','20:38:40-06:40'::timetz)$$) as (range agtype);
+    range    
+-------------
+ 20::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Minutes','20:38:40-06:40'::timetz)$$) as (range agtype);
+    range    
+-------------
+ 38::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Second','20:38:40-06:40'::timetz)$$) as (range agtype);
+       range        
+--------------------
+ 40.000000::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Timezone','20:38:40-06:40'::timetz)$$) as (range agtype);
+      range      
+-----------------
+ -24000::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Timezone_hour','20:38:40-06:40'::timetz)$$) as (range agtype);
+    range    
+-------------
+ -6::numeric
+(1 row)
+
+SELECT * from cypher('time', $$RETURN extract('Timezone_minute','20:38:40-06:40'::timetz)$$) as (range agtype);
+    range     
+--------------
+ -40::numeric
 (1 row)
 
 --

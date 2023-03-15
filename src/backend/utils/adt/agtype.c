@@ -8594,6 +8594,13 @@ Datum age_date_part(PG_FUNCTION_ARGS)
                                                                                                         agtv_part->val.string.len)),
                                                                  TimeADTGetDatum(agtv_time->val.int_value)));
     }
+    else if(agtv_time->type == AGTV_TIMETZ)
+    {
+    agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(timetz_part,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 DatumGetTimeTzADTP(&agtv_time->val.timetz)));
+    }
     else if (agtv_time->type == AGTV_DATE)
     {
     agtv.val.float_value = DatumGetFloat8(DirectFunctionCall2(timestamp_part,
@@ -8657,6 +8664,13 @@ Datum age_extract(PG_FUNCTION_ARGS)
                                                                  PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
                                                                                                         agtv_part->val.string.len)),
                                                                  TimeADTGetDatum(agtv_time->val.int_value)));
+    }
+    else if(agtv_time->type == AGTV_TIMETZ)
+    {
+    agtv.val.numeric = DatumGetNumeric(DirectFunctionCall2(extract_timetz,
+                                                                 PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                                        agtv_part->val.string.len)),
+                                                                 DatumGetTimeTzADTP(&agtv_time->val.timetz)));
     }
     else if (agtv_time->type == AGTV_DATE)
     {

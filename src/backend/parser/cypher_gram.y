@@ -92,7 +92,7 @@
                  OPTIONAL OR ORDER
                  REMOVE RETURN
                  SECOND SET SKIP STARTS SYMMETRIC
-                 TIME TIMESTAMP TIMESTAMPTZ THEN TRUE_P
+                 TIME TIMESTAMP TIMESTAMPTZ TIMETZ TIMEZONE TIMEZONE_H TIMEZONE_M THEN TRUE_P
                  UNION UNWIND
                  VERBOSE
                  WEEK WHEN WHERE WITH
@@ -1607,6 +1607,10 @@ typecast_ident:
         {
               $$ = pnstrdup($1, 4);
         }
+        | TIMETZ
+        {
+              $$ = pnstrdup($1, 6);
+        }
 
 time_ident:
         DATE
@@ -1628,6 +1632,10 @@ time_ident:
         | TIME
         {
               $$ = pnstrdup($1, 4);
+        }
+        | TIMETZ
+        {
+              $$ = pnstrdup($1, 6);
         }
    ;
 
@@ -1696,6 +1704,18 @@ exist_field_expr:
        {
             $$ = pnstrdup($1, 7);
        } 
+    | TIMEZONE
+       {
+            $$ = pnstrdup($1, 8);
+       }
+    | TIMEZONE_H
+       {
+            $$ = pnstrdup($1, 11);
+       }
+    | TIMEZONE_M
+       {
+            $$ = pnstrdup($1, 11);
+       }
     ;
 
 expr_atom:
