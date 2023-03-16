@@ -261,6 +261,47 @@ Datum agtype_add(PG_FUNCTION_ARGS)
         agtv_result.type = AGTV_TIMESTAMP;
         agtv_result.val.int_value = ts;
     }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_INTEGER)
+    {  
+        DateADT date;
+
+        date = DatumGetDateADT(DirectFunctionCall2(date_pli, DateADTGetDatum(agtv_lhs->val.int32_value),
+                                                   Int32GetDatum(agtv_rhs->val.int_value)));
+
+        agtv_result.type = AGTV_DATE;
+        agtv_result.val.int32_value = date;
+    }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_INTERVAL )
+    {
+        Timestamp ts;
+
+        ts = DatumGetTimestamp(DirectFunctionCall2(date_pl_interval, DateADTGetDatum(agtv_lhs->val.int32_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = ts;
+    }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_TIME)
+    {
+        Timestamp ts;
+        
+        ts = DatumGetTimestamp(DirectFunctionCall2(datetime_timestamp, DateADTGetDatum(agtv_lhs->val.int32_value),
+                                                   TimeADTGetDatum(agtv_rhs->val.int_value)));
+
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = ts;
+
+    }
+    else if (agtv_lhs->type == AGTV_TIME && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        TimeADT time;
+
+        time = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv_lhs->val.int_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIME;
+        agtv_result.val.int_value = time;
+    }
     else
         /* Not a covered case, error out */
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),

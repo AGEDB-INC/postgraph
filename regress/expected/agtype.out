@@ -339,6 +339,156 @@ SELECT agtype_add('"59 Minutes"::interval', '"61 Seconds"::interval');
  @ 1 hour 1 sec
 (1 row)
 
+SELECT agtype_add('"2000-1-1"::date', '1');
+ agtype_add 
+------------
+ 01-02-2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '-1');
+ agtype_add 
+------------
+ 12-31-1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"30 Seconds"::interval');
+        agtype_add        
+--------------------------
+ Sat Jan 01 00:00:30 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"45 Minutes"::interval');
+        agtype_add        
+--------------------------
+ Sat Jan 01 00:45:00 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"12 Hours"::interval');
+        agtype_add        
+--------------------------
+ Sat Jan 01 12:00:00 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"5 Days"::interval');
+        agtype_add        
+--------------------------
+ Thu Jan 06 00:00:00 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"2 Weeks"::interval');
+        agtype_add        
+--------------------------
+ Sat Jan 15 00:00:00 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"13 Months"::interval');
+        agtype_add        
+--------------------------
+ Thu Feb 01 00:00:00 2001
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"10 Years"::interval');
+        agtype_add        
+--------------------------
+ Fri Jan 01 00:00:00 2010
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"30 Seconds Ago"::interval');
+        agtype_add        
+--------------------------
+ Fri Dec 31 23:59:30 1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"45 Minutes Ago"::interval');
+        agtype_add        
+--------------------------
+ Fri Dec 31 23:15:00 1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"12 Hours Ago"::interval');
+        agtype_add        
+--------------------------
+ Fri Dec 31 12:00:00 1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"5 Days Ago"::interval');
+        agtype_add        
+--------------------------
+ Mon Dec 27 00:00:00 1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"2 Weeks Ago"::interval');
+        agtype_add        
+--------------------------
+ Sat Dec 18 00:00:00 1999
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"13 Months Ago"::interval');
+        agtype_add        
+--------------------------
+ Tue Dec 01 00:00:00 1998
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"10 Years Ago"::interval');
+        agtype_add        
+--------------------------
+ Mon Jan 01 00:00:00 1990
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"10 Years Ago"::interval');
+        agtype_add        
+--------------------------
+ Mon Jan 01 00:00:00 1990
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"07:37:16-08"::time');
+        agtype_add        
+--------------------------
+ Sat Jan 01 07:37:16 2000
+(1 row)
+
+SELECT agtype_add('"2000-1-1"::date', '"07:37:16"::time');
+        agtype_add        
+--------------------------
+ Sat Jan 01 07:37:16 2000
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"10 Seconds Ago"::interval');
+ agtype_add 
+------------
+ 07:29:50
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"45 Minutes Ago"::interval');
+ agtype_add 
+------------
+ 06:45:00
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"5 Days"::interval');
+ agtype_add 
+------------
+ 07:30:00
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"30 Seconds"::interval');
+ agtype_add 
+------------
+ 07:30:30
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"12 Hours Ago"::interval');
+ agtype_add 
+------------
+ 19:30:00
+(1 row)
+
+SELECT agtype_add('"07:30:00"::time', '"12 Hours"::interval');
+ agtype_add 
+------------
+ 19:30:00
+(1 row)
+
 SELECT agtype_sub('-1', '-1');
  agtype_sub 
 ------------
