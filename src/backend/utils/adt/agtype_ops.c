@@ -429,6 +429,50 @@ Datum agtype_sub(PG_FUNCTION_ARGS)
         agtv_result.val.interval.day = i->day;
         agtv_result.val.interval.month = i->month;
     }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_DATE)
+    {
+        agtv_result.type = AGTV_INTEGER;
+        agtv_result.val.int_value = DatumGetInt32(DirectFunctionCall2(date_mi, DateADTGetDatum(agtv_lhs->val.int32_value),
+											 DateADTGetDatum(agtv_rhs->val.int32_value)));
+    }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        Timestamp ts;
+
+        ts = DatumGetTimestamp(DirectFunctionCall2(timestamp_mi_interval, DateADTGetDatum(agtv_lhs->val.int32_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = ts;
+    }
+    else if (agtv_lhs->type == AGTV_DATE && agtv_rhs->type == AGTV_INTEGER)
+    {
+        agtv_result.type = AGTV_DATE;
+        agtv_result.val.int32_value =  DatumGetDateADT(DirectFunctionCall2(date_mii, DateADTGetDatum(agtv_lhs->val.int32_value),
+                                                   Int32GetDatum(agtv_rhs->val.int_value)));
+    }
+    else if (agtv_lhs->type == AGTV_TIME && agtv_rhs->type == AGTV_TIME)
+    {
+        Interval *i;
+        
+        i = DatumGetIntervalP(DirectFunctionCall2(time_mi_time, TimeADTGetDatum(agtv_lhs->val.int_value),
+                                             TimeADTGetDatum(agtv_rhs->val.int_value)));
+
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = i->time;
+        agtv_result.val.interval.day = i->day;
+        agtv_result.val.interval.month = i->month;
+    }
+    else if (agtv_lhs->type == AGTV_TIME && agtv_rhs->type == AGTV_INTERVAL)
+    {
+        TimeADT time;
+
+        time = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv_lhs->val.int_value),
+                                                   IntervalPGetDatum(&agtv_rhs->val.interval)));
+
+        agtv_result.type = AGTV_TIME;
+        agtv_result.val.int_value = time;
+    }
     else
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                         errmsg("Invalid input parameter types for agtype_sub")));
