@@ -3917,6 +3917,20 @@ LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE 
 AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_date_trunc(agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_date_trunc(agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME', 'age_date_trunc_wtimezone';
   
 CREATE FUNCTION age_extract(agtype, agtype)
 RETURNS agtype
