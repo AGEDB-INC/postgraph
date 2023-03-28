@@ -24,6 +24,7 @@
 
 #include "postgres.h"
 
+#include "catalog/pg_collation.h"
 #include "catalog/pg_type.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
@@ -860,8 +861,8 @@ static Node *transform_A_Indirection(cypher_parsestate *cpstate,
                 List *fields = cr->fields;
                 Value *string = linitial(fields);
 
-                Const *const_str = makeConst(AGTYPEOID, -1, InvalidOid, -1,
-                                             string_to_agtype(strVal(string)),
+                Const *const_str = makeConst(TEXTOID, -1, DEFAULT_COLLATION_OID, -1,
+                                             CStringGetTextDatum(strVal(string)),
                                              false, false);
                 cur = (Node *)make_op(pstate, list_make1(makeString("->")), cur, (Node *)const_str, pstate->p_last_srf,  -1);
             }
