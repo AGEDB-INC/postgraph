@@ -5536,6 +5536,30 @@ $$) AS (age agtype);
  @ 9 days ago
 (1 row)
 
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1'::timestamp)
+$$) AS (age agtype);
+     age      
+--------------
+ @ 28036 days
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1 00:00:00'::timestamp)
+$$) AS (age agtype);
+     age      
+--------------
+ @ 28036 days
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1 12:00:00'::timestamp)
+$$) AS (age agtype);
+          age          
+-----------------------
+ @ 28036 days 12 hours
+(1 row)
+
 --
 -- user defined function expressions - using pg functions for these tests
 --

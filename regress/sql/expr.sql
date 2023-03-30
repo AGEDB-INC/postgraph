@@ -2323,6 +2323,15 @@ $$) AS (age agtype);
 SELECT * FROM cypher('expr', $$
     RETURN age('2000-1-1 12:00:00'::timestamp, '2000-1-10 12:00:00'::timestamp)
 $$) AS (age agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1'::timestamp)
+$$) AS (age agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1 00:00:00'::timestamp)
+$$) AS (age agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN age('2100-1-1 12:00:00'::timestamp)
+$$) AS (age agtype);
 
 --
 -- user defined function expressions - using pg functions for these tests
