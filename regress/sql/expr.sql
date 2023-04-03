@@ -2325,6 +2325,37 @@ SELECT * FROM cypher('expr', $$
 $$) AS (age agtype);
 
 --
+-- date_bin
+--
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01 00:02:30'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01 00:02:30'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01 00:02:30'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01 00:02:30'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01'::date)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01'::date)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2020-02-11 15:44:17'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2020-02-11 15:44:17'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2001-01-01'::date)
+$$) AS (bin agtype);
+
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
