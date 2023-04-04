@@ -9157,6 +9157,36 @@ Datum age_current_date(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
 }
 
+PG_FUNCTION_INFO_V1(age_isfinite);
+Datum age_isfinite(PG_FUNCTION_ARGS)
+{
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv, agtv_result;
+    bool result = false;
+
+    if (is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv->type == AGTV_DATE)
+        result = DatumGetBool(DirectFunctionCall1(date_finite, DateADTGetDatum(agtv->val.int32_value)));
+    else if (agtv->type == AGTV_INTERVAL)
+        result = true; //  according to postgresql docs, currently, return value for interval is always true
+    else if(agtv->type == AGTV_TIMESTAMP || agtv->type == AGTV_TIMESTAMPTZ)
+    {
+        result = DatumGetBool(DirectFunctionCall1(timestamp_finite, TimestampGetDatum(agtv->val.int_value)));
+    }
+    else
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("isinfinite(agtype) only supports agtype date, interval, timestamp")));
+
+    agtv_result.type = AGTV_BOOL;
+    agtv_result.val.boolean = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 /*
 PG_FUNCTION_INFO_V1(age_current_time);
 
