@@ -5537,6 +5537,41 @@ $$) AS (age agtype);
 (1 row)
 
 --
+-- justify_days
+--
+select * from cypher('expr',$$ 
+    RETURN justify_days('5 weeks'::interval)
+$$) as (t agtype);
+       t        
+----------------
+ @ 1 mon 5 days
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_days('35 days'::interval)
+$$) as (t agtype);
+       t        
+----------------
+ @ 1 mon 5 days
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_days('4 weeks 8 days'::interval)
+$$) as (t agtype);
+       t        
+----------------
+ @ 1 mon 6 days
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_days('1 month 5 weeks'::interval)
+$$) as (t agtype);
+        t        
+-----------------
+ @ 2 mons 5 days
+(1 row)
+
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
