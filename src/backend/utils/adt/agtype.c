@@ -9157,6 +9157,35 @@ Datum age_current_date(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
 }
 
+PG_FUNCTION_INFO_V1(age_justify_hours);
+
+Datum age_justify_hours(PG_FUNCTION_ARGS)
+{
+
+    agtype *agt = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value *agtv, agtv_result;
+    Interval *i;
+
+    if(is_agtype_null(agt))
+        PG_RETURN_NULL();
+
+    agtv = get_ith_agtype_value_from_container(&agt->root, 0);
+
+    if (agtv->type != AGTV_INTERVAL)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("justify_hours(agtype) only supports intervals")));
+
+    i = DatumGetIntervalP(DirectFunctionCall1(interval_justify_hours,
+                                              IntervalPGetDatum(&agtv->val.interval)));
+
+    agtv_result.type = AGTV_INTERVAL;
+    agtv_result.val.interval.time = i->time;
+    agtv_result.val.interval.day = i->day;
+    agtv_result.val.interval.month = i->month;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 /*
 PG_FUNCTION_INFO_V1(age_current_time);
 
