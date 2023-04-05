@@ -2329,16 +2329,16 @@ $$) AS (age agtype);
 --
 select * from cypher('expr',$$ 
     RETURN justify_days('5 weeks'::interval)
-$$) as (t agtype);
+$$) as (result agtype);
 select * from cypher('expr',$$ 
     RETURN justify_days('35 days'::interval)
-$$) as (t agtype);
+$$) as (result agtype);
 select * from cypher('expr',$$ 
     RETURN justify_days('4 weeks 8 days'::interval)
-$$) as (t agtype);
+$$) as (result agtype);
 select * from cypher('expr',$$ 
     RETURN justify_days('1 month 5 weeks'::interval)
-$$) as (t agtype);
+$$) as (result agtype);
 
 --
 -- user defined function expressions - using pg functions for these tests
