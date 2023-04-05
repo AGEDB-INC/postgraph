@@ -2325,6 +2325,23 @@ SELECT * FROM cypher('expr', $$
 $$) AS (age agtype);
 
 --
+-- justify_interval
+--
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 month -1 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 month 33 days 1 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 week 6 days 27 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_interval('27 hours'::interval)
+$$) as (result agtype);
+
+
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
