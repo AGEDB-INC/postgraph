@@ -3947,6 +3947,13 @@ IMMUTABLE
 PARALLEL SAFE 
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION age_date_bin(agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 /*
 CREATE FUNCTION ag_catalog.age_current_time()
 RETURNS agtype
