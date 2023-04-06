@@ -2816,6 +2816,19 @@ SELECT * from cypher('time', $$RETURN extract('Timezone','20:38:40-06:40'::timet
 SELECT * from cypher('time', $$RETURN extract('Timezone_hour','20:38:40-06:40'::timetz)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN extract('Timezone_minute','20:38:40-06:40'::timetz)$$) as (range agtype);
 
+SELECT * from cypher('time', $$RETURN date_trunc('Second','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Minute','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Week','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Month','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Year','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Week','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','3 Days 02:47:33'::interval)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','3 Days 02:47:33'::interval)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Month','3 Days 02:47:33'::interval)$$) as (range agtype);
 
 --
 -- Cleanup
