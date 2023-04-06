@@ -8626,6 +8626,123 @@ Datum age_date_part(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv));
 }
 
+PG_FUNCTION_INFO_V1(age_date_trunc);
+Datum age_date_trunc(PG_FUNCTION_ARGS)
+{                                                 
+    agtype_value agtv_result;
+    agtype_value *agtv_part, *agtv_time;
+    agtype *agt_part, *agt_time;
+
+    agt_part = AG_GET_ARG_AGTYPE_P(0);
+    agt_time = AG_GET_ARG_AGTYPE_P(1);
+    if (is_agtype_null(agt_part) || is_agtype_null(agt_time))
+        PG_RETURN_NULL();
+
+    agtv_part = get_ith_agtype_value_from_container(&agt_part->root, 0);
+    agtv_time = get_ith_agtype_value_from_container(&agt_time->root, 0);
+    if (agtv_part->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("field argument requires a string")));
+
+    if (agtv_time->type == AGTV_TIMESTAMP)
+    {
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = DatumGetTimestamp(DirectFunctionCall2(timestamp_trunc,
+                                                    PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                            agtv_part->val.string.len)),
+                                                    TimestampGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIMESTAMPTZ)
+    {
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+        agtv_result.val.int_value = DatumGetTimestampTz(DirectFunctionCall2(timestamptz_trunc,
+                                                    PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                            agtv_part->val.string.len)),
+                                                    TimestampTzGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_INTERVAL){
+        Interval *i;
+        i = DatumGetIntervalP(DirectFunctionCall2(interval_trunc,
+                                                    PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                            agtv_part->val.string.len)),
+                                                    IntervalPGetDatum(&agtv_time->val.interval)));
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = i->time;
+        agtv_result.val.interval.day = i->day;
+        agtv_result.val.interval.month = i->month;
+    }
+    else
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("invalid date format")));
+    }    
+
+    AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_date_trunc_wtimezone);
+Datum age_date_trunc_wtimezone(PG_FUNCTION_ARGS)
+{                                                 
+    agtype_value agtv_result;
+    agtype_value *agtv_part, *agtv_time, *agtv_timezone;
+    agtype *agt_timezone, *agt_part, *agt_time;
+
+    agt_part = AG_GET_ARG_AGTYPE_P(0); 
+    agt_time = AG_GET_ARG_AGTYPE_P(1);
+    agt_timezone = AG_GET_ARG_AGTYPE_P(2);   
+    if (is_agtype_null(agt_part) || is_agtype_null(agt_time) || is_agtype_null(agt_timezone))
+        PG_RETURN_NULL();
+
+    agtv_part = get_ith_agtype_value_from_container(&agt_part->root, 0);
+    agtv_time = get_ith_agtype_value_from_container(&agt_time->root, 0);
+    agtv_timezone = get_ith_agtype_value_from_container(&agt_timezone->root, 0);
+    if (agtv_part->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("field argument requires a string")));
+    if (agtv_timezone->type != AGTV_STRING)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("timezone argument requires a string")));
+
+    if (agtv_time->type == AGTV_TIMESTAMP)
+    {
+        agtv_result.type = AGTV_TIMESTAMP;
+        agtv_result.val.int_value = DatumGetTimestamp(DirectFunctionCall2(timestamp_trunc,
+                                                    PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                            agtv_part->val.string.len)),
+                                                    TimestampGetDatum(agtv_time->val.int_value)));
+    }
+    else if (agtv_time->type == AGTV_TIMESTAMPTZ)
+    {
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+        agtv_result.val.int_value = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_trunc_zone,
+                                                PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,                                                                                                agtv_part->val.string.len)),
+                                                TimestampTzGetDatum(agtv_time->val.int_value),
+                                                PointerGetDatum(cstring_to_text_with_len(agtv_timezone->val.string.val,
+                                                                                      agtv_timezone->val.string.len))));
+        
+    }
+    else if (agtv_time->type == AGTV_INTERVAL){
+        Interval *i;
+        i = DatumGetIntervalP(DirectFunctionCall2(interval_trunc,
+                                                    PointerGetDatum(cstring_to_text_with_len(agtv_part->val.string.val,
+                                                                                            agtv_part->val.string.len)),
+                                                    IntervalPGetDatum(&agtv_time->val.interval)));
+        agtv_result.type = AGTV_INTERVAL;
+        agtv_result.val.interval.time = i->time;
+        agtv_result.val.interval.day = i->day;
+        agtv_result.val.interval.month = i->month;
+    }
+    else
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("invalid date format")));
+    }    
+
+    AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_extract);
 Datum age_extract(PG_FUNCTION_ARGS)
 {
@@ -9144,6 +9261,39 @@ Datum age_age(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_age_today);
+Datum age_age_today(PG_FUNCTION_ARGS)
+{
+    Timestamp ts;
+    agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value agtv_result, *agtv1;
+    Interval *i;
+
+    if (is_agtype_null(arg1))
+        PG_RETURN_NULL();
+    agtv1 = get_ith_agtype_value_from_container(&arg1->root, 0);
+
+    ts = TimestampGetDatum(GetCurrentTransactionStartTimestamp());
+    ts = DatumGetTimestamp(DirectFunctionCall2(timestamp_trunc,
+                                                    cstring_to_text_with_len("day",3),
+                                                    ts));
+
+    if (agtv1->type != AGTV_TIMESTAMP)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype) only supports timestamps")));
+
+    i = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
+                                              TimestampGetDatum(agtv1->val.int_value),
+                                              ts));
+
+    agtv_result.type = AGTV_INTERVAL;
+    agtv_result.val.interval.time = i->time;
+    agtv_result.val.interval.day = i->day;
+    agtv_result.val.interval.month = i->month;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 
 PG_FUNCTION_INFO_V1(age_current_date);
 
@@ -9182,6 +9332,129 @@ Datum age_justify_hours(PG_FUNCTION_ARGS)
     agtv_result.val.interval.time = i->time;
     agtv_result.val.interval.day = i->day;
     agtv_result.val.interval.month = i->month;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_date_bin);
+
+Datum age_date_bin(PG_FUNCTION_ARGS)
+{
+    agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
+    agtype *arg2 = AG_GET_ARG_AGTYPE_P(1);
+    agtype *arg3 = AG_GET_ARG_AGTYPE_P(2);
+    agtype_value agtv_result, *agtv1, *agtv2, *agtv3;
+
+    if (is_agtype_null(arg1) || is_agtype_null(arg2) || is_agtype_null(arg3))
+        PG_RETURN_NULL();
+    
+    agtv1 = get_ith_agtype_value_from_container(&arg1->root, 0);
+    agtv2 = get_ith_agtype_value_from_container(&arg2->root, 0);
+    agtv3 = get_ith_agtype_value_from_container(&arg3->root, 0);
+
+    if ( agtv1->type != AGTV_INTERVAL){
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_bin(agtype, agtype, agtype) only supports type interval as stride")));    
+    }
+
+    if( agtv2->type != AGTV_DATE && agtv2->type != AGTV_TIMESTAMP && agtv2->type != AGTV_TIMESTAMPTZ){
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_bin(agtype, agtype, agtype) only supports type date, timestamp or timestamptz as source")));    
+    }
+
+    if( agtv3->type != AGTV_DATE && agtv3->type != AGTV_TIMESTAMP && agtv3->type != AGTV_TIMESTAMPTZ){
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("date_bin(agtype, agtype, agtype) only supports type date, timestamp or timestamptz as origin")));    
+    }    
+
+    Timestamp source, origin;
+
+    if(agtv2->type == AGTV_DATE)
+        source = TimestampGetDatum(date2timestamp_no_overflow(agtv2->val.int32_value));
+    else if(agtv2->type == AGTV_TIMESTAMP || agtv2->type == AGTV_TIMESTAMPTZ)
+        source = agtv2->val.int_value;
+    
+    if( agtv3->type == AGTV_DATE)
+        origin = TimestampGetDatum(date2timestamp_no_overflow(agtv3->val.int32_value));
+    else if(agtv3->type == AGTV_TIMESTAMP || agtv3->type == AGTV_TIMESTAMPTZ)
+        origin = agtv3->val.int_value;
+    
+    Timestamp result;
+
+    if(agtv2->type == AGTV_TIMESTAMPTZ && agtv3->type == AGTV_TIMESTAMPTZ)
+    {
+        result = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampTzGetDatum(source),
+                                                              TimestampTzGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+    else if (agtv2->type == AGTV_TIMESTAMP && agtv3->type == AGTV_TIMESTAMP)
+    {
+        result = DatumGetTimestamp(DirectFunctionCall3(timestamp_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMP;
+    }
+    else if (agtv2->type == AGTV_TIMESTAMP && agtv3->type == AGTV_TIMESTAMPTZ)
+    {
+        result = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampTzGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+    else if (agtv2->type == AGTV_TIMESTAMPTZ && agtv3->type == AGTV_TIMESTAMP)
+    {
+        result = DatumGetTimestamp(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampTzGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+    else if (agtv2->type == AGTV_DATE && agtv3->type == AGTV_DATE)
+    {
+        result = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+    else if (agtv2->type == AGTV_DATE && agtv3->type == AGTV_TIMESTAMP)
+    {
+        result = DatumGetTimestamp(DirectFunctionCall3(timestamp_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMP;
+    }
+    else if (agtv2->type == AGTV_DATE && agtv3->type == AGTV_TIMESTAMPTZ)
+    {
+        result = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampTzGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+    else if (agtv2->type == AGTV_TIMESTAMP && agtv3->type == AGTV_DATE)
+    {
+        result = DatumGetTimestamp(DirectFunctionCall3(timestamp_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMP;
+    }
+    else if (agtv2->type == AGTV_TIMESTAMPTZ && agtv3->type == AGTV_DATE)
+    {
+        result = DatumGetTimestampTz(DirectFunctionCall3(timestamptz_bin,
+                                                              IntervalPGetDatum(&agtv1->val.interval),
+                                                              TimestampTzGetDatum(source),
+                                                              TimestampGetDatum(origin)));
+        agtv_result.type = AGTV_TIMESTAMPTZ;
+    }
+
+    agtv_result.val.int_value = result;
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
