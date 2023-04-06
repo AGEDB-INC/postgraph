@@ -2340,6 +2340,36 @@ select * from cypher('expr',$$
     RETURN justify_interval('27 hours'::interval)
 $$) as (result agtype);
 
+--
+-- date_bin
+--
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01 00:02:30'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01 00:02:30'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01 00:02:30'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01 00:02:30'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamp, '2001-01-01'::date)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11 15:44:17'::timestamptz, '2001-01-01'::date)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2020-02-11 15:44:17'::timestamp)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2020-02-11 15:44:17'::timestamptz)
+$$) AS (bin agtype);
+SELECT * from cypher('expr',$$ 
+    RETURN date_bin('15 minutes'::interval,'2020-02-11'::date, '2001-01-01'::date)
+$$) AS (bin agtype);
 
 --
 -- user defined function expressions - using pg functions for these tests
@@ -2833,6 +2863,19 @@ SELECT * from cypher('time', $$RETURN extract('Timezone','20:38:40-06:40'::timet
 SELECT * from cypher('time', $$RETURN extract('Timezone_hour','20:38:40-06:40'::timetz)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN extract('Timezone_minute','20:38:40-06:40'::timetz)$$) as (range agtype);
 
+SELECT * from cypher('time', $$RETURN date_trunc('Second','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Minute','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Week','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Month','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Year','2001-02-16 20:38:40'::timestamp)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Week','2001-02-16 20:38:40+00'::timestamptz,'GMT+5')$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Hour','3 Days 02:47:33'::interval)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Day','3 Days 02:47:33'::interval)$$) as (range agtype);
+SELECT * from cypher('time', $$RETURN date_trunc('Month','3 Days 02:47:33'::interval)$$) as (range agtype);
 
 --
 -- Cleanup
