@@ -9261,6 +9261,39 @@ Datum age_age(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_age_today);
+Datum age_age_today(PG_FUNCTION_ARGS)
+{
+    Timestamp ts;
+    agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value agtv_result, *agtv1;
+    Interval *i;
+
+    if (is_agtype_null(arg1))
+        PG_RETURN_NULL();
+    agtv1 = get_ith_agtype_value_from_container(&arg1->root, 0);
+
+    ts = TimestampGetDatum(GetCurrentTransactionStartTimestamp());
+    ts = DatumGetTimestamp(DirectFunctionCall2(timestamp_trunc,
+                                                    cstring_to_text_with_len("day",3),
+                                                    ts));
+
+    if (agtv1->type != AGTV_TIMESTAMP)
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("age(agtype) only supports timestamps")));
+
+    i = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
+                                              TimestampGetDatum(agtv1->val.int_value),
+                                              ts));
+
+    agtv_result.type = AGTV_INTERVAL;
+    agtv_result.val.interval.time = i->time;
+    agtv_result.val.interval.day = i->day;
+    agtv_result.val.interval.month = i->month;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 
 PG_FUNCTION_INFO_V1(age_current_date);
 
