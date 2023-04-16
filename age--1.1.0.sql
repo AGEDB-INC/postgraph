@@ -3925,6 +3925,20 @@ IMMUTABLE
 PARALLEL SAFE 
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION age_overlaps(agtype, agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_current_timestamp()
+RETURNS agtype
+LANGUAGE c
+volatile
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME';
+
 /*
 CREATE FUNCTION ag_catalog.age_current_time()
 RETURNS agtype
