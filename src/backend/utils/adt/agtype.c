@@ -9181,47 +9181,62 @@ Datum age_overlaps(PG_FUNCTION_ARGS)
     if( agtv1->type == AGTV_DATE && agtv2->type == AGTV_DATE 
         && agtv3->type == AGTV_DATE && agtv4->type == AGTV_DATE)
     {
+        Timestamp ts1,te1,ts2,te2;
+        ts1 = date2timestamp_no_overflow(agtv1->val.int32_value);
+        te1 = date2timestamp_no_overflow(agtv2->val.int32_value);
+        ts2 = date2timestamp_no_overflow(agtv3->val.int32_value);
+        te2 = date2timestamp_no_overflow(agtv4->val.int32_value);
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
-                                                DateADTGetDatum(agtv1->val.int32_value),
-                                                DateADTGetDatum(agtv2->val.int32_value),
-                                                DateADTGetDatum(agtv3->val.int32_value),
-                                                DateADTGetDatum(agtv4->val.int32_value)));
+                                                TimestampGetDatum(ts1),
+                                                TimestampGetDatum(te1),
+                                                TimestampGetDatum(ts2),
+                                                TimestampGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_DATE && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_DATE && agtv4->type == AGTV_INTERVAL)
     {
+        Timestamp ts1,te1,ts2,te2;
+        ts1 = date2timestamp_no_overflow(agtv1->val.int32_value);
+        te1 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(ts1), IntervalPGetDatum(&agtv2->val.interval)));
+        ts2 = date2timestamp_no_overflow(agtv3->val.int32_value);
+        te2 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(ts2), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
-                                                DateADTGetDatum(agtv1->val.int32_value),
-                                                IntervalPGetDatum(&agtv2->val.interval),
-                                                DateADTGetDatum(agtv3->val.int32_value),
-                                                IntervalPGetDatum(&agtv4->val.interval)));
+                                                TimestampGetDatum(ts1),
+                                                TimestampGetDatum(te1),
+                                                TimestampGetDatum(ts2),
+                                                TimestampGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_DATE && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_DATE && agtv4->type == AGTV_DATE)
     {
+        Timestamp ts1,te1,ts2,te2;
+        ts1 = date2timestamp_no_overflow(agtv1->val.int32_value);
+        te1 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(ts1), IntervalPGetDatum(&agtv2->val.interval)));
+        ts2 = date2timestamp_no_overflow(agtv3->val.int32_value);
+        te2 = date2timestamp_no_overflow(agtv4->val.int32_value);
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
-                                                DateADTGetDatum(agtv1->val.int32_value),
-                                                IntervalPGetDatum(&agtv2->val.interval),
-                                                DateADTGetDatum(agtv3->val.int32_value),
-                                                DateADTGetDatum(agtv4->val.int32_value)));
-    }
-    else if( agtv1->type == AGTV_DATE && agtv2->type == AGTV_INTERVAL 
-        && agtv3->type == AGTV_DATE && agtv4->type == AGTV_DATE)
-    {
-        result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
-                                                DateADTGetDatum(agtv1->val.int32_value),
-                                                IntervalPGetDatum(&agtv2->val.interval),
-                                                DateADTGetDatum(agtv3->val.int32_value),
-                                                DateADTGetDatum(agtv4->val.int32_value)));
+                                                TimestampGetDatum(ts1),
+                                                TimestampGetDatum(te1),
+                                                TimestampGetDatum(ts2),
+                                                TimestampGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_DATE && agtv2->type == AGTV_DATE 
         && agtv3->type == AGTV_DATE && agtv4->type == AGTV_INTERVAL)
     {
+        Timestamp ts1,te1,ts2,te2;
+        ts1 = date2timestamp_no_overflow(agtv1->val.int32_value);
+        te1 = date2timestamp_no_overflow(agtv2->val.int32_value);
+        ts2 = date2timestamp_no_overflow(agtv3->val.int32_value);
+        te2 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(ts2), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
-                                                DateADTGetDatum(agtv1->val.int32_value),
-                                                DateADTGetDatum(agtv2->val.int32_value),
-                                                DateADTGetDatum(agtv3->val.int32_value),
-                                                IntervalPGetDatum(&agtv4->val.interval)));
+                                                TimestampGetDatum(ts1),
+                                                TimestampGetDatum(te1),
+                                                TimestampGetDatum(ts2),
+                                                TimestampGetDatum(te2)));
     }         
     else if( agtv1->type == AGTV_TIMESTAMP && agtv2->type == AGTV_TIMESTAMP 
         && agtv3->type == AGTV_TIMESTAMP && agtv4->type == AGTV_TIMESTAMP)
@@ -9235,29 +9250,39 @@ Datum age_overlaps(PG_FUNCTION_ARGS)
     else if( agtv1->type == AGTV_TIMESTAMP && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIMESTAMP && agtv4->type == AGTV_INTERVAL)
     {
+        Timestamp te1,te2;
+        te1 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(agtv1->val.int_value), IntervalPGetDatum(&agtv2->val.interval)));
+        te2 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(agtv3->val.int_value), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
                                                   TimestampGetDatum(agtv1->val.int_value),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
+                                                  TimestampGetDatum(te1),
                                                   TimestampGetDatum(agtv3->val.int_value),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimestampGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_TIMESTAMP && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIMESTAMP && agtv4->type == AGTV_TIMESTAMP)
     {
+        Timestamp te1;
+        te1 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(agtv1->val.int_value), IntervalPGetDatum(&agtv2->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
                                                   TimestampGetDatum(agtv1->val.int_value),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
+                                                  TimestampGetDatum(te1),
                                                   TimestampGetDatum(agtv3->val.int_value),
                                                   TimestampGetDatum(agtv4->val.int_value)));
     }
     else if( agtv1->type == AGTV_TIMESTAMP && agtv2->type == AGTV_TIMESTAMP 
         && agtv3->type == AGTV_TIMESTAMP && agtv4->type == AGTV_INTERVAL)
     {
+        Timestamp te2;
+        te2 = TimestampGetDatum(DirectFunctionCall2(timestamp_pl_interval, TimestampGetDatum(agtv3->val.int_value), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timestamp,
                                                   TimestampGetDatum(agtv1->val.int_value),
                                                   TimestampGetDatum(agtv2->val.int_value),
                                                   TimestampGetDatum(agtv3->val.int_value),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimestampGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_TIME && agtv2->type == AGTV_TIME 
         && agtv3->type == AGTV_TIME && agtv4->type == AGTV_TIME)
@@ -9271,65 +9296,85 @@ Datum age_overlaps(PG_FUNCTION_ARGS)
     else if( agtv1->type == AGTV_TIME && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIME && agtv4->type == AGTV_INTERVAL)
     {
+        TimeADT te1,te2;
+        te1 = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv1->val.int_value), IntervalPGetDatum(&agtv2->val.interval)));
+        te2 = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv3->val.int_value), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_time,
                                                   TimeADTGetDatum(agtv1->val.int_value),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
+                                                  TimeADTGetDatum(te1),
                                                   TimeADTGetDatum(agtv3->val.int_value),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimeADTGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_TIME && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIME && agtv4->type == AGTV_TIME)
     {
+        TimeADT te1;
+        te1 = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv1->val.int_value), IntervalPGetDatum(&agtv2->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_time,
                                                   TimeADTGetDatum(agtv1->val.int_value),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
+                                                  TimeADTGetDatum(te1),
                                                   TimeADTGetDatum(agtv3->val.int_value),
                                                   TimeADTGetDatum(agtv4->val.int_value)));
     }
     else if( agtv1->type == AGTV_TIME && agtv2->type == AGTV_TIME 
         && agtv3->type == AGTV_TIME && agtv4->type == AGTV_INTERVAL)
     {
+        TimeADT te2;
+        te2 = DatumGetTimeADT(DirectFunctionCall2(time_pl_interval, TimeADTGetDatum(agtv3->val.int_value), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_time,
                                                   TimeADTGetDatum(agtv1->val.int_value),
                                                   TimeADTGetDatum(agtv2->val.int_value),
                                                   TimeADTGetDatum(agtv3->val.int_value),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimeADTGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_TIMETZ && agtv2->type == AGTV_TIMETZ 
         && agtv3->type == AGTV_TIMETZ && agtv4->type == AGTV_TIMETZ)
     {
         result = DatumGetBool(DirectFunctionCall4(overlaps_timetz,
-                                                  DatumGetTimeTzADTP(&agtv1->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv2->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv3->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv4->val.timetz)));
+                                                  TimeTzADTPGetDatum(&agtv1->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv2->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv3->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv4->val.timetz)));
     }
     else if( agtv1->type == AGTV_TIMETZ && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIMETZ && agtv4->type == AGTV_INTERVAL)
     {
+        TimeTzADT *te1,*te2;
+        te1 = DatumGetTimeTzADTP(DirectFunctionCall2(timetz_pl_interval, TimeTzADTPGetDatum(&agtv1->val.timetz), IntervalPGetDatum(&agtv2->val.interval)));
+        te2 = DatumGetTimeTzADTP(DirectFunctionCall2(timetz_pl_interval, TimeTzADTPGetDatum(&agtv3->val.timetz), IntervalPGetDatum(&agtv4->val.interval)));
+        
         result = DatumGetBool(DirectFunctionCall4(overlaps_timetz,
-                                                  DatumGetTimeTzADTP(&agtv1->val.timetz),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
-                                                  DatumGetTimeTzADTP(&agtv3->val.timetz),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimeTzADTPGetDatum(&agtv1->val.timetz),
+                                                  TimeTzADTPGetDatum(te1),
+                                                  TimeTzADTPGetDatum(&agtv3->val.timetz),
+                                                  TimeTzADTPGetDatum(te2)));
     }
     else if( agtv1->type == AGTV_TIMETZ && agtv2->type == AGTV_INTERVAL 
         && agtv3->type == AGTV_TIMETZ && agtv4->type == AGTV_TIMETZ)
     {
+        TimeTzADT *te1;
+        te1 = DatumGetTimeTzADTP(DirectFunctionCall2(timetz_pl_interval, TimeTzADTPGetDatum(&agtv1->val.timetz), IntervalPGetDatum(&agtv2->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timetz,
-                                                  DatumGetTimeTzADTP(&agtv1->val.timetz),
-                                                  IntervalPGetDatum(&agtv2->val.interval),
-                                                  DatumGetTimeTzADTP(&agtv3->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv4->val.timetz)));
+                                                  TimeTzADTPGetDatum(&agtv1->val.timetz),
+                                                  TimeTzADTPGetDatum(te1),
+                                                  TimeTzADTPGetDatum(&agtv3->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv4->val.timetz)));
     }
     else if( agtv1->type == AGTV_TIMETZ && agtv2->type == AGTV_TIMETZ 
         && agtv3->type == AGTV_TIMETZ && agtv4->type == AGTV_INTERVAL)
     {
+        TimeTzADT *te2;
+        te2 = DatumGetTimeTzADTP(DirectFunctionCall2(timetz_pl_interval, TimeTzADTPGetDatum(&agtv3->val.timetz), IntervalPGetDatum(&agtv4->val.interval)));
+
         result = DatumGetBool(DirectFunctionCall4(overlaps_timetz,
-                                                  DatumGetTimeTzADTP(&agtv1->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv2->val.timetz),
-                                                  DatumGetTimeTzADTP(&agtv3->val.timetz),
-                                                  IntervalPGetDatum(&agtv4->val.interval)));
+                                                  TimeTzADTPGetDatum(&agtv1->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv2->val.timetz),
+                                                  TimeTzADTPGetDatum(&agtv3->val.timetz),
+                                                  TimeTzADTPGetDatum(te2)));
     }
     else
             ereport(ERROR,
