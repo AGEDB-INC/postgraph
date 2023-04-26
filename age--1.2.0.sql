@@ -3794,6 +3794,13 @@ STABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.age_cbrt(agtype)
+RETURNS agtype
+LANGUAGE c
+STABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 --
 -- aggregate function components for stdev(internal, agtype)
 -- and stdevp(internal, agtype)

@@ -8247,6 +8247,81 @@ Datum age_fact(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+
+PG_FUNCTION_INFO_V1(age_cbrt);
+
+Datum age_cbrt(PG_FUNCTION_ARGS)
+{
+
+    /*  
+        *  cbrt() only supports agtype float and 
+        *  agtype numeric and agtype integer for the input expression.
+    */
+    agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value agtv;
+    agtype_value agtv_result;
+
+    /* Variable to store result */
+    float8 result;
+
+    /* Check If input is NULL */
+    if (agtype_in == NULL)
+        PG_RETURN_NULL();
+
+
+    /* Check if input is scalar type or not */
+    if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
+        (agtv.type != AGTV_FLOAT &&
+         agtv.type != AGTV_INTEGER &&
+         agtv.type != AGTV_NUMERIC))
+        cannot_cast_agtype_value(agtv.type, "float");
+
+    PG_FREE_IF_COPY(agtype_in, 0);
+
+    /*
+        * Check the agtype which the user has entered.
+        * Convert the agtypes to float8, as the postgres function dcbt() only supports float8.
+        * If the agtype is float, then directly convert it to float8.
+        * If the agtype is integer, then convert it to float8.
+        * If the agtype is numeric, then convert it to float8.    
+    */
+
+    if (agtv.type == AGTV_FLOAT){
+        result = agtv.val.float_value;
+        agtv_result.type = AGTV_FLOAT;
+        agtv_result.val.float_value = result;
+    }
+    else if (agtv.type == AGTV_INTEGER){
+        char *string = DatumGetCString(DirectFunctionCall1(int8out,
+                           Int64GetDatum(agtv.val.int_value)));
+        bool is_valid = false;
+        /* turn it into a float */
+        result = float8in_internal_null(string, NULL, "double precision",
+                                     string, &is_valid);
+        agtv_result.type = AGTV_FLOAT;
+        agtv_result.val.float_value = result;
+    }else if (agtv.type == AGTV_NUMERIC){
+        result = DatumGetFloat8(DirectFunctionCall1(numeric_float8,
+                     NumericGetDatum(agtv.val.numeric)));
+        agtv_result.type = AGTV_FLOAT;
+        agtv_result.val.float_value = result;
+    }else{
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("cbrt() invalid argument")));
+    }
+
+    /*
+        * Call the postgres function dcbrt() to get the cube root of the input.
+        * Convert the result to agtype and return it.    
+    */
+    result = DatumGetFloat8(DirectFunctionCall1(dcbrt,
+                                                      Float8GetDatum(agtv_result.val.float_value)));
+    
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_timestamp);
 
 Datum age_timestamp(PG_FUNCTION_ARGS)
