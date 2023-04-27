@@ -5117,6 +5117,59 @@ ERROR:  schema "contains" does not exist
 LINE 2:     RETURN contains.age_sqrt(25)
                                     ^
 --
+-- user defined function expressions - testing for age_cbrt function
+--
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(25)
+$$) as (result agtype);
+      result      
+------------------
+ 2.92401773821287
+(1 row)
+
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(25::pg_float8)
+$$) as (result agtype);
+      result      
+------------------
+ 2.92401773821287
+(1 row)
+
+-- should return null
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(null::pg_float8)
+$$) as (result agtype);
+ result 
+--------
+ 
+(1 row)
+
+-- should fail
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt()
+$$) as (result agtype);
+ERROR:  function pg_catalog.cbrt() does not exist
+LINE 2:     RETURN pg_catalog.cbrt()
+                              ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt("1"::pg_float8)
+$$) as (result agtype);
+ERROR:  cannot cast agtype string to type float
+-- should fail do to schema but using a reserved_keyword
+SELECT * from cypher('expr', $$
+    RETURN distinct.age_cbrt(25)
+$$) as (result agtype);
+ERROR:  schema "distinct" does not exist
+LINE 2:     RETURN distinct.age_cbrt(25)
+                                    ^
+SELECT * from cypher('expr', $$
+    RETURN contains.age_cbrt(25)
+$$) as (result agtype);
+ERROR:  schema "contains" does not exist
+LINE 2:     RETURN contains.age_cbrt(25)
+                                    ^
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
