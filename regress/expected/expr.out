@@ -5144,6 +5144,14 @@ $$) as (result agtype);
  
 (1 row)
 
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(null)
+$$) as (result agtype);
+ result 
+--------
+ 
+(1 row)
+
 -- should fail
 SELECT * from cypher('expr', $$
     RETURN pg_catalog.cbrt()
