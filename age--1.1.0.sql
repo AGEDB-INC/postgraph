@@ -3709,6 +3709,13 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.age_sinh(variadic "any")
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION ag_catalog.age_degrees(variadic "any")
 RETURNS agtype
 LANGUAGE c
