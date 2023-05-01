@@ -7179,7 +7179,7 @@ Datum age_sinh(PG_FUNCTION_ARGS)
      * expression.
      */
 
-    x = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0), AGTYPEOID, "sinh", &is_null);
+    x = get_float_compatible_arg(AGTYPE_P_GET_DATUM(AG_GET_ARG_AGTYPE_P(0)), AGTYPEOID, "sinh", &is_null);
 
 
     /* We need the input as a float8 so that we can pass it off to PG */
