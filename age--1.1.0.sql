@@ -3800,7 +3800,7 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
-CREATE FUNCTION ag_catalog.age_cbrt(agtype)
+CREATE FUNCTION ag_catalog.age_cbrt(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
