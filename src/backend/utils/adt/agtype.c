@@ -7822,32 +7822,16 @@ PG_FUNCTION_INFO_V1(age_cbrt);
 Datum age_cbrt(PG_FUNCTION_ARGS)
 {
 
-    int nargs;
-    Datum *args;
-    bool *nulls;
-    Oid *types;
     agtype_value agtv_result;
     float8 input;
     float8 result;
     bool is_null = true;
-
-    /* extract argument values */
-    nargs = extract_variadic_args(fcinfo, 0, true, &args, &types, &nulls);
-
-    /* check number of args */
-    if (nargs != 1)
-        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-                        errmsg("cbrt() invalid number of arguments")));
-
-    if (types[0] != AGTYPEOID)
-        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-                        errmsg("cbrt() invalid input type")));
     /*
      * cbrt() supports agtype integer, float,
      * and numeric for the input
      */
 
-    input = get_float_compatible_arg(args[0], types[0], "cbrt", &is_null);
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "cbrt", &is_null);
 
     /* We need the input as a float8 so that we can pass it off to PG */
     result = DatumGetFloat8(DirectFunctionCall1(dcbrt,
