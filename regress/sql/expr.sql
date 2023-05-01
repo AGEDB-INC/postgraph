@@ -2142,6 +2142,38 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 
 --
+-- user defined function expressions - testing for age_cbrt function
+--
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(25)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(25::pg_float8)
+$$) as (result agtype);
+-- should return null
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(null::pg_float8)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(null)
+$$) as (result agtype);
+-- should fail
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt()
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt("1"::pg_float8)
+$$) as (result agtype);
+-- should fail do to schema but using a reserved_keyword
+SELECT * from cypher('expr', $$
+    RETURN distinct.age_cbrt(25)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN contains.age_cbrt(25)
+$$) as (result agtype);
+
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
