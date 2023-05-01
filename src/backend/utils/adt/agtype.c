@@ -7822,9 +7822,6 @@ PG_FUNCTION_INFO_V1(age_cbrt);
 Datum age_cbrt(PG_FUNCTION_ARGS)
 {
 
-    // check if input is agtype
-    if (PG_ARGISNULL(0))
-        PG_RETURN_NULL();
 
     /*  
         *  cbrt() only supports agtype float and 
@@ -7836,11 +7833,6 @@ Datum age_cbrt(PG_FUNCTION_ARGS)
 
     /* Variable to store result */
     float8 result;
-
-    /* Check If input is NULL */
-    if (agtype_in == NULL)
-        PG_RETURN_NULL();
-
 
     /* Check if input is scalar type or not */
     if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
