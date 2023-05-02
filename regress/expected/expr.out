@@ -5208,6 +5208,36 @@ LINE 1: SELECT * FROM age_tanh();
                       ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
+-- tanh()
+--
+SELECT asinh = results FROM cypher('expr', $$
+    RETURN asinh(3.1415)
+$$) AS (results agtype), asinh(3.1415);
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT asinh = age_asinh FROM asinh(3.1415), age_asinh(agtype_in('3.1415'));
+ ?column? 
+----------
+ t
+(1 row)
+
+-- should return null
+SELECT * FROM age_asinh(null);
+ age_asinh 
+-----------
+ 
+(1 row)
+
+-- should fail
+SELECT * FROM age_asinh();
+ERROR:  function age_asinh() does not exist
+LINE 1: SELECT * FROM age_asinh();
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
