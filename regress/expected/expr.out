@@ -5208,7 +5208,7 @@ LINE 1: SELECT * FROM age_tanh();
                       ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
--- tanh()
+-- sinh()
 --
 SELECT asinh = results FROM cypher('expr', $$
     RETURN asinh(3.1415)
@@ -5235,6 +5235,36 @@ SELECT * FROM age_asinh(null);
 SELECT * FROM age_asinh();
 ERROR:  function age_asinh() does not exist
 LINE 1: SELECT * FROM age_asinh();
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+--
+-- atanh()
+--
+SELECT atanh = results FROM cypher('expr', $$
+    RETURN atanh(0.1)
+$$) AS (results agtype), atanh(0.1);
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT atanh = age_atanh FROM atanh(0.1), age_atanh(agtype_in('0.1'));
+ ?column? 
+----------
+ t
+(1 row)
+
+-- should return null
+SELECT * FROM age_atanh(null);
+ age_atanh 
+-----------
+ 
+(1 row)
+
+-- should fail
+SELECT * FROM age_atanh();
+ERROR:  function age_atanh() does not exist
+LINE 1: SELECT * FROM age_atanh();
                       ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
