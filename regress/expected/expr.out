@@ -4335,7 +4335,7 @@ HINT:  No function matches the given name and argument types. You might need to 
 SELECT * FROM age_atan2(1);
 ERROR:  atan2() invalid number of arguments
 --
--- Hyperbolic functions: sinh
+-- Hyperbolic functions: sinh, cosh
 --
 SELECT * FROM cypher('expr', $$
     RETURN sinh(3.1415)
@@ -4376,6 +4376,45 @@ SELECT * FROM cypher('expr', $$
 	RETURN sinh('0')
 $$) AS (results agtype);
 ERROR:  sinh() unsupported argument agtype 1
+SELECT * FROM cypher('expr', $$
+    RETURN cosh(3.1415)
+$$) AS (results agtype);
+     results      
+------------------
+ 11.5908832931176
+(1 row)
+
+SELECT cosh = age_cosh FROM cosh(3.1415), age_cosh(agtype_in('3.1415'));
+ ?column? 
+----------
+ t
+(1 row)
+
+-- should return null
+SELECT * FROM cypher('expr', $$
+	RETURN cosh(null)
+$$) AS (results agtype);
+ results 
+---------
+ 
+(1 row)
+
+-- should fail
+SELECT * FROM cypher('expr', $$
+	RETURN cosh("0")
+$$) AS (results agtype);
+ERROR:  cosh() unsupported argument agtype 1
+SELECT * FROM cypher('expr', $$
+	RETURN cosh()
+$$) AS (results agtype);
+ERROR:  function ag_catalog.age_cosh() does not exist
+LINE 2:  RETURN cosh()
+                ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM cypher('expr', $$
+	RETURN cosh('0')
+$$) AS (results agtype);
+ERROR:  cosh() unsupported argument agtype 1
 --
 -- pi
 --

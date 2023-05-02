@@ -1785,7 +1785,7 @@ SELECT * FROM age_atan2();
 SELECT * FROM age_atan2(1);
 
 --
--- Hyperbolic functions: sinh
+-- Hyperbolic functions: sinh, cosh
 --
 SELECT * FROM cypher('expr', $$
     RETURN sinh(3.1415)
@@ -1804,6 +1804,25 @@ SELECT * FROM cypher('expr', $$
 $$) AS (results agtype);
 SELECT * FROM cypher('expr', $$
 	RETURN sinh('0')
+$$) AS (results agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN cosh(3.1415)
+$$) AS (results agtype);
+SELECT cosh = age_cosh FROM cosh(3.1415), age_cosh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM cypher('expr', $$
+	RETURN cosh(null)
+$$) AS (results agtype);
+-- should fail
+SELECT * FROM cypher('expr', $$
+	RETURN cosh("0")
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN cosh()
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN cosh('0')
 $$) AS (results agtype);
 
 --
