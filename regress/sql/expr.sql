@@ -2196,6 +2196,18 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 
 --
+-- tanh()
+--
+SELECT tanh = results FROM cypher('expr', $$
+    RETURN tanh(3.1415)
+$$) AS (results agtype), tanh(3.1415);
+SELECT tanh = age_tanh FROM tanh(3.1415), age_tanh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM age_tanh(null);
+-- should fail
+SELECT * FROM age_tanh();
+
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
