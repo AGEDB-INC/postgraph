@@ -2208,7 +2208,7 @@ SELECT * FROM age_tanh(null);
 SELECT * FROM age_tanh();
 
 --
--- tanh()
+-- sinh()
 --
 SELECT asinh = results FROM cypher('expr', $$
     RETURN asinh(3.1415)
@@ -2218,6 +2218,18 @@ SELECT asinh = age_asinh FROM asinh(3.1415), age_asinh(agtype_in('3.1415'));
 SELECT * FROM age_asinh(null);
 -- should fail
 SELECT * FROM age_asinh();
+
+--
+-- atanh()
+--
+SELECT atanh = results FROM cypher('expr', $$
+    RETURN atanh(0.1)
+$$) AS (results agtype), atanh(0.1);
+SELECT atanh = age_atanh FROM atanh(0.1), age_atanh(agtype_in('0.1'));
+-- should return null
+SELECT * FROM age_atanh(null);
+-- should fail
+SELECT * FROM age_atanh();
 
 --
 -- aggregate functions avg(), sum(), count(), & count(*)
