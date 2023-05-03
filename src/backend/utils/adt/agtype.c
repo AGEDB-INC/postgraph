@@ -7935,7 +7935,7 @@ Datum age_asinh(PG_FUNCTION_ARGS)
     float8 result;
     bool is_null = true;
     /*
-     * tanh supports agtype integer, float,
+     * asinh supports agtype integer, float,
      * and numeric for the input
      */    
 
@@ -7943,6 +7943,32 @@ Datum age_asinh(PG_FUNCTION_ARGS)
 
     /* We need the input as a float8 so that we can pass it off to PG */
     result = DatumGetFloat8(DirectFunctionCall1(dasinh,
+                                                Float8GetDatum(input)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_atanh);
+
+Datum age_atanh(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    float8 input;
+    float8 result;
+    bool is_null = true;
+    /*
+     * atanh supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "atanh", &is_null);
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    result = DatumGetFloat8(DirectFunctionCall1(datanh,
                                                 Float8GetDatum(input)));
     /* build the result */
     agtv_result.type = AGTV_FLOAT;
