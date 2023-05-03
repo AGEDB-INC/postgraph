@@ -2325,6 +2325,19 @@ SELECT * FROM cypher('expr', $$
 $$) AS (age agtype);
 
 --
+-- justify_hours
+--
+select * from cypher('expr',$$ 
+    RETURN justify_hours('27 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_hours('1 week 27 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_hours('2 days 30 hours'::interval)
+$$) as (result agtype);
+
+--
 -- date_bin
 --
 SELECT * from cypher('expr',$$ 
