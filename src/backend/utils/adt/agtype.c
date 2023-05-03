@@ -7921,6 +7921,34 @@ Datum age_atanh(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_trim_scale);
+
+Datum age_trim_scale(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    Numeric result;
+    bool is_null = true;
+    Numeric numeric_input;
+
+    /*
+     * trim_scale supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    numeric_input= get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "trim_scale", &is_null, NULL);
+
+    // /* We need the input as a Numeric so that we can pass it off to PG */
+    result = DatumGetNumeric(DirectFunctionCall1(numeric_trim_scale,
+                                                NumericGetDatum(numeric_input)));
+
+    agtv_result.type = AGTV_NUMERIC;
+    agtv_result.val.numeric = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+
 
 PG_FUNCTION_INFO_V1(age_timestamp);
 

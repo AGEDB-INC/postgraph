@@ -3831,6 +3831,16 @@ IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION ag_catalog.age_trim_scale(agtype) 
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+
 --
 -- aggregate function components for stdev(internal, agtype)
 -- and stdevp(internal, agtype)
