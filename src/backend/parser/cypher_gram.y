@@ -89,7 +89,7 @@
                  LIMIT
                  MATCH MERGE MICROSECONDS MILLENIUM MILLISECONDS MINUTE MONTH
                  NOT NULL_P
-                 OPTIONAL OR ORDER
+                 OPTIONAL OR ORDER OVERLAPS
                  REMOVE RETURN
                  SECOND SET SKIP STARTS SYMMETRIC
                  TIME TIMESTAMP TIMESTAMPTZ TIMETZ TIMEZONE TIMEZONE_H TIMEZONE_M THEN TRUE_P
@@ -1577,7 +1577,21 @@ expr_func_subexpr:
         {
             $$ = make_function_expr(list_make1(makeString("extract")), list_make2($3, $5), @1);
         }
-    ;
+    | '(' expr_list ')' OVERLAPS '(' expr_list ')'
+        {
+            if (list_length($2) != 2)
+						ereport(ERROR,
+								(errcode(ERRCODE_SYNTAX_ERROR),
+								 errmsg("wrong number of parameters on left side of OVERLAPS expression"),
+								 ag_scanner_errposition(@2, scanner)));
+			if (list_length($6) != 2)
+						ereport(ERROR,
+								(errcode(ERRCODE_SYNTAX_ERROR),
+								 errmsg("wrong number of parameters on right side of OVERLAPS expression"),
+								 ag_scanner_errposition(@6, scanner)));
+            $$ = make_function_expr(list_make1(makeString("overlaps")), list_concat($2, $6), @4);
+        }     
+    ; 
 
 property_value:
     expr_var '.' property_key_name
@@ -1970,6 +1984,7 @@ safe_keywords:
     | OPTIONAL   { $$ = pnstrdup($1, 8); }
     | OR         { $$ = pnstrdup($1, 2); }
     | ORDER      { $$ = pnstrdup($1, 5); }
+    | OVERLAPS   { $$ = pnstrdup($1, 8); }
     | REMOVE     { $$ = pnstrdup($1, 6); }
     | RETURN     { $$ = pnstrdup($1, 6); }
     | SET        { $$ = pnstrdup($1, 3); }
