@@ -2251,6 +2251,18 @@ SELECT * FROM age_atanh(null);
 SELECT * FROM age_atanh();
 
 --
+-- trim_scale()
+--
+SELECT trim_scale = results FROM cypher('expr', $$
+    RETURN trim_scale(0.1100)
+$$) AS (results agtype), trim_scale(0.1100);
+SELECT trim_scale = age_trim_scale FROM trim_scale(0.1100), age_trim_scale(agtype_in('0.1100'));
+-- should return null
+SELECT * FROM age_trim_scale(null);
+-- should fail
+SELECT * FROM age_trim_scale();
+
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
