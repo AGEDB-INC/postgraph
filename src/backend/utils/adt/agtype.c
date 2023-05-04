@@ -2624,29 +2624,18 @@ PG_FUNCTION_INFO_V1(agtype_to_int4);
 Datum agtype_to_int4(PG_FUNCTION_ARGS)
 {
     agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
-    agtype_value agtv;
+  agtype_value agtv;
     int32 result = 0x0;
-    agtype *arg_agt;
 
-    /* get the agtype equivalence of any convertable input type */
-    arg_agt = get_one_agtype_from_variadic_args(fcinfo, 0, 1);
-
-    /* Return null if arg_agt is null. This covers SQL and Agtype NULLS */
-    if (arg_agt == NULL)
-        PG_RETURN_NULL();
-
-    if (!agtype_extract_scalar(&arg_agt->root, &agtv) ||
+    if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
         (agtv.type != AGTV_FLOAT &&
          agtv.type != AGTV_INTEGER &&
          agtv.type != AGTV_NUMERIC &&
          agtv.type != AGTV_STRING))
         cannot_cast_agtype_value(agtv.type, "int");
 
-    PG_FREE_IF_COPY(agtype_in, 0);
-
     if (agtv.type == AGTV_INTEGER)
-        result = DatumGetInt32(DirectFunctionCall1(int84,
-                                                   Int64GetDatum(agtv.val.int_value)));
+        result = agtv.val.int_value;
     else if (agtv.type == AGTV_FLOAT)
         result = DatumGetInt32(DirectFunctionCall1(dtoi4,
                                                    Float8GetDatum(agtv.val.float_value)));
@@ -2658,6 +2647,8 @@ Datum agtype_to_int4(PG_FUNCTION_ARGS)
                                                    CStringGetDatum(agtv.val.string.val)));
     else
         elog(ERROR, "invalid agtype type: %d", (int)agtv.type);
+
+    PG_FREE_IF_COPY(agtype_in, 0);
 
     PG_RETURN_INT32(result);
 }
