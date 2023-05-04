@@ -2663,16 +2663,9 @@ Datum agtype_to_int2(PG_FUNCTION_ARGS)
     agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
     agtype_value agtv;
     int16 result = 0x0;
-    agtype *arg_agt;
+   
 
-    /* get the agtype equivalence of any convertable input type */
-    arg_agt = get_one_agtype_from_variadic_args(fcinfo, 0, 1);
-
-    /* Return null if arg_agt is null. This covers SQL and Agtype NULLS */
-    if (arg_agt == NULL)
-        PG_RETURN_NULL();
-
-    if (!agtype_extract_scalar(&arg_agt->root, &agtv) ||
+    if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
         (agtv.type != AGTV_FLOAT &&
          agtv.type != AGTV_INTEGER &&
          agtv.type != AGTV_NUMERIC &&
