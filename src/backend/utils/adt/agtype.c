@@ -2816,16 +2816,15 @@ Datum agtype_to_int4_array(PG_FUNCTION_ARGS)
 {
     agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
     agtype_value agtv;
-    agtype_iterator_token agtv_token;
+    agtype_iterator *agtype_iterator;
     Datum *array_value;
     ArrayType *result;
     int element_size;
     int i;
 
-    agtype_iterator *agtype_iterator = agtype_iterator_init(&agtype_in->root);
-    agtv_token = agtype_iterator_next(&agtype_iterator, &agtv, false);
+    agtype_iterator = agtype_iterator_init(&agtype_in->root);
 
-    if (agtv.type != AGTV_ARRAY)
+    if (agtype_iterator_next(&agtype_iterator, &agtv, false) != WAGT_BEGIN_ARRAY)
     {
         cannot_cast_agtype_value(agtv.type, "int4[]");
     }
@@ -2834,7 +2833,7 @@ Datum agtype_to_int4_array(PG_FUNCTION_ARGS)
     array_value = (Datum *)palloc(sizeof(Datum) * element_size);
 
     i = 0;
-    while ((agtv_token = agtype_iterator_next(&agtype_iterator, &agtv, true)) != WAGT_END_ARRAY)
+    while (agtype_iterator_next(&agtype_iterator, &agtv, true) != WAGT_END_ARRAY)
     {
         int32 element_value = 0;
         if (agtv.type == AGTV_INTEGER)
