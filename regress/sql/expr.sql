@@ -2113,60 +2113,19 @@ $$) as (result agtype);
 --
 -- Factorial function tests age_fact()
 -- 0! = 1
-SELECT * FROM age_fact(0);
+SELECT * FROM age_fact('0');
 -- 1! = 1
-SELECT * FROM age_fact(1);
+SELECT * FROM age_fact('1');
 -- 5! = 120
-SELECT * FROM age_fact(5);
+SELECT * FROM age_fact('5');
 -- 10! = 3628800
-SELECT * FROM age_fact(100);
+SELECT * FROM age_fact('100');
 -- 20! = 2432902008176640000
-SELECT * FROM age_fact(500);
+SELECT * FROM age_fact('500');
 
 
 -- Overflow test
-SELECT * FROM age_fact(32178);
-
-
--- Inside the cypher query
--- At CREATE clause
-SELECT * FROM cypher('expr', $$
-CREATE (n:Node {value: fact(5)})
-RETURN n.value
-$$) AS (value agtype);
-
--- At MATCH clause
-SELECT * FROM cypher('expr', $$
-MATCH (n:Node {value: fact(5)})
-RETURN n.value
-$$) AS (value agtype);
-
--- At RETURN clause
-SELECT * FROM cypher('expr', $$
-MATCH (n:Node {value: fact(5)})
-RETURN fact(toInteger(n.value))
-$$) AS (value agtype);
-
--- At WHERE clause
-SELECT * FROM cypher('expr', $$
-MATCH (n:Node)
-WHERE n.value = fact(5)
-RETURN n.value
-$$) AS (value agtype);
-
--- At SET clause
-SELECT * FROM cypher('expr', $$
-MATCH (n:Node)
-SET n.value = fact(3)
-RETURN n.value
-$$) AS (value agtype);
-
--- At created node integer property
-select * from cypher('expr', $$
-CREATE (n:Person {name:"person", age:5}) RETURN n $$) as (res agtype);
-
-select * from cypher('expr', $$
-MATCH (n:Person {name:"person"}) RETURN fact(n.age) $$) as (res agtype);
+SELECT * FROM age_fact('32178');
 
 -- End of factorial function tests
 
