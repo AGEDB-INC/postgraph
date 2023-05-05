@@ -1785,6 +1785,47 @@ SELECT * FROM age_atan2();
 SELECT * FROM age_atan2(1);
 
 --
+-- Hyperbolic functions: sinh, cosh
+--
+SELECT * FROM cypher('expr', $$
+    RETURN sinh(3.1415)
+$$) AS (results agtype);
+SELECT sinh = age_sinh FROM sinh(3.1415), age_sinh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM cypher('expr', $$
+	RETURN sinh(null)
+$$) AS (results agtype);
+-- should fail
+SELECT * FROM cypher('expr', $$
+	RETURN sinh("0")
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN sinh()
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN sinh('0')
+$$) AS (results agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN cosh(3.1415)
+$$) AS (results agtype);
+SELECT cosh = age_cosh FROM cosh(3.1415), age_cosh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM cypher('expr', $$
+	RETURN cosh(null)
+$$) AS (results agtype);
+-- should fail
+SELECT * FROM cypher('expr', $$
+	RETURN cosh("0")
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN cosh()
+$$) AS (results agtype);
+SELECT * FROM cypher('expr', $$
+	RETURN cosh('0')
+$$) AS (results agtype);
+
+--
 -- pi
 --
 SELECT * FROM cypher('expr', $$
@@ -2162,6 +2203,86 @@ $$) as (result agtype);
 SELECT * from cypher('expr', $$
     RETURN contains.age_sqrt(25)
 $$) as (result agtype);
+
+--
+-- user defined function expressions - testing for age_cbrt function
+--
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(25)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(25::pg_float8)
+$$) as (result agtype);
+-- should return null
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt(null::pg_float8)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_cbrt(null)
+$$) as (result agtype);
+-- should fail
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt()
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN pg_catalog.cbrt("1"::pg_float8)
+$$) as (result agtype);
+-- should fail do to schema but using a reserved_keyword
+SELECT * from cypher('expr', $$
+    RETURN distinct.age_cbrt(25)
+$$) as (result agtype);
+SELECT * from cypher('expr', $$
+    RETURN contains.age_cbrt(25)
+$$) as (result agtype);
+
+--
+-- tanh()
+--
+SELECT tanh = results FROM cypher('expr', $$
+    RETURN tanh(3.1415)
+$$) AS (results agtype), tanh(3.1415);
+SELECT tanh = age_tanh FROM tanh(3.1415), age_tanh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM age_tanh(null);
+-- should fail
+SELECT * FROM age_tanh();
+
+--
+-- sinh()
+--
+SELECT asinh = results FROM cypher('expr', $$
+    RETURN asinh(3.1415)
+$$) AS (results agtype), asinh(3.1415);
+SELECT asinh = age_asinh FROM asinh(3.1415), age_asinh(agtype_in('3.1415'));
+-- should return null
+SELECT * FROM age_asinh(null);
+-- should fail
+SELECT * FROM age_asinh();
+
+--
+-- atanh()
+--
+SELECT atanh = results FROM cypher('expr', $$
+    RETURN atanh(0.1)
+$$) AS (results agtype), atanh(0.1);
+SELECT atanh = age_atanh FROM atanh(0.1), age_atanh(agtype_in('0.1'));
+-- should return null
+SELECT * FROM age_atanh(null);
+-- should fail
+SELECT * FROM age_atanh();
+
+--
+-- trim_scale()
+--
+SELECT trim_scale = results FROM cypher('expr', $$
+    RETURN trim_scale(0.1100)
+$$) AS (results agtype), trim_scale(0.1100);
+SELECT trim_scale = age_trim_scale FROM trim_scale(0.1100), age_trim_scale(agtype_in('0.1100'));
+-- should return null
+SELECT * FROM age_trim_scale(null);
+-- should fail
+SELECT * FROM age_trim_scale();
 
 --
 -- aggregate functions avg(), sum(), count(), & count(*)

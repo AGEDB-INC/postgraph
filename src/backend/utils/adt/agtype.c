@@ -7165,6 +7165,62 @@ Datum age_atan2(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_sinh);
+
+Datum age_sinh(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    float8 x;
+    float8 angle;
+    bool is_null = true;
+
+    /*
+     * sinh() supports agtype integer, float, and numeric for the input
+     * expression.
+     */
+
+    x = get_float_compatible_arg(AGTYPE_P_GET_DATUM(AG_GET_ARG_AGTYPE_P(0)), AGTYPEOID, "sinh", &is_null);
+
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    angle = DatumGetFloat8(DirectFunctionCall1(dsinh,
+                                               Float8GetDatum(x)));
+
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = angle;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_cosh);
+
+Datum age_cosh(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    float8 x;
+    float8 angle;
+    bool is_null = true;
+
+    /*
+     * cosh() supports agtype integer, float, and numeric for the input
+     * expression.
+     */
+
+    x = get_float_compatible_arg(AGTYPE_P_GET_DATUM(AG_GET_ARG_AGTYPE_P(0)), AGTYPEOID, "cosh", &is_null);
+
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    angle = DatumGetFloat8(DirectFunctionCall1(dcosh,
+                                               Float8GetDatum(x)));
+
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = angle;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_degrees);
 
 Datum age_degrees(PG_FUNCTION_ARGS)
@@ -7813,6 +7869,137 @@ Datum age_sqrt(PG_FUNCTION_ARGS)
     /* build the result */
     agtv_result.type = AGTV_FLOAT;
     agtv_result.val.float_value = float_result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_cbrt);
+
+Datum age_cbrt(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    float8 input;
+    float8 result;
+    bool is_null = true;
+    /*
+     * cbrt() supports agtype integer, float,
+     * and numeric for the input
+     */
+
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "cbrt", &is_null);
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    result = DatumGetFloat8(DirectFunctionCall1(dcbrt,
+                                                Float8GetDatum(input)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_tanh);
+
+Datum age_tanh(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    float8 input;
+    float8 result;
+    bool is_null = true;
+    /*
+     * tanh supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "tanh", &is_null);
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    result = DatumGetFloat8(DirectFunctionCall1(dtanh,
+                                                Float8GetDatum(input)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_asinh);
+
+Datum age_asinh(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    float8 input;
+    float8 result;
+    bool is_null = true;
+    /*
+     * asinh supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "asinh", &is_null);
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    result = DatumGetFloat8(DirectFunctionCall1(dasinh,
+                                                Float8GetDatum(input)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_atanh);
+
+Datum age_atanh(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    float8 input;
+    float8 result;
+    bool is_null = true;
+    /*
+     * atanh supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    input = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "atanh", &is_null);
+
+    /* We need the input as a float8 so that we can pass it off to PG */
+    result = DatumGetFloat8(DirectFunctionCall1(datanh,
+                                                Float8GetDatum(input)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
+PG_FUNCTION_INFO_V1(age_trim_scale);
+
+Datum age_trim_scale(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    Numeric result;
+    bool is_null = true;
+    Numeric numeric_input;
+
+    /*
+     * trim_scale supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    numeric_input= get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "trim_scale", &is_null, NULL);
+
+    // /* We need the input as a Numeric so that we can pass it off to PG */
+    result = DatumGetNumeric(DirectFunctionCall1(numeric_trim_scale,
+                                                NumericGetDatum(numeric_input)));
+
+    agtv_result.type = AGTV_NUMERIC;
+    agtv_result.val.numeric = result;
 
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
