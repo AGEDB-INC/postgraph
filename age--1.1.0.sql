@@ -3856,6 +3856,15 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+-- lcm function
+CREATE FUNCTION ag_catalog.age_lcm(agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+STRICT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 
 --
 -- aggregate function components for stdev(internal, agtype)

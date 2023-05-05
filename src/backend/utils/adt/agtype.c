@@ -8004,7 +8004,42 @@ Datum age_trim_scale(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_lcm);
 
+Datum age_lcm(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    agtype *agt_arg0 = AG_GET_ARG_AGTYPE_P(0);
+    agtype *agt_arg1 = AG_GET_ARG_AGTYPE_P(1);
+    agtype_value *arg0;
+    agtype_value *arg1;
+
+    /* lcm supports agtype integer as input */
+    arg0 = get_ith_agtype_value_from_container(&agt_arg0->root, 0);
+    arg1 = get_ith_agtype_value_from_container(&agt_arg1->root, 0);
+
+    /* only integers are allowed */
+    if (arg0->type != AGTV_INTEGER || arg1->type != AGTV_INTEGER )
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                 errmsg("arguments must resolve to an integer")));
+
+    /* check for agtype null */
+    if (arg0->type == AGTV_NULL)
+        PG_RETURN_POINTER(agt_arg1);
+    if (arg1->type == AGTV_NULL)
+        PG_RETURN_POINTER(agt_arg0);
+
+    agtv_result.val.numeric = DatumGetNumeric(
+                DirectFunctionCall2(numeric_lcm,
+                                    DirectFunctionCall1(int8_numeric,
+                                                        Int64GetDatum(arg0->val.int_value)),
+                                    DirectFunctionCall1(int8_numeric,
+                                                        Int64GetDatum(arg1->val.int_value))));
+    agtv_result.type = AGTV_NUMERIC;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
 
 PG_FUNCTION_INFO_V1(age_timestamp);
 

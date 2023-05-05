@@ -2149,6 +2149,44 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 
 --
+-- lcm()
+--
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1, 2)
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(10, 30)
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(0, 0)
+$$) as (result agtype);
+
+SELECT * FROM age_lcm('1', '2');
+
+SELECT * FROM age_lcm('25', '125');
+
+SELECT * FROM age_lcm('0', '0');
+
+SELECT * FROM age_lcm('10', '25');
+
+-- should fail
+SELECT * FROM cypher('expr', $$
+    RETURN lcm()
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1)
+$$) as (result agtype);
+
+SELECT * FROM age_lcm('1.5', '2');
+
+
+-- end of lcm()
+
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
