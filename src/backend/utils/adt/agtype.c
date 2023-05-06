@@ -8004,7 +8004,18 @@ Datum age_trim_scale(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_setseed);
 
+Datum age_setseed(PG_FUNCTION_ARGS)
+{
+    float8 seed;
+    bool is_null = true;
+    seed = get_float_compatible_arg(AG_GET_ARG_AGTYPE_P(0), AGTYPEOID, "setseed", &is_null);
+    
+    DirectFunctionCall1(setseed, Float8GetDatum(seed));
+
+    PG_RETURN_VOID();
+}
 
 PG_FUNCTION_INFO_V1(age_timestamp);
 
