@@ -2182,6 +2182,33 @@ SELECT * from cypher('expr', $$
     RETURN contains.age_sqrt(25)
 $$) as (result agtype);
 
+--- trunc(agtype, agtype)
+
+SELECT * from age_trunc('13.2245','1');
+SELECT * from age_trunc('13.2245','2');
+SELECT * from age_trunc('153.2245','3');
+SELECT * from age_trunc('153.2245','4');
+SELECT * from age_trunc('153.2245','0');
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_trunc(13.2245,1)
+$$) as (result agtype);
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_trunc(13.2245,2)
+$$) as (result agtype);
+
+-- fails
+SELECT * from age_trunc('13.2245','1.1');
+SELECT * from age_trunc('13.2245','2.2');
+
+
+
+
+
+
+---
+
 --
 -- user defined function expressions - testing for age_cbrt function
 --

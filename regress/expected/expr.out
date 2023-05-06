@@ -5197,6 +5197,59 @@ $$) as (result agtype);
 ERROR:  schema "contains" does not exist
 LINE 2:     RETURN contains.age_sqrt(25)
                                     ^
+--- trunc(agtype, agtype)
+SELECT * from age_trunc('13.2245','1');
+   age_trunc   
+---------------
+ 13.2::numeric
+(1 row)
+
+SELECT * from age_trunc('13.2245','2');
+   age_trunc    
+----------------
+ 13.22::numeric
+(1 row)
+
+SELECT * from age_trunc('153.2245','3');
+    age_trunc     
+------------------
+ 153.224::numeric
+(1 row)
+
+SELECT * from age_trunc('153.2245','4');
+     age_trunc     
+-------------------
+ 153.2245::numeric
+(1 row)
+
+SELECT * from age_trunc('153.2245','0');
+  age_trunc   
+--------------
+ 153::numeric
+(1 row)
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_trunc(13.2245,1)
+$$) as (result agtype);
+    result     
+---------------
+ 13.2::numeric
+(1 row)
+
+SELECT * from cypher('expr', $$
+    RETURN ag_catalog.age_trunc(13.2245,2)
+$$) as (result agtype);
+     result     
+----------------
+ 13.22::numeric
+(1 row)
+
+-- fails
+SELECT * from age_trunc('13.2245','1.1');
+ERROR:  trunc() unsupported argument type
+SELECT * from age_trunc('13.2245','2.2');
+ERROR:  trunc() unsupported argument type
+---
 --
 -- user defined function expressions - testing for age_cbrt function
 --
