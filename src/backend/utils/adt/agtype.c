@@ -2807,6 +2807,19 @@ Datum int8_to_agtype(PG_FUNCTION_ARGS)
     return integer_to_agtype(PG_GETARG_INT64(0));
 }
 
+
+PG_FUNCTION_INFO_V1(float4_to_agtype);
+
+/*
+ * Cast float4 to agtype.
+ */
+Datum float4_to_agtype(PG_FUNCTION_ARGS)
+{
+    return float_to_agtype(PG_GETARG_FLOAT4(0));
+}
+
+
+
 PG_FUNCTION_INFO_V1(agtype_to_int4_array);
 
 /*
