@@ -2807,6 +2807,16 @@ Datum agtype_to_text(PG_FUNCTION_ARGS)
     PG_RETURN_TEXT_P(text_value);
 }
 
+PG_FUNCTION_INFO_V1(text_to_agtype);
+/*
+ * Cast text to agtpe.
+ */
+Datum text_to_agtype(PG_FUNCTION_ARGS)
+{
+    //return text as an agtype
+    return string_to_agtype(text_to_cstring(PG_GETARG_TEXT_PP(0)));
+}
+
 PG_FUNCTION_INFO_V1(bool_to_agtype);
 
 /*

@@ -3198,6 +3198,14 @@ AS 'MODULE_PATHNAME';
 CREATE CAST (agtype AS text)
 WITH FUNCTION ag_catalog.agtype_to_text(agtype);
 
+CREATE FUNCTION ag_catalog.text_to_agtype(text)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 -- agtype -> boolean (implicit)
 CREATE FUNCTION ag_catalog.agtype_to_bool(agtype)
 RETURNS boolean
