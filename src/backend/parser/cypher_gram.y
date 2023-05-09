@@ -86,7 +86,7 @@
                  HOUR
                  IN INTERVAL IS
                  JULIAN
-                 LIMIT
+                 LIMIT LOCALTIME
                  MATCH MERGE MICROSECONDS MILLENIUM MILLISECONDS MINUTE MONTH
                  NOT NULL_P
                  OPTIONAL OR ORDER OVERLAPS
@@ -1590,7 +1590,11 @@ expr_func_subexpr:
 								 errmsg("wrong number of parameters on right side of OVERLAPS expression"),
 								 ag_scanner_errposition(@6, scanner)));
             $$ = make_function_expr(list_make1(makeString("overlaps")), list_concat($2, $6), @4);
-        }     
+        }    
+    | LOCALTIME
+        {
+            $$ = make_function_expr(list_make1(makeString("localtime")), NIL, @1);
+        }
     ; 
 
 property_value:
