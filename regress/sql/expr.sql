@@ -2189,6 +2189,8 @@ SELECT * from age_trunc('13.2245','2');
 SELECT * from age_trunc('153.2245','3');
 SELECT * from age_trunc('153.2245','4');
 SELECT * from age_trunc('153.2245','0');
+SELECT * from age_trunc('10.2245');
+SELECT * from age_trunc('10');
 
 SELECT * from cypher('expr', $$
     RETURN ag_catalog.age_trunc(13.2245,1)

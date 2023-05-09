@@ -5228,6 +5228,18 @@ SELECT * from age_trunc('153.2245','0');
  153::numeric
 (1 row)
 
+SELECT * from age_trunc('10.2245');
+  age_trunc  
+-------------
+ 10::numeric
+(1 row)
+
+SELECT * from age_trunc('10');
+  age_trunc  
+-------------
+ 10::numeric
+(1 row)
+
 SELECT * from cypher('expr', $$
     RETURN ag_catalog.age_trunc(13.2245,1)
 $$) as (result agtype);
