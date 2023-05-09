@@ -3954,6 +3954,20 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION age_justify_hours(agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_overlaps(agtype, agtype, agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION age_date_bin(agtype, agtype, agtype)
 RETURNS agtype
 LANGUAGE c
