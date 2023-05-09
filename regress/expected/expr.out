@@ -5537,6 +5537,48 @@ $$) AS (age agtype);
 (1 row)
 
 --
+-- isfinite
+--
+select * from cypher('expr',$$ 
+    RETURN isfinite('infinity'::date)
+    $$) as (result agtype);
+ result 
+--------
+ false
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN isfinite('2001-02-16'::date)
+    $$) as (result agtype);
+ result 
+--------
+ true
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN isfinite('2001-02-16 23:40:00'::timestamp)
+    $$) as (result agtype);
+ result 
+--------
+ true
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN isfinite('infinity'::timestamp)
+    $$) as (result agtype);
+ result 
+--------
+ false
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN isfinite('15 minutes'::interval)
+    $$) as (result agtype);
+ result 
+--------
+ true
+
+--
 -- justify_hours
 --
 select * from cypher('expr',$$ 
