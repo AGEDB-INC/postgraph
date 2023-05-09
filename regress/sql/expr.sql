@@ -2344,6 +2344,22 @@ select * from cypher('expr',$$
     $$) as (result agtype);
 
 --
+-- justify_days
+--
+select * from cypher('expr',$$ 
+    RETURN justify_days('5 weeks'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_days('35 days'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_days('4 weeks 8 days'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_days('1 month 5 weeks'::interval)
+$$) as (result agtype);
+
+--
 -- justify_hours
 --
 select * from cypher('expr',$$ 
