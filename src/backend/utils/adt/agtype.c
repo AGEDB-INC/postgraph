@@ -9371,7 +9371,7 @@ PG_FUNCTION_INFO_V1(age_overlaps);
 
 Datum age_overlaps(PG_FUNCTION_ARGS)
 {
-     agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
+    agtype *arg1 = AG_GET_ARG_AGTYPE_P(0);
     agtype *arg2 = AG_GET_ARG_AGTYPE_P(1);
     agtype *arg3 = AG_GET_ARG_AGTYPE_P(2);
     agtype *arg4 = AG_GET_ARG_AGTYPE_P(3);
