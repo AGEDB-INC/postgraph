@@ -2325,6 +2325,25 @@ SELECT * FROM cypher('expr', $$
 $$) AS (age agtype);
 
 --
+-- isfinite
+--
+select * from cypher('expr',$$ 
+    RETURN isfinite('infinity'::date)
+    $$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN isfinite('2001-02-16'::date)
+    $$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN isfinite('2001-02-16 23:40:00'::timestamp)
+    $$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN isfinite('infinity'::timestamp)
+    $$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN isfinite('15 minutes'::interval)
+    $$) as (result agtype);
+
+--
 -- justify_days
 --
 select * from cypher('expr',$$ 
@@ -2338,6 +2357,19 @@ select * from cypher('expr',$$
 $$) as (result agtype);
 select * from cypher('expr',$$ 
     RETURN justify_days('1 month 5 weeks'::interval)
+$$) as (result agtype);
+
+--
+-- justify_hours
+--
+select * from cypher('expr',$$ 
+    RETURN justify_hours('27 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_hours('1 week 27 hours'::interval)
+$$) as (result agtype);
+select * from cypher('expr',$$ 
+    RETURN justify_hours('2 days 30 hours'::interval)
 $$) as (result agtype);
 
 --
@@ -2876,6 +2908,138 @@ SELECT * from cypher('time', $$RETURN date_trunc('Week','2001-02-16 20:38:40+00'
 SELECT * from cypher('time', $$RETURN date_trunc('Hour','3 Days 02:47:33'::interval)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN date_trunc('Day','3 Days 02:47:33'::interval)$$) as (range agtype);
 SELECT * from cypher('time', $$RETURN date_trunc('Month','3 Days 02:47:33'::interval)$$) as (range agtype);
+
+--
+-- Overlap
+--
+
+-- date date date date
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'2001-10-29'::date) overlaps ('2001-10-30'::date,'2002-10-30'::date)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'2001-10-31'::date) overlaps ('2001-10-30'::date,'2002-10-30'::date)
+$$) as (result agtype);
+
+-- date interval date interval
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'10 days'::interval) overlaps ('2001-10-30'::date,'10 days'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'365 days'::interval) overlaps ('2001-10-30'::date,'10 days'::interval)
+$$) as (result agtype);
+
+-- date interval date date
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'10 days'::interval) overlaps ('2001-10-30'::date,'2001-11-09'::date)
+$$) as (result agtype);
+select * from cypher('time',$$  
+    RETURN ('2001-02-16'::date,'365 days'::interval) overlaps ('2001-10-30'::date,'2001-11-09'::date)
+$$) as (result agtype);
+
+-- date date date interval
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'2001-10-28'::date) overlaps ('2001-10-30'::date,'-2 days'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::date,'2001-10-28'::date) overlaps ('2001-10-30'::date,'-3 days'::interval)
+$$) as (result agtype);
+
+-- timestamp timestamp timestamp timestamp
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'2001-10-29'::timestamp) overlaps ('2001-10-30'::timestamp,'2002-10-30'::timestamp)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'2001-10-31'::timestamp) overlaps ('2001-10-30'::timestamp,'2002-10-30'::timestamp)
+$$) as (result agtype);
+
+-- timestamp interval timestamp interval
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'10 days'::interval) overlaps ('2001-10-30'::timestamp,'10 days'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'365 days'::interval) overlaps ('2001-10-30'::timestamp,'10 days'::interval)
+$$) as (result agtype);
+
+-- timestamp interval timestamp timestamp
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'10 days'::interval) overlaps ('2001-10-30'::timestamp,'2001-11-09'::timestamp)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'365 days'::interval) overlaps ('2001-10-30'::timestamp,'2001-11-09'::timestamp)
+$$) as (result agtype);
+
+-- timestamp timestamp timestamp interval
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'2001-10-28'::timestamp) overlaps ('2001-10-30'::timestamp,'-2 days'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('2001-02-16'::timestamp,'2001-10-28'::timestamp) overlaps ('2001-10-30'::timestamp,'-3 days'::interval)
+$$) as (result agtype);
+
+-- time time time time
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'21:00:00'::time) overlaps ('21:00:00'::time,'22:00:00'::time)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'21:01:00'::time) overlaps ('21:00:00'::time,'22:00:00'::time)
+$$) as (result agtype);
+
+-- time interval time interval
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'10 minutes'::interval) overlaps ('20:10:00'::time,'10 minutes'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'11 minutes'::interval) overlaps ('20:10:00'::time,'10 minutes'::interval)
+$$) as (result agtype);
+
+-- time interval time time
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'10 minutes'::interval) overlaps ('20:10:00'::time,'20:20:00'::time)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'11 minutes'::interval) overlaps ('20:10:00'::time,'20:20:00'::time)
+$$) as (result agtype);
+
+-- time time time interval
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'20:08:00'::time) overlaps ('20:10:00'::time,'-2 minutes'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00'::time,'20:08:00'::time) overlaps ('20:10:00'::time,'-3 minutes'::interval)
+$$) as (result agtype);
+
+-- timetz timetz timetz timetz
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'21:00:00+00'::timetz) overlaps ('21:00:00+00'::timetz,'22:00:00+00'::timetz)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'21:01:00+00'::timetz) overlaps ('21:00:00+00'::timetz,'22:00:00+00'::timetz)
+$$) as (result agtype);
+
+-- timetz interval timetz interval
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'10 minutes'::interval) overlaps ('20:10:00+00'::timetz,'10 minutes'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'11 minutes'::interval) overlaps ('20:10:00+00'::timetz,'10 minutes'::interval)
+$$) as (result agtype);
+
+-- timetz interval timetz timetz
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'10 minutes'::interval) overlaps ('20:10:00+00'::timetz,'20:20:00+00'::timetz)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'11 minutes'::interval) overlaps ('20:10:00+00'::timetz,'20:20:00+00'::timetz)
+$$) as (result agtype);
+
+-- timetz timetz timetz interval
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'20:08:00+00'::timetz) overlaps ('20:10:00+00'::timetz,'-2 minutes'::interval)
+$$) as (result agtype);
+select * from cypher('time',$$ 
+    RETURN ('20:00:00+00'::timetz,'20:08:00+00'::timetz) overlaps ('20:10:00+00'::timetz,'-3 minutes'::interval)
+$$) as (result agtype);
 
 --
 -- Cleanup
