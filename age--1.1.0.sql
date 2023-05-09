@@ -3810,7 +3810,7 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 -- age_trunc
-CREATE FUNCTION ag_catalog.age_trunc(agtype, agtype)
+CREATE FUNCTION ag_catalog.age_trunc(agtype, agtype DEFAULT '0')
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
