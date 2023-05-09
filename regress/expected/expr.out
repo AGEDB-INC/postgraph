@@ -5580,6 +5580,41 @@ select * from cypher('expr',$$
 (1 row)
 
 --
+-- justify_interval
+--
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 month -1 hours'::interval)
+$$) as (result agtype);
+       result       
+--------------------
+ @ 29 days 23 hours
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 month 33 days 1 hours'::interval)
+$$) as (result agtype);
+         result         
+------------------------
+ @ 2 mons 3 days 1 hour
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_interval('1 week 6 days 27 hours'::interval)
+$$) as (result agtype);
+      result       
+-------------------
+ @ 14 days 3 hours
+(1 row)
+
+select * from cypher('expr',$$ 
+    RETURN justify_interval('27 hours'::interval)
+$$) as (result agtype);
+     result      
+-----------------
+ @ 1 day 3 hours
+(1 row)
+
+--
 -- justify_days
 --
 select * from cypher('expr',$$ 
