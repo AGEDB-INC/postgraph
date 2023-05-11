@@ -6277,10 +6277,10 @@ SELECT text_to_agtype('test');
  "test"
 (1 row)
 
-SELECT '"This is a string"'::agtype::text;
-       text       
-------------------
- This is a string
+SELECT 'This is a string'::text::agtype;
+       agtype       
+--------------------
+ "This is a string"
 (1 row)
 
 --

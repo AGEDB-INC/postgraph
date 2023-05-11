@@ -2467,7 +2467,7 @@ SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 --
 
 SELECT text_to_agtype('test');
-SELECT '"This is a string"'::agtype::text;
+SELECT 'This is a string'::text::agtype;
 
 
 
