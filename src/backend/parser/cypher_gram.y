@@ -81,9 +81,9 @@
                  BY
                  CALL CASE COALESCE CONTAINS CREATE
                  DELETE DESC DESCENDING DETACH DISTINCT
-                 ELSE END_P ENDS EXISTS EXPLAIN
+                 ELSE END_P ENDS EXCEPT EXISTS EXPLAIN
                  FALSE_P
-                 IN IS
+                 IN INTERSECT IS
                  LIMIT
                  MATCH MERGE
                  NOT NULL_P
@@ -321,9 +321,21 @@ cypher_stmt:
         {
             $$ = $1;
         }
+    | '(' cypher_stmt ')'
+        {
+            $$ = $2;
+        }
     | cypher_stmt UNION all_or_distinct cypher_stmt
         {
             $$ = list_make1(make_set_op(SETOP_UNION, $3, $1, $4));
+        }
+    | cypher_stmt INTERSECT all_or_distinct cypher_stmt
+        {
+            $$ = list_make1(make_set_op(SETOP_INTERSECT, $3, $1, $4));
+        }
+    | cypher_stmt EXCEPT all_or_distinct cypher_stmt
+        {
+            $$ = list_make1(make_set_op(SETOP_EXCEPT, $3, $1, $4));
         }
     ;
 
