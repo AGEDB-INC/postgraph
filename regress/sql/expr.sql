@@ -18,7 +18,7 @@
  */
 
 SET extra_float_digits = 0;
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 
 SELECT * FROM create_graph('expr');

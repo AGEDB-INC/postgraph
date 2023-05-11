@@ -15,9 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-MODULE_big = age
+MODULE_big = agedb
 
-OBJS = src/backend/age.o \
+OBJS = src/backend/agedb.o \
        src/backend/catalog/ag_catalog.o \
        src/backend/catalog/ag_graph.o \
        src/backend/catalog/ag_label.o \
@@ -66,9 +66,9 @@ OBJS = src/backend/age.o \
        src/backend/utils/load/age_load.o \
        src/backend/utils/load/libcsv.o
 
-EXTENSION = age
+EXTENSION = agedb
 
-DATA = age--1.1.0.sql
+DATA = agedb--1.0.0.sql
 
 # sorted in dependency order
 REGRESS = scan \
@@ -94,7 +94,7 @@ REGRESS = scan \
 srcdir=`pwd`
 
 ag_regress_dir = $(srcdir)/regress
-REGRESS_OPTS = --load-extension=age --inputdir=$(ag_regress_dir) --outputdir=$(ag_regress_dir) --temp-instance=$(ag_regress_dir)/instance --port=61958 --encoding=UTF-8
+REGRESS_OPTS = --load-extension=agedb --inputdir=$(ag_regress_dir) --outputdir=$(ag_regress_dir) --temp-instance=$(ag_regress_dir)/instance --port=61958 --encoding=UTF-8
 
 ag_regress_out = instance/ log/ results/ regression.*
 EXTRA_CLEAN = $(addprefix $(ag_regress_dir)/, $(ag_regress_out)) src/backend/parser/cypher_gram.c src/include/parser/cypher_gram_def.h src/include/parser/cypher_kwlist_d.h

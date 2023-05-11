@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 --
 -- create_graph(), drop_label(), and drop_graph() tests

@@ -24,7 +24,7 @@
 --
 -- Load extension and set path
 --
-LOAD 'age';
+LOAD 'agedb';
 SET extra_float_digits = 0;
 SET search_path TO ag_catalog;
 

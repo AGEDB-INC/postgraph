@@ -18,7 +18,7 @@
  */
 
 SET extra_float_digits = 0;
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 
 SELECT create_graph('scan');
@@ -249,8 +249,8 @@ CREATE DATABASE contrib_regression_age_euc_kr
 
 \c contrib_regression_age_euc_kr
 
-CREATE EXTENSION age;
-LOAD 'age';
+CREATE EXTENSION agedb;
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 SELECT create_graph('scan');
 
@@ -264,7 +264,7 @@ SELECT drop_graph('scan', true);
 
 DROP DATABASE contrib_regression_age_euc_kr;
 
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 
 -- invalid Unicode escape sequence (must be \uXXXX or \UXXXXXXXX)

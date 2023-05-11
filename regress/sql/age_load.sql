@@ -1,6 +1,6 @@
 \! cp -r regress/age_load/data regress/instance/data/age_load
 
-LOAD 'age';
+LOAD 'agedb';
 
 SET search_path TO ag_catalog;
 SELECT create_graph('agload_test_graph');

@@ -17,19 +17,19 @@
  * under the License.
  */
 
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 
 SELECT create_graph('drop');
 
-DROP EXTENSION age;
+DROP EXTENSION agedb;
 
 SELECT nspname FROM pg_catalog.pg_namespace WHERE nspname = 'drop';
 
 SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'ag_catalog';
 
 -- Recreate the extension and validate we can recreate a graph
-CREATE EXTENSION age;
+CREATE EXTENSION agedb;
 
 SELECT create_graph('drop');
 
@@ -39,13 +39,13 @@ CREATE SCHEMA other_schema;
 CREATE TABLE other_schema.tbl (id agtype);
 
 -- Should Fail because agtype can't be dropped
-DROP EXTENSION age;
+DROP EXTENSION agedb;
 
 -- Check the graph still exist, because the DROP command failed
 SELECT nspname FROM pg_catalog.pg_namespace WHERE nspname = 'drop';
 
 -- Should succeed, delete the 'drop' schema and leave 'other_schema'
-DROP EXTENSION age CASCADE;
+DROP EXTENSION agedb CASCADE;
 
 -- 'other_schema' should exist, 'drop' should be deleted
 SELECT nspname FROM pg_catalog.pg_namespace WHERE nspname IN ('other_schema', 'drop');

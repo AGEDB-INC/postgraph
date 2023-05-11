@@ -17,7 +17,7 @@
  * under the License.
  */
 
-LOAD 'age';
+LOAD 'agedb';
 SET search_path TO ag_catalog;
 
 SELECT create_graph('cypher_union');
