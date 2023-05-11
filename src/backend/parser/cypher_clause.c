@@ -344,13 +344,9 @@ Query *transform_cypher_clause(cypher_parsestate *cpstate,
         {
             result = transform_cypher_return(cpstate, clause);
         }
-        else if (n->op == SETOP_UNION)
-        {
-            result = transform_cypher_union(cpstate, clause);
-        }
         else
         {
-            ereport(ERROR, (errmsg_internal("unexpected Node for cypher_return")));
+            result = transform_cypher_union(cpstate, clause);
         }
     }
     else if (is_ag_node(self, cypher_with))
@@ -683,7 +679,7 @@ transform_cypher_union_tree(cypher_parsestate *cpstate, cypher_clause *clause,
         Assert(cmp->larg == NULL && cmp->rarg == NULL);
         isLeaf = true;
     }
-    else if (cmp->op == SETOP_UNION)
+    else
     {
         Assert(cmp->larg != NULL && cmp->rarg != NULL);
         if (cmp->order_by || cmp->limit || cmp->skip)
@@ -694,12 +690,6 @@ transform_cypher_union_tree(cypher_parsestate *cpstate, cypher_clause *clause,
         {
             isLeaf = false;
         }
-    }
-    else
-    {
-        ereport(ERROR, (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-                errmsg("Cypher found an unsupported SETOP"),
-                parser_errposition(pstate, 0)));
     }
 
     if (isLeaf)
@@ -815,9 +805,7 @@ transform_cypher_union_tree(cypher_parsestate *cpstate, cypher_clause *clause,
          * went horribly wrong. That is an SQL contruct with no parallel in
          * cypher.
          */
-        if (isTopLevel &&
-            pstate->p_parent_cte &&
-            pstate->p_parent_cte->cterecursive)
+        if (isTopLevel && pstate->p_parent_cte && pstate->p_parent_cte->cterecursive)
         {
             ereport(ERROR, (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
                     errmsg("Cypher does not support recursive CTEs"),
