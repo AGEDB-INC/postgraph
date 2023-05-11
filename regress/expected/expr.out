@@ -1517,6 +1517,36 @@ SELECT float4_to_agtype(0.0);
  0.0
 (1 row)
 
+SELECT 42.42::float4::agtype;
+      agtype      
+------------------
+ 42.4199981689453
+(1 row)
+
+SELECT -42.42::float4::agtype;
+     ?column?      
+-------------------
+ -42.4199981689453
+(1 row)
+
+SELECT 0.0::float4::agtype;
+ agtype 
+--------
+ 0.0
+(1 row)
+
+SELECT float4_to_agtype(NULL);
+ float4_to_agtype 
+------------------
+ 
+(1 row)
+
+SELECT NULL::float4::agtype;
+ agtype 
+--------
+ 
+(1 row)
+
 -- should return SQL null
 SELECT agtype_typecast_numeric('null'::agtype);
  agtype_typecast_numeric 

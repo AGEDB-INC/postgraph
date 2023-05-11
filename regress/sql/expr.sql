@@ -679,6 +679,11 @@ $$) AS r(result agtype);
 SELECT float4_to_agtype(42.42);
 SELECT float4_to_agtype(-42.42);
 SELECT float4_to_agtype(0.0);
+SELECT 42.42::float4::agtype;
+SELECT -42.42::float4::agtype;
+SELECT 0.0::float4::agtype;
+SELECT float4_to_agtype(NULL);
+SELECT NULL::float4::agtype;
 
 -- should return SQL null
 SELECT agtype_typecast_numeric('null'::agtype);
