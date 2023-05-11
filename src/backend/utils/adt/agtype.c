@@ -2655,6 +2655,14 @@ Datum agtype_to_int4(PG_FUNCTION_ARGS)
 
 PG_FUNCTION_INFO_V1(agtype_to_int2);
 
+
+
+
+
+
+
+
+
 /*
  * Cast agtype to int2.
  */
@@ -2786,6 +2794,45 @@ Datum bool_to_agtype(PG_FUNCTION_ARGS)
 {
     return boolean_to_agtype(PG_GETARG_BOOL(0));
 }
+
+
+
+
+PG_FUNCTION_INFO_V1(float4_array_to_agtype);
+
+/*
+ * Cast float4 array to agtype.
+ */
+Datum float4_array_to_agtype(PG_FUNCTION_ARGS)
+{
+    ArrayType *arr;
+    agtype_value *agtv;
+    agtype *agt;
+
+    if (PG_ARGISNULL(0))
+        PG_RETURN_NULL();
+        
+    arr = PG_GETARG_ARRAYTYPE_P(0);
+    int n = (ARR_DIMS(arr))[0]; // assuming a 1-D array for simplicity
+    float4 *data = (float4*) ARR_DATA_PTR(arr);
+
+    agtv = palloc(sizeof(agtype_value));
+    agtv->type = AGTV_ARRAY;
+    
+    agtv->val.array.raw_scalar = false;
+    agtv->val.array.num_elems = n;
+    agtv->val.array.elems = palloc(sizeof(agtype_value) * n);
+    for (int i = 0; i < n; i++)
+    {
+        agtv->val.array.elems[i].type = AGTV_FLOAT;
+        agtv->val.array.elems[i].val.float_value = data[i];
+    }
+
+    agt = agtype_value_to_agtype(agtv);
+    PG_RETURN_POINTER(agt);
+}
+
+
 
 PG_FUNCTION_INFO_V1(float8_to_agtype);
 

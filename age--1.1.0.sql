@@ -3235,6 +3235,22 @@ AS 'MODULE_PATHNAME';
 CREATE CAST (float8 AS agtype)
 WITH FUNCTION ag_catalog.float8_to_agtype(float8);
 
+
+-- floa4[] -> agtype (explicit)
+CREATE FUNCTION ag_catalog.float4_array_to_agtype(float4[])
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE CAST (float4[] AS agtype)
+WITH FUNCTION ag_catalog.float4_array_to_agtype(float4[]);
+
+
+
+
 -- agtype -> float8 (implicit)
 CREATE FUNCTION ag_catalog.agtype_to_float8(agtype)
 RETURNS float8
