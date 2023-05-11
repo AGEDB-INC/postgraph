@@ -3206,6 +3206,10 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE CAST (text AS agtype)
+WITH FUNCTION ag_catalog.text_to_agtype(text);
+
+
 -- agtype -> boolean (implicit)
 CREATE FUNCTION ag_catalog.agtype_to_bool(agtype)
 RETURNS boolean

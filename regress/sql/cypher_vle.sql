@@ -232,12 +232,11 @@ AS $$
 DECLARE
     ag_param agtype;
 BEGIN
-    ag_param = FORMAT('{"list_name": "%s"}', $1)::agtype;
+    ag_param = FORMAT('{"list_name": %s}', $1::agtype);
     PERFORM * FROM cypher('mygraph', $CYPHER$
         MERGE (:head {name: $list_name})-[:next]->(:tail {name: $list_name})
     $CYPHER$, ag_param) AS (a agtype);
 END $$;
-
 CREATE OR REPLACE FUNCTION prepend_node(list_name text, node_content text)
 RETURNS void
 LANGUAGE 'plpgsql'
@@ -245,14 +244,13 @@ AS $$
 DECLARE
     ag_param agtype;
 BEGIN
-    ag_param = FORMAT('{"list_name": "%s", "node_content": "%s"}', $1, $2)::agtype;
+    ag_param = FORMAT('{"list_name": %s, "node_content": %s}', $1::agtype, $2::agtype);
     PERFORM * FROM cypher('mygraph', $CYPHER$
         MATCH (h:head {name: $list_name})-[e:next]->(v)
         DELETE e
         CREATE (h)-[:next]->(:node {content: $node_content})-[:next]->(v)
     $CYPHER$, ag_param) AS (a agtype);
 END $$;
-
 CREATE OR REPLACE FUNCTION show_list_use_vle(list_name text)
 RETURNS TABLE(node agtype)
 LANGUAGE 'plpgsql'
@@ -260,7 +258,7 @@ AS $$
 DECLARE
     ag_param agtype;
 BEGIN
-    ag_param = FORMAT('{"list_name": "%s"}', $1)::agtype;
+    ag_param = FORMAT('{"list_name": %s}', $1::agtype);
     RETURN QUERY
     SELECT * FROM cypher('mygraph', $CYPHER$
         MATCH (h:head {name: $list_name})-[e:next*]->(v:node)
