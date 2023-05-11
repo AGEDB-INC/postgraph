@@ -2800,7 +2800,7 @@ Datum float8_to_agtype(PG_FUNCTION_ARGS)
 PG_FUNCTION_INFO_V1(int8_to_agtype);
 
 /*
- * Cast float8 to agtype.
+ * Cast int8 to agtype.
  */
 Datum int8_to_agtype(PG_FUNCTION_ARGS)
 {
