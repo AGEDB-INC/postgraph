@@ -1740,6 +1740,29 @@ SELECT agtype_in('[NaN, {"e": 2.718281::numeric, "one": Infinity, "pie": 3.14159
  [NaN, {"e": 2.718281::numeric, "one": Infinity, "pie": 3.1415927}, 2::numeric, null]
 (1 row)
 
+-- Test agtype_to_float4 function
+SELECT agtype_to_float4('3.14'::agtype), 3.14::float4;
+ agtype_to_float4 | float4 
+------------------+--------
+             3.14 |   3.14
+(1 row)
+
+SELECT agtype_to_float4('-1.23'::agtype), -1.23::float4;
+ agtype_to_float4 | ?column? 
+------------------+----------
+            -1.23 |    -1.23
+(1 row)
+
+SELECT agtype_to_float4('0'::agtype), 0::float4;
+ agtype_to_float4 | float4 
+------------------+--------
+                0 |      0
+(1 row)
+
+SELECT agtype_to_float4('{"key": 42}'::agtype);  -- Expect ERROR
+ERROR:  cannot cast agtype object to type float
+SELECT agtype_to_float4('null'::agtype), null::float4;
+ERROR:  cannot cast agtype null to type float
 --
 -- Test typecast :: transform and execution logic for object (vertex & edge)
 --

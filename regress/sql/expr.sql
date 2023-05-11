@@ -766,6 +766,13 @@ RETURN (['NaN'::float, {one: 'inf'::float, pie: 3.1415927, e: 2.718281::numeric}
 $$) AS r(result agtype);
 SELECT agtype_in('[NaN, {"e": 2.718281::numeric, "one": Infinity, "pie": 3.1415927}, 2::numeric, null]');
 
+
+-- Test agtype_to_float4 function
+SELECT agtype_to_float4('3.14'::agtype), 3.14::float4;
+SELECT agtype_to_float4('-1.23'::agtype), -1.23::float4;
+SELECT agtype_to_float4('0'::agtype), 0::float4;
+SELECT agtype_to_float4('{"key": 42}'::agtype);  -- Expect ERROR
+SELECT agtype_to_float4('null'::agtype), null::float4;
 --
 -- Test typecast :: transform and execution logic for object (vertex & edge)
 --
