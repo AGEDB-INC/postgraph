@@ -1762,7 +1762,11 @@ SELECT agtype_to_float4('0'::agtype), 0::float4;
 SELECT agtype_to_float4('{"key": 42}'::agtype);  -- Expect ERROR
 ERROR:  cannot cast agtype object to type float
 SELECT agtype_to_float4('null'::agtype), null::float4;
-ERROR:  cannot cast agtype null to type float
+ agtype_to_float4 | float4 
+------------------+--------
+                  |       
+(1 row)
+
 --
 -- Test typecast :: transform and execution logic for object (vertex & edge)
 --

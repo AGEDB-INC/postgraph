@@ -2780,6 +2780,8 @@ Datum agtype_to_float4(PG_FUNCTION_ARGS)
     agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
     agtype_value agtv;
     float4 result;
+    if (is_agtype_null(agtype_in))
+       PG_RETURN_NULL();
 
     if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
         (agtv.type != AGTV_FLOAT &&
