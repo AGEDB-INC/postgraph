@@ -1595,6 +1595,10 @@ expr_func_subexpr:
         {
             $$ = make_function_expr(list_make1(makeString("localtime")), NIL, @1);
         }
+    | LOCALTIME '(' expr_list ')'
+        {
+            $$ = make_function_expr(list_make1(makeString("localtime")), $3, @1);
+        }
     ; 
 
 property_value:
@@ -1982,6 +1986,7 @@ safe_keywords:
     | IN         { $$ = pnstrdup($1, 2); }
     | IS         { $$ = pnstrdup($1, 2); }
     | LIMIT      { $$ = pnstrdup($1, 6); }
+    | LOCALTIME  { $$ = pnstrdup($1, 9); }
     | MATCH      { $$ = pnstrdup($1, 6); }
     | MERGE      { $$ = pnstrdup($1, 6); }
     | NOT        { $$ = pnstrdup($1, 3); }
