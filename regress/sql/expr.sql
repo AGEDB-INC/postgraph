@@ -2213,6 +2213,20 @@ $$) as (result agtype);
 SELECT * from cypher('expr', $$
     RETURN contains.age_cbrt(25)
 $$) as (result agtype);
+---
+
+--
+-- ceiling
+--
+SELECT * from age_ceiling('1.5');
+SELECT * from age_ceiling('100.521321');
+SELECT * from age_ceiling('-100.521321');
+SELECT * from age_ceiling('0');
+SELECT * from age_ceiling('0.0');
+SELECT * from age_ceiling('0.1');
+SELECT * from age_ceiling();
+SELECT * from age_ceiling(null);
+---
 
 --
 -- tanh()
