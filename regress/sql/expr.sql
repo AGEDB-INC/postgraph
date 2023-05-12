@@ -2300,6 +2300,19 @@ SELECT * FROM age_trim_scale(null);
 -- should fail
 SELECT * FROM age_trim_scale();
 
+
+--
+-- min_scale()
+--
+SELECT min_scale = results FROM cypher('expr', $$
+    RETURN min_scale(0.1100)
+$$) AS (results agtype), min_scale(0.1100);
+SELECT min_scale = age_min_scale FROM min_scale(0.1100), age_min_scale(agtype_in('0.1100'));
+-- should return null
+SELECT * FROM age_min_scale(null);
+-- should fail
+SELECT * FROM age_min_scale();
+
 --
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
