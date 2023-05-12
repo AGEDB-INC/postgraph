@@ -2276,6 +2276,42 @@ SELECT * FROM age_min_scale(null);
 SELECT * FROM age_min_scale();
 
 --
+-- gcd()
+--
+-- correct result
+SELECT * FROM age_gcd('25', '20');
+SELECT * FROM age_gcd('120', '200');
+SELECT * FROM age_gcd('0', '0');
+SELECT * FROM age_gcd('1', '1');
+SELECT * FROM age_gcd('-10', '20');
+SELECT * FROM age_gcd('-12', '-5');
+
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(5, 7)
+$$) as (result agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(30, 25)
+$$) as (result agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(10, 10)
+$$) as (result agtype);
+
+-- incorrect calling
+SELECT * FROM age_gcd(10, 20);
+SELECT * FROM age_gcd(1);
+SELECT * FROM age_gcd('16', 20);
+
+SELECT * FROM cypher('expr', $$
+    RETURN gcd()
+$$) as (result agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN gcd('expr', 0)
+$$) as (result agtype);
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(1.5, 2.5)
+$$) as (result agtype);
+
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
