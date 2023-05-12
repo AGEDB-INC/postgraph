@@ -6269,6 +6269,21 @@ SELECT * from cypher('list', $$RETURN labels(NULL)$$) as (Labels agtype);
 SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 ERROR:  labels() argument must be a vertex
 --
+-- text to agtype typecasting
+--
+SELECT text_to_agtype('test');
+ text_to_agtype 
+----------------
+ "test"
+(1 row)
+
+SELECT 'This is a string'::text::agtype;
+       agtype       
+--------------------
+ "This is a string"
+(1 row)
+
+--
 -- Cleanup
 --
 SELECT * FROM drop_graph('chained', true);

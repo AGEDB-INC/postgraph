@@ -2461,6 +2461,17 @@ SELECT * from cypher('list', $$MATCH (u) RETURN labels(u), u$$) as (Labels agtyp
 SELECT * from cypher('list', $$RETURN labels(NULL)$$) as (Labels agtype);
 -- should return an error
 SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
+
+--
+-- text to agtype typecasting
+--
+
+SELECT text_to_agtype('test');
+SELECT 'This is a string'::text::agtype;
+
+
+
+
 --
 -- Cleanup
 --

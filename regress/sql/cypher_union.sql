@@ -76,5 +76,27 @@ SELECT * FROM cypher('cypher_union', $$RETURN 1.0::int UNION RETURN 1.0::float U
 
 SELECT * FROM cypher('cypher_union', $$RETURN 1.0::float UNION RETURN 1::int UNION RETURN 1::float$$) AS (result agtype);
 
+-- Intersect
+
+SELECT * FROM cypher('cypher_union', $$MATCH (n) RETURN n INTERSECT MATCH (m) RETURN m$$) AS (result agtype);
+
+SELECT * FROM cypher('cypher_union', $$MATCH (n) RETURN n INTERSECT ALL MATCH (m) RETURN m$$) AS (result agtype);
+
+
+-- Except
+SELECT * FROM cypher('cypher_union', $$MATCH (n) RETURN n EXCEPT MATCH (m) RETURN m$$) AS (result agtype);
+
+SELECT * FROM cypher('cypher_union', $$MATCH (n) RETURN n EXCEPT ALL MATCH (m) RETURN m$$) AS (result agtype);
+
+-- Operator Precedence
+
+SELECT * FROM cypher('cypher_union', $$RETURN 2.0::int UNION (RETURN 1::float UNION ALL RETURN 1.0::float)$$) AS (result agtype);
+
+SELECT * FROM cypher('cypher_union', $$(RETURN 2.0::int UNION RETURN 1::float ) UNION ALL RETURN 1.0::float$$) AS (result agtype);
+
+
+
+
+
 
 SELECT drop_graph('cypher_union', true);
