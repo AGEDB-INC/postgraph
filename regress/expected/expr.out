@@ -6284,6 +6284,15 @@ SELECT 'This is a string'::text::agtype;
 (1 row)
 
 --
+-- text array to agtype typecasting
+--
+SELECT * FROM text_array_to_agtype(ARRAY [ '(408)-589-5846','(408)-589-5555' ]);
+         text_array_to_agtype         
+--------------------------------------
+ ["(408)-589-5846", "(408)-589-5555"]
+(1 row)
+
+--
 -- Cleanup
 --
 SELECT * FROM drop_graph('chained', true);

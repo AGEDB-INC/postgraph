@@ -2469,6 +2469,12 @@ SELECT * from cypher('list', $$RETURN labels("string")$$) as (Labels agtype);
 SELECT text_to_agtype('test');
 SELECT 'This is a string'::text::agtype;
 
+--
+-- text array to agtype typecasting
+--
+
+SELECT * FROM text_array_to_agtype(ARRAY [ '(408)-589-5846','(408)-589-5555' ]);
+
 
 
 
