@@ -3801,6 +3801,31 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 --
+-- count aggregate
+--
+CREATE AGGREGATE age_count(*)
+(
+    stype = int8,
+    sfunc = int8inc,
+    finalfunc = int8_to_agtype,
+    combinefunc = int8pl,
+    finalfunc_modify = READ_ONLY,
+    initcond = 0,
+    parallel = safe
+);
+
+CREATE AGGREGATE age_count(agtype)
+(
+    stype = int8,
+    sfunc = int8inc_any,
+    finalfunc = int8_to_agtype,
+    combinefunc = int8pl,
+    finalfunc_modify = READ_ONLY,
+    initcond = 0,
+    parallel = safe
+);
+
+--
 -- aggregate function components for stdev(internal, agtype)
 -- and stdevp(internal, agtype)
 --

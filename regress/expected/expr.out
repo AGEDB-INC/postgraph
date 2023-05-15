@@ -5244,7 +5244,7 @@ LINE 1: SELECT * FROM cypher('UCSC', $$ RETURN sum() $$) AS (sum agt...
                                                ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 SELECT * FROM cypher('UCSC', $$ RETURN count() $$) AS (count agtype);
-ERROR:  pg_catalog.count(*) must be used to call a parameterless aggregate function
+ERROR:  ag_catalog.age_count(*) must be used to call a parameterless aggregate function
 LINE 1: SELECT * FROM cypher('UCSC', $$ RETURN count() $$) AS (count...
                                                ^
 --
