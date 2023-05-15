@@ -3985,9 +3985,9 @@ Datum agtype_typecast_path(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(path.res));
 }
 
-PG_FUNCTION_INFO_V1(age_id);
+PG_FUNCTION_INFO_V1(agtype_id);
 
-Datum age_id(PG_FUNCTION_ARGS)
+Datum agtype_id(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4023,9 +4023,9 @@ Datum age_id(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_start_id);
+PG_FUNCTION_INFO_V1(agtype_start_id);
 
-Datum age_start_id(PG_FUNCTION_ARGS)
+Datum agtype_start_id(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4061,9 +4061,9 @@ Datum age_start_id(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_end_id);
+PG_FUNCTION_INFO_V1(agtype_end_id);
 
-Datum age_end_id(PG_FUNCTION_ARGS)
+Datum agtype_end_id(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4263,9 +4263,9 @@ static Datum get_vertex(const char *graph, const char *vertex_label,
     return result;
 }
 
-PG_FUNCTION_INFO_V1(age_startnode);
+PG_FUNCTION_INFO_V1(agtype_startnode);
 
-Datum age_startnode(PG_FUNCTION_ARGS)
+Datum agtype_startnode(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4328,9 +4328,9 @@ Datum age_startnode(PG_FUNCTION_ARGS)
     return result;
 }
 
-PG_FUNCTION_INFO_V1(age_endnode);
+PG_FUNCTION_INFO_V1(agtype_endnode);
 
-Datum age_endnode(PG_FUNCTION_ARGS)
+Datum agtype_endnode(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4393,9 +4393,9 @@ Datum age_endnode(PG_FUNCTION_ARGS)
     return result;
 }
 
-PG_FUNCTION_INFO_V1(age_head);
+PG_FUNCTION_INFO_V1(agtype_head);
 
-Datum age_head(PG_FUNCTION_ARGS)
+Datum agtype_head(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_result = NULL;
@@ -4427,9 +4427,9 @@ Datum age_head(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_last);
+PG_FUNCTION_INFO_V1(agtype_last);
 
-Datum age_last(PG_FUNCTION_ARGS)
+Datum agtype_last(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_result = NULL;
@@ -4461,9 +4461,9 @@ Datum age_last(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_properties);
+PG_FUNCTION_INFO_V1(agtype_properties);
 
-Datum age_properties(PG_FUNCTION_ARGS)
+Datum agtype_properties(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -4499,9 +4499,9 @@ Datum age_properties(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_length);
+PG_FUNCTION_INFO_V1(agtype_length);
 
-Datum age_length(PG_FUNCTION_ARGS)
+Datum agtype_length(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_path = NULL;
@@ -4535,9 +4535,9 @@ Datum age_length(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_toboolean);
+PG_FUNCTION_INFO_V1(agtype_toboolean);
 
-Datum age_toboolean(PG_FUNCTION_ARGS)
+Datum agtype_toboolean(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -4633,9 +4633,9 @@ Datum age_toboolean(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_tofloat);
+PG_FUNCTION_INFO_V1(agtype_tofloat);
 
-Datum age_tofloat(PG_FUNCTION_ARGS)
+Datum agtype_tofloat(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -4767,9 +4767,9 @@ Datum age_tofloat(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_tointeger);
+PG_FUNCTION_INFO_V1(agtype_tointeger);
 
-Datum age_tointeger(PG_FUNCTION_ARGS)
+Datum agtype_tointeger(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -4961,9 +4961,9 @@ Datum age_tointeger(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_size);
+PG_FUNCTION_INFO_V1(agtype_size);
 
-Datum age_size(PG_FUNCTION_ARGS)
+Datum agtype_size(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5062,9 +5062,9 @@ Datum agtype_to_graphid(PG_FUNCTION_ARGS)
     PG_RETURN_INT16(agtv.val.int_value);
 }
 
-PG_FUNCTION_INFO_V1(age_type);
+PG_FUNCTION_INFO_V1(agtype_type);
 
-Datum age_type(PG_FUNCTION_ARGS)
+Datum agtype_type(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_object = NULL;
@@ -5100,11 +5100,11 @@ Datum age_type(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_label);
+PG_FUNCTION_INFO_V1(agtype_label);
 /*
  * Executor function for label(edge/vertex).
  */
-Datum age_label(PG_FUNCTION_ARGS)
+Datum agtype_label(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_value = NULL;
@@ -5144,9 +5144,9 @@ Datum age_label(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(label));
 }
 
-PG_FUNCTION_INFO_V1(age_tostring);
+PG_FUNCTION_INFO_V1(agtype_tostring);
 
-Datum age_tostring(PG_FUNCTION_ARGS)
+Datum agtype_tostring(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5290,9 +5290,9 @@ static agtype_iterator *get_next_list_element(agtype_iterator *it,
     return it;
 }
 
-PG_FUNCTION_INFO_V1(age_reverse);
+PG_FUNCTION_INFO_V1(agtype_reverse);
 
-Datum age_reverse(PG_FUNCTION_ARGS)
+Datum agtype_reverse(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5416,9 +5416,9 @@ Datum age_reverse(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_toupper);
+PG_FUNCTION_INFO_V1(agtype_toupper);
 
-Datum age_toupper(PG_FUNCTION_ARGS)
+Datum agtype_toupper(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5506,9 +5506,9 @@ Datum age_toupper(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_tolower);
+PG_FUNCTION_INFO_V1(agtype_tolower);
 
-Datum age_tolower(PG_FUNCTION_ARGS)
+Datum agtype_tolower(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5596,9 +5596,9 @@ Datum age_tolower(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_rtrim);
+PG_FUNCTION_INFO_V1(agtype_rtrim);
 
-Datum age_rtrim(PG_FUNCTION_ARGS)
+Datum agtype_rtrim(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5687,9 +5687,9 @@ Datum age_rtrim(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_ltrim);
+PG_FUNCTION_INFO_V1(agtype_ltrim);
 
-Datum age_ltrim(PG_FUNCTION_ARGS)
+Datum agtype_ltrim(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5778,9 +5778,9 @@ Datum age_ltrim(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_trim);
+PG_FUNCTION_INFO_V1(agtype_trim);
 
-Datum age_trim(PG_FUNCTION_ARGS)
+Datum agtype_trim(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -5869,9 +5869,9 @@ Datum age_trim(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_right);
+PG_FUNCTION_INFO_V1(agtype_right);
 
-Datum age_right(PG_FUNCTION_ARGS)
+Datum agtype_right(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6010,9 +6010,9 @@ Datum age_right(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_left);
+PG_FUNCTION_INFO_V1(agtype_left);
 
-Datum age_left(PG_FUNCTION_ARGS)
+Datum agtype_left(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6151,9 +6151,9 @@ Datum age_left(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_substring);
+PG_FUNCTION_INFO_V1(agtype_substring);
 
-Datum age_substring(PG_FUNCTION_ARGS)
+Datum agtype_substring(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6320,9 +6320,9 @@ Datum age_substring(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_split);
+PG_FUNCTION_INFO_V1(agtype_split);
 
-Datum age_split(PG_FUNCTION_ARGS)
+Datum agtype_split(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6468,9 +6468,9 @@ Datum age_split(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_replace);
+PG_FUNCTION_INFO_V1(agtype_replace);
 
-Datum age_replace(PG_FUNCTION_ARGS)
+Datum agtype_replace(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6774,9 +6774,9 @@ static Numeric get_numeric_compatible_arg(Datum arg, Oid type, char *funcname,
     return result;
 }
 
-PG_FUNCTION_INFO_V1(age_sin);
+PG_FUNCTION_INFO_V1(agtype_sin);
 
-Datum age_sin(PG_FUNCTION_ARGS)
+Datum agtype_sin(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6821,9 +6821,9 @@ Datum age_sin(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_cos);
+PG_FUNCTION_INFO_V1(agtype_cos);
 
-Datum age_cos(PG_FUNCTION_ARGS)
+Datum agtype_cos(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6868,9 +6868,9 @@ Datum age_cos(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_tan);
+PG_FUNCTION_INFO_V1(agtype_tan);
 
-Datum age_tan(PG_FUNCTION_ARGS)
+Datum agtype_tan(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6915,9 +6915,9 @@ Datum age_tan(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_cot);
+PG_FUNCTION_INFO_V1(agtype_cot);
 
-Datum age_cot(PG_FUNCTION_ARGS)
+Datum agtype_cot(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -6962,9 +6962,9 @@ Datum age_cot(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_asin);
+PG_FUNCTION_INFO_V1(agtype_asin);
 
-Datum age_asin(PG_FUNCTION_ARGS)
+Datum agtype_asin(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7013,9 +7013,9 @@ Datum age_asin(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_acos);
+PG_FUNCTION_INFO_V1(agtype_acos);
 
-Datum age_acos(PG_FUNCTION_ARGS)
+Datum agtype_acos(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7064,9 +7064,9 @@ Datum age_acos(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_atan);
+PG_FUNCTION_INFO_V1(agtype_atan);
 
-Datum age_atan(PG_FUNCTION_ARGS)
+Datum agtype_atan(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7111,9 +7111,9 @@ Datum age_atan(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_atan2);
+PG_FUNCTION_INFO_V1(agtype_atan2);
 
-Datum age_atan2(PG_FUNCTION_ARGS)
+Datum agtype_atan2(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7165,9 +7165,9 @@ Datum age_atan2(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_degrees);
+PG_FUNCTION_INFO_V1(agtype_degrees);
 
-Datum age_degrees(PG_FUNCTION_ARGS)
+Datum agtype_degrees(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7212,9 +7212,9 @@ Datum age_degrees(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_radians);
+PG_FUNCTION_INFO_V1(agtype_radians);
 
-Datum age_radians(PG_FUNCTION_ARGS)
+Datum agtype_radians(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7260,9 +7260,9 @@ Datum age_radians(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_round);
+PG_FUNCTION_INFO_V1(agtype_round);
 
-Datum age_round(PG_FUNCTION_ARGS)
+Datum agtype_round(PG_FUNCTION_ARGS)
 {
     Datum *args = NULL;
     bool *nulls = NULL;
@@ -7341,9 +7341,9 @@ Datum age_round(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_ceil);
+PG_FUNCTION_INFO_V1(agtype_ceil);
 
-Datum age_ceil(PG_FUNCTION_ARGS)
+Datum agtype_ceil(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7390,9 +7390,9 @@ Datum age_ceil(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_floor);
+PG_FUNCTION_INFO_V1(agtype_floor);
 
-Datum age_floor(PG_FUNCTION_ARGS)
+Datum agtype_floor(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7440,9 +7440,9 @@ Datum age_floor(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_abs);
+PG_FUNCTION_INFO_V1(agtype_abs);
 
-Datum age_abs(PG_FUNCTION_ARGS)
+Datum agtype_abs(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7513,9 +7513,9 @@ Datum age_abs(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_sign);
+PG_FUNCTION_INFO_V1(agtype_sign);
 
-Datum age_sign(PG_FUNCTION_ARGS)
+Datum agtype_sign(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7563,9 +7563,9 @@ Datum age_sign(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_log);
+PG_FUNCTION_INFO_V1(agtype_log);
 
-Datum age_log(PG_FUNCTION_ARGS)
+Datum agtype_log(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7624,9 +7624,9 @@ Datum age_log(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_log10);
+PG_FUNCTION_INFO_V1(agtype_log10);
 
-Datum age_log10(PG_FUNCTION_ARGS)
+Datum agtype_log10(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7690,9 +7690,9 @@ Datum age_log10(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_e);
+PG_FUNCTION_INFO_V1(agtype_e);
 
-Datum age_e(PG_FUNCTION_ARGS)
+Datum agtype_e(PG_FUNCTION_ARGS)
 {
     agtype_value agtv_result;
     float8 float_result;
@@ -7707,9 +7707,9 @@ Datum age_e(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_exp);
+PG_FUNCTION_INFO_V1(agtype_exp);
 
-Datum age_exp(PG_FUNCTION_ARGS)
+Datum agtype_exp(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7756,9 +7756,9 @@ Datum age_exp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_sqrt);
+PG_FUNCTION_INFO_V1(agtype_sqrt);
 
-Datum age_sqrt(PG_FUNCTION_ARGS)
+Datum agtype_sqrt(PG_FUNCTION_ARGS)
 {
     int nargs;
     Datum *args;
@@ -7817,9 +7817,9 @@ Datum age_sqrt(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_timestamp);
+PG_FUNCTION_INFO_V1(agtype_timestamp);
 
-Datum age_timestamp(PG_FUNCTION_ARGS)
+Datum agtype_timestamp(PG_FUNCTION_ARGS)
 {
     agtype_value agtv_result;
     struct timespec ts;
@@ -7836,8 +7836,8 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_pi);
-Datum age_pi(PG_FUNCTION_ARGS)
+PG_FUNCTION_INFO_V1(agtype_pi);
+Datum agtype_pi(PG_FUNCTION_ARGS)
 {
     agtype_value agtv = {
         .type = AGTV_FLOAT,
@@ -7847,8 +7847,8 @@ Datum age_pi(PG_FUNCTION_ARGS)
     AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv));
 }
 
-PG_FUNCTION_INFO_V1(age_rand);
-Datum age_rand(PG_FUNCTION_ARGS)
+PG_FUNCTION_INFO_V1(agtype_rand);
+Datum agtype_rand(PG_FUNCTION_ARGS)
 {
     agtype_value agtv = {
         .type = AGTV_FLOAT,
@@ -8124,9 +8124,9 @@ agtype *get_one_agtype_from_variadic_args(FunctionCallInfo fcinfo,
  * Note: The sql definition is STRICT so no input NULLs need to
  * be dealt with except for agtype.
  */
-PG_FUNCTION_INFO_V1(age_agtype_sum);
+PG_FUNCTION_INFO_V1(agtype_agtype_sum);
 
-Datum age_agtype_sum(PG_FUNCTION_ARGS)
+Datum agtype_agtype_sum(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg0 = AG_GET_ARG_AGTYPE_P(0);
     agtype *agt_arg1 = AG_GET_ARG_AGTYPE_P(1);
@@ -8281,12 +8281,10 @@ Datum age_agtype_sum(PG_FUNCTION_ARGS)
 
 /*
  * Wrapper function for float8_accum to take an agtype input.
- * This function is defined as STRICT so it does not need to check
- * for NULL input parameters
  */
-PG_FUNCTION_INFO_V1(age_agtype_float8_accum);
+PG_FUNCTION_INFO_V1(agtype_agtype_float8_accum);
 
-Datum age_agtype_float8_accum(PG_FUNCTION_ARGS)
+Datum agtype_agtype_float8_accum(PG_FUNCTION_ARGS)
 {
     Datum dfloat;
     Datum result;
@@ -8300,9 +8298,9 @@ Datum age_agtype_float8_accum(PG_FUNCTION_ARGS)
 }
 
 /* Wrapper for stdDev function. */
-PG_FUNCTION_INFO_V1(age_float8_stddev_samp_aggfinalfn);
+PG_FUNCTION_INFO_V1(agtype_float8_stddev_samp_aggfinalfn);
 
-Datum age_float8_stddev_samp_aggfinalfn(PG_FUNCTION_ARGS)
+Datum agtype_float8_stddev_samp_aggfinalfn(PG_FUNCTION_ARGS)
 {
     Datum result;
     PGFunction func;
@@ -8332,9 +8330,9 @@ Datum age_float8_stddev_samp_aggfinalfn(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_float));
 }
 
-PG_FUNCTION_INFO_V1(age_float8_stddev_pop_aggfinalfn);
+PG_FUNCTION_INFO_V1(agtype_float8_stddev_pop_aggfinalfn);
 
-Datum age_float8_stddev_pop_aggfinalfn(PG_FUNCTION_ARGS)
+Datum agtype_float8_stddev_pop_aggfinalfn(PG_FUNCTION_ARGS)
 {
     Datum result;
     PGFunction func;
@@ -8364,9 +8362,9 @@ Datum age_float8_stddev_pop_aggfinalfn(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_float));
 }
 
-PG_FUNCTION_INFO_V1(age_agtype_larger_aggtransfn);
+PG_FUNCTION_INFO_V1(agtype_agtype_larger_aggtransfn);
 
-Datum age_agtype_larger_aggtransfn(PG_FUNCTION_ARGS)
+Datum agtype_agtype_larger_aggtransfn(PG_FUNCTION_ARGS)
 {
     agtype *agtype_arg1;
     agtype *agtype_arg2;
@@ -8396,9 +8394,9 @@ Datum age_agtype_larger_aggtransfn(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_larger);
 }
 
-PG_FUNCTION_INFO_V1(age_agtype_smaller_aggtransfn);
+PG_FUNCTION_INFO_V1(agtype_agtype_smaller_aggtransfn);
 
-Datum age_agtype_smaller_aggtransfn(PG_FUNCTION_ARGS)
+Datum agtype_agtype_smaller_aggtransfn(PG_FUNCTION_ARGS)
 {
     agtype *agtype_arg1 = NULL;
     agtype *agtype_arg2 = NULL;
@@ -8438,9 +8436,9 @@ static Datum float8_lerp(Datum lo, Datum hi, double pct)
 }
 
 /* Code borrowed and adjusted from PG's ordered_set_transition function */
-PG_FUNCTION_INFO_V1(age_percentile_aggtransfn);
+PG_FUNCTION_INFO_V1(agtype_percentile_aggtransfn);
 
-Datum age_percentile_aggtransfn(PG_FUNCTION_ARGS)
+Datum agtype_percentile_aggtransfn(PG_FUNCTION_ARGS)
 {
     PercentileGroupAggState *pgastate;
 
@@ -8504,9 +8502,9 @@ Datum age_percentile_aggtransfn(PG_FUNCTION_ARGS)
 }
 
 /* Code borrowed and adjusted from PG's percentile_cont_final function */
-PG_FUNCTION_INFO_V1(age_percentile_cont_aggfinalfn);
+PG_FUNCTION_INFO_V1(agtype_percentile_cont_aggfinalfn);
 
-Datum age_percentile_cont_aggfinalfn(PG_FUNCTION_ARGS)
+Datum agtype_percentile_cont_aggfinalfn(PG_FUNCTION_ARGS)
 {
     PercentileGroupAggState *pgastate;
     float8 percentile;
@@ -8581,9 +8579,9 @@ Datum age_percentile_cont_aggfinalfn(PG_FUNCTION_ARGS)
 }
 
 /* Code borrowed and adjusted from PG's percentile_disc_final function */
-PG_FUNCTION_INFO_V1(age_percentile_disc_aggfinalfn);
+PG_FUNCTION_INFO_V1(agtype_percentile_disc_aggfinalfn);
 
-Datum age_percentile_disc_aggfinalfn(PG_FUNCTION_ARGS)
+Datum agtype_percentile_disc_aggfinalfn(PG_FUNCTION_ARGS)
 {
     PercentileGroupAggState *pgastate;
     double percentile;
@@ -8644,9 +8642,9 @@ Datum age_percentile_disc_aggfinalfn(PG_FUNCTION_ARGS)
 }
 
 /* functions to support the aggregate function COLLECT() */
-PG_FUNCTION_INFO_V1(age_collect_aggtransfn);
+PG_FUNCTION_INFO_V1(agtype_collect_aggtransfn);
 
-Datum age_collect_aggtransfn(PG_FUNCTION_ARGS)
+Datum agtype_collect_aggtransfn(PG_FUNCTION_ARGS)
 {
     agtype_in_state *castate;
     int nargs;
@@ -8734,9 +8732,9 @@ Datum age_collect_aggtransfn(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(castate);
 }
 
-PG_FUNCTION_INFO_V1(age_collect_aggfinalfn);
+PG_FUNCTION_INFO_V1(agtype_collect_aggfinalfn);
 
-Datum age_collect_aggfinalfn(PG_FUNCTION_ARGS)
+Datum agtype_collect_aggfinalfn(PG_FUNCTION_ARGS)
 {
     agtype_in_state *castate;
     MemoryContext old_mcxt;
@@ -8918,14 +8916,14 @@ agtype_value *get_agtype_value(char *funcname, agtype *agt_arg,
     return agtv_value;
 }
 
-PG_FUNCTION_INFO_V1(age_eq_tilde);
+PG_FUNCTION_INFO_V1(agtype_eq_tilde);
 /*
  * Execution function for =~ aka regular expression comparisons
  *
  * Note: Everything must resolve to 2 agtype strings. All others types are
  * errors.
  */
-Datum age_eq_tilde(PG_FUNCTION_ARGS)
+Datum agtype_eq_tilde(PG_FUNCTION_ARGS)
 {
     agtype *agt_string = NULL;
     agtype *agt_pattern = NULL;
@@ -9039,11 +9037,11 @@ static agtype_iterator *get_next_object_key(agtype_iterator *it,
     return it;
 }
 
-PG_FUNCTION_INFO_V1(age_keys);
+PG_FUNCTION_INFO_V1(agtype_keys);
 /*
  * Execution function to implement openCypher keys() function
  */
-Datum age_keys(PG_FUNCTION_ARGS)
+Datum agtype_keys(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_result = NULL;
@@ -9115,11 +9113,11 @@ Datum age_keys(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agtv_result));
 }
 
-PG_FUNCTION_INFO_V1(age_nodes);
+PG_FUNCTION_INFO_V1(agtype_nodes);
 /*
  * Execution function to implement openCypher nodes() function
  */
-Datum age_nodes(PG_FUNCTION_ARGS)
+Datum agtype_nodes(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_path = NULL;
@@ -9176,7 +9174,7 @@ Datum age_nodes(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agis_result.res));
 }
 
-PG_FUNCTION_INFO_V1(age_labels);
+PG_FUNCTION_INFO_V1(agtype_labels);
 /*
  * Execution function to implement openCypher labels() function
  *
@@ -9185,7 +9183,7 @@ PG_FUNCTION_INFO_V1(age_labels);
  * This function is defined to return NULL on NULL input. So, no need to check
  * for SQL NULL input.
  */
-Datum age_labels(PG_FUNCTION_ARGS)
+Datum agtype_labels(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_temp = NULL;
@@ -9245,11 +9243,11 @@ Datum age_labels(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agis_result.res));
 }
 
-PG_FUNCTION_INFO_V1(age_relationships);
+PG_FUNCTION_INFO_V1(agtype_relationships);
 /*
  * Execution function to implement openCypher relationships() function
  */
-Datum age_relationships(PG_FUNCTION_ARGS)
+Datum agtype_relationships(PG_FUNCTION_ARGS)
 {
     agtype *agt_arg = NULL;
     agtype_value *agtv_path = NULL;
@@ -9380,11 +9378,11 @@ static int64 get_int64_from_int_datums(Datum d, Oid type, char *funcname,
     return result;
 }
 
-PG_FUNCTION_INFO_V1(age_range);
+PG_FUNCTION_INFO_V1(agtype_range);
 /*
  * Execution function to implement openCypher range() function
  */
-Datum age_range(PG_FUNCTION_ARGS)
+Datum agtype_range(PG_FUNCTION_ARGS)
 {
     Datum *args = NULL;
     bool *nulls = NULL;
@@ -9485,14 +9483,14 @@ Datum age_range(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(agis_result.res));
 }
 
-PG_FUNCTION_INFO_V1(age_unnest);
+PG_FUNCTION_INFO_V1(agtype_unnest);
 /*
  * Function to convert the Array type of Agtype into each row. It is used for
  * Cypher `UNWIND` clause, but considering the situation in which the user can
  * directly use this function in vanilla PGSQL, put a second parameter related
  * to this.
  */
-Datum age_unnest(PG_FUNCTION_ARGS)
+Datum agtype_unnest(PG_FUNCTION_ARGS)
 {
     agtype *agtype_arg = AG_GET_ARG_AGTYPE_P(0);
     bool block_types = PG_GETARG_BOOL(1);

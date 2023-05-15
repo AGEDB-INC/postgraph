@@ -676,33 +676,33 @@ SELECT _agtype_build_path(
 --
 -- id, startid, endid
 --
-SELECT age_id(_agtype_build_vertex('1'::graphid, $$label_name$$, agtype_build_map()));
-SELECT age_id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
+SELECT id(_agtype_build_vertex('1'::graphid, $$label_name$$, agtype_build_map()));
+SELECT id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
 			  $$label_name$$, agtype_build_map('id', 2)));
 
-SELECT age_start_id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
+SELECT start_id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
 			  $$label_name$$, agtype_build_map('id', 2)));
 
-SELECT age_end_id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
+SELECT end_id(_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
 			  $$label_name$$, agtype_build_map('id', 2)));
 
 
-SELECT age_id(_agtype_build_path(
+SELECT id(_agtype_build_path(
 	_agtype_build_vertex('2'::graphid, $$label_name$$, agtype_build_map()),
 	_agtype_build_edge('1'::graphid, '2'::graphid, '3'::graphid,
 			  $$label$$, agtype_build_map('id', 2)),
 	_agtype_build_vertex('3'::graphid, $$label$$, agtype_build_map('id', 2))
 ));
 
-SELECT age_id(agtype_in('1'));
+SELECT id(agtype_in('1'));
 
-SELECT age_id(NULL);
-SELECT age_start_id(NULL);
-SELECT age_end_id(NULL);
+SELECT id(NULL);
+SELECT start_id(NULL);
+SELECT end_id(NULL);
 
-SELECT age_id(agtype_in('null'));
-SELECT age_start_id(agtype_in('null'));
-SELECT age_end_id(agtype_in('null'));
+SELECT id(agtype_in('null'));
+SELECT start_id(agtype_in('null'));
+SELECT end_id(agtype_in('null'));
 
 SELECT agtype_contains('{"id": 1}','{"id": 1}');
 SELECT agtype_contains('{"id": 1}','{"id": 2}');
