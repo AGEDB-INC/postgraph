@@ -7836,6 +7836,17 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_pi);
+Datum age_pi(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv = {
+        .type = AGTV_FLOAT,
+        .val.float_value = M_PI
+    };
+
+    AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv));
+}
+
 /*
  * Converts an agtype object or array to a binary agtype_value.
  */

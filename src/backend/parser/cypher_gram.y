@@ -1979,8 +1979,6 @@ static Node *make_function_expr(List *func_name, List *exprs, int location)
          */
         if (pg_strcasecmp(name, "rand") == 0)
             funcname = SystemFuncName("random");
-        else if (pg_strcasecmp(name, "pi") == 0)
-            funcname = SystemFuncName("pi");
         else
             /*
              * We don't qualify AGE functions here. This is done in the
