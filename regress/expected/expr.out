@@ -4391,14 +4391,14 @@ SELECT * FROM cypher('expr', $$
 $$) AS (results agtype);
 ERROR:  function ag_catalog.age_pi(agtype) does not exist
 LINE 2:     RETURN pi(null)
-                     ^
+                   ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 SELECT * FROM cypher('expr', $$
     RETURN pi(1)
 $$) AS (results agtype);
 ERROR:  function ag_catalog.age_pi(agtype) does not exist
 LINE 2:     RETURN pi(1)
-                     ^
+                   ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
 -- radians() & degrees()
@@ -5109,13 +5109,13 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 ERROR:  schema "distinct" does not exist
 LINE 2:     RETURN distinct.age_sqrt(25)
-                                    ^
+                   ^
 SELECT * from cypher('expr', $$
     RETURN contains.age_sqrt(25)
 $$) as (result agtype);
 ERROR:  schema "contains" does not exist
 LINE 2:     RETURN contains.age_sqrt(25)
-                                    ^
+                   ^
 --
 -- aggregate functions avg(), sum(), count(), & count(*)
 --

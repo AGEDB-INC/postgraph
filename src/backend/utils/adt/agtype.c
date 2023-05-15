@@ -7847,6 +7847,17 @@ Datum age_pi(PG_FUNCTION_ARGS)
     AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv));
 }
 
+PG_FUNCTION_INFO_V1(age_rand);
+Datum age_rand(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv = {
+        .type = AGTV_FLOAT,
+        .val.float_value = DatumGetFloat8(DirectFunctionCall1(random, Float8GetDatum(1)))
+    };
+
+    AG_RETURN_AGTYPE_P(agtype_value_to_agtype(&agtv));
+}
+
 /*
  * Converts an agtype object or array to a binary agtype_value.
  */
