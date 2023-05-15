@@ -3793,12 +3793,51 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION age_pi()
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE FUNCTION age_rand()
+RETURNS agtype
+LANGUAGE c 
+IMMUTABLE 
+PARALLEL SAFE 
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION ag_catalog.age_timestamp()
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
+
+--
+-- count aggregate
+--
+CREATE AGGREGATE age_count(*)
+(
+    stype = int8,
+    sfunc = int8inc,
+    finalfunc = int8_to_agtype,
+    combinefunc = int8pl,
+    finalfunc_modify = READ_ONLY,
+    initcond = 0,
+    parallel = safe
+);
+
+CREATE AGGREGATE age_count(agtype)
+(
+    stype = int8,
+    sfunc = int8inc_any,
+    finalfunc = int8_to_agtype,
+    combinefunc = int8pl,
+    finalfunc_modify = READ_ONLY,
+    initcond = 0,
+    parallel = safe
+);
 
 --
 -- aggregate function components for stdev(internal, agtype)
