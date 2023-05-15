@@ -2149,6 +2149,31 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 
 --
+-- age_setseed
+--
+
+SELECT * from age_setseed('1');
+SELECT * from age_setseed('0.1');
+SELECT * from age_setseed('-0.1');
+SELECT * from age_setseed('-1');
+SELECT * from age_setseed('0.9');
+
+-- should return null
+SELECT * from age_setseed(null);
+
+-- fails
+SELECT * from age_setseed('2');
+SELECT * from age_setseed('-3');
+SELECT * from age_setseed('1.1');
+
+
+
+
+
+
+-- end of age_setseed
+
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
