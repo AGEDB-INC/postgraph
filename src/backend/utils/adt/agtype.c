@@ -2869,6 +2869,62 @@ Datum text_to_agtype(PG_FUNCTION_ARGS)
     return string_to_agtype(text_to_cstring(PG_GETARG_TEXT_PP(0)));
 }
 
+PG_FUNCTION_INFO_V1(text_array_to_agtype);
+/*
+ * Cast text to agtpe.
+ */
+Datum text_array_to_agtype(PG_FUNCTION_ARGS)
+{
+
+    ArrayType *keys = PG_GETARG_ARRAYTYPE_P(0);
+    int i;
+    Datum *key_datums;
+    bool *key_nulls;
+    int elem_count;
+    agtype_in_state edges_result;
+
+    deconstruct_array(keys, TEXTOID, -1, false, 'i', &key_datums, &key_nulls,
+                      &elem_count);
+
+    /*initialize our arrays*/
+    MemSet(&edges_result, 0, sizeof(agtype_in_state));
+
+    /*start our array */
+    edges_result.res = push_agtype_value(&edges_result.parse_state,
+                                         WAGT_BEGIN_ARRAY, NULL);
+    
+    /*Get each Element from the array and add it into agtype array */
+    for (i = 0; i < elem_count; i++)
+    {
+        agtype_value strVal;
+
+        if (key_nulls[i])
+        {
+            continue;
+        }
+        
+
+        strVal.type = AGTV_STRING;
+        strVal.val.string.val = VARDATA(key_datums[i]);
+        strVal.val.string.len = VARSIZE(key_datums[i]) - VARHDRSZ;
+
+        edges_result.res = push_agtype_value(&edges_result.parse_state,
+                                             WAGT_ELEM, &strVal);
+
+    }
+
+    /* close our agtype array */
+    edges_result.res = push_agtype_value(&edges_result.parse_state,
+                                         WAGT_END_ARRAY, NULL);
+
+    /* make it an array */
+    edges_result.res->type = AGTV_ARRAY;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(edges_result.res));
+
+
+}
+
 PG_FUNCTION_INFO_V1(bool_to_agtype);
 
 /*
