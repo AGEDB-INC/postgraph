@@ -1498,6 +1498,55 @@ $$) AS r(result agtype);
  [0, {"e": 2.718281::numeric, "one": 1, "pie": 3.1415927}, 2::numeric, null]
 (1 row)
 
+-- Testing float4 to agtype
+SELECT float4_to_agtype(42.42);
+ float4_to_agtype 
+------------------
+ 42.4199981689453
+(1 row)
+
+SELECT float4_to_agtype(-42.42);
+ float4_to_agtype  
+-------------------
+ -42.4199981689453
+(1 row)
+
+SELECT float4_to_agtype(0.0);
+ float4_to_agtype 
+------------------
+ 0.0
+(1 row)
+
+SELECT 42.42::float4::agtype;
+      agtype      
+------------------
+ 42.4199981689453
+(1 row)
+
+SELECT -42.42::float4::agtype;
+     ?column?      
+-------------------
+ -42.4199981689453
+(1 row)
+
+SELECT 0.0::float4::agtype;
+ agtype 
+--------
+ 0.0
+(1 row)
+
+SELECT float4_to_agtype(NULL);
+ float4_to_agtype 
+------------------
+ 
+(1 row)
+
+SELECT NULL::float4::agtype;
+ agtype 
+--------
+ 
+(1 row)
+
 -- should return SQL null
 SELECT agtype_typecast_numeric('null'::agtype);
  agtype_typecast_numeric 

@@ -675,6 +675,16 @@ $$) AS r(result agtype);
 SELECT * FROM cypher('expr', $$
 RETURN ([0, {one: 1, pie: 3.1415927, e: 2.718281::numeric}, 2::numeric, null])
 $$) AS r(result agtype);
+-- Testing float4 to agtype
+SELECT float4_to_agtype(42.42);
+SELECT float4_to_agtype(-42.42);
+SELECT float4_to_agtype(0.0);
+SELECT 42.42::float4::agtype;
+SELECT -42.42::float4::agtype;
+SELECT 0.0::float4::agtype;
+SELECT float4_to_agtype(NULL);
+SELECT NULL::float4::agtype;
+
 -- should return SQL null
 SELECT agtype_typecast_numeric('null'::agtype);
 SELECT agtype_typecast_numeric(null);
