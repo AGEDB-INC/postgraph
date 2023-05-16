@@ -2771,6 +2771,58 @@ Datum agtype_to_float8(PG_FUNCTION_ARGS)
     PG_RETURN_FLOAT8(result);
 }
 
+PG_FUNCTION_INFO_V1(agtype_to_float4);
+/*
+ * Cast agtype to float4.
+ */
+Datum agtype_to_float4(PG_FUNCTION_ARGS)
+{
+    agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value agtv;
+    float4 result;
+    if (is_agtype_null(agtype_in))
+       PG_RETURN_NULL();
+
+    if (!agtype_extract_scalar(&agtype_in->root, &agtv) ||
+        (agtv.type != AGTV_FLOAT &&
+         agtv.type != AGTV_INTEGER &&
+         agtv.type != AGTV_NUMERIC))
+        cannot_cast_agtype_value(agtv.type, "float");
+
+    PG_FREE_IF_COPY(agtype_in, 0);
+
+    if (agtv.type == AGTV_FLOAT)
+        result = agtv.val.float_value;
+    else if (agtv.type == AGTV_INTEGER)
+    {
+        /*
+         * Get the string representation of the integer because it could be
+         * too large to fit in a float. Let the float routine determine
+         * what to do with it.
+         */
+        char *string = DatumGetCString(DirectFunctionCall1(int8out,
+                           Int64GetDatum(agtv.val.int_value)));
+        bool is_valid = false;
+        /* turn it into a float */
+        result = DatumGetFloat4(DirectFunctionCall3(float4in, CStringGetDatum(string), 0, -1));
+
+        /* return null if it was not a valid float */
+        if (errno != 0)
+            ereport(ERROR, (errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
+                            errmsg("cannot cast to float4, integer value out of range")));
+    }
+    else if (agtv.type == AGTV_NUMERIC)
+        result = DatumGetFloat4(DirectFunctionCall1(numeric_float4,
+                     NumericGetDatum(agtv.val.numeric)));
+    else
+        elog(ERROR, "invalid agtype type: %d", (int)agtv.type);
+
+    PG_RETURN_FLOAT4(result);
+}
+
+
+
+
 PG_FUNCTION_INFO_V1(agtype_to_text);
 
 /*
