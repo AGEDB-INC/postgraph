@@ -1550,6 +1550,10 @@ expr_func_subexpr:
 	{
 	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), NIL, @1);
 	}
+    | CURRENT_TIMESTAMP '(' expr_list ')'
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), $3, @1);
+	}
     | EXISTS '(' anonymous_path ')'
         {
             cypher_sub_pattern *sub;
