@@ -8004,6 +8004,34 @@ Datum age_trim_scale(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+
+PG_FUNCTION_INFO_V1(age_min_scale);
+
+Datum age_min_scale(PG_FUNCTION_ARGS)
+{
+
+    agtype_value agtv_result;
+    int32 result;
+    bool is_null = true;
+    Numeric numeric_input;
+
+    /*
+     * minscale supports agtype integer, float,
+     * and numeric for the input
+     */    
+
+    numeric_input= get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "min_scale", &is_null, NULL);
+
+    // /* We need the input as a Numeric so that we can pass it off to PG */
+    result = DatumGetInt32(DirectFunctionCall1(numeric_min_scale,
+                                                NumericGetDatum(numeric_input)));
+
+    agtv_result.type = AGTV_INTEGER;
+    agtv_result.val.int_value = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_lcm);
 
 Datum age_lcm(PG_FUNCTION_ARGS)
