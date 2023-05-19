@@ -5204,6 +5204,54 @@ SELECT * FROM age_lcm('1.5', '2');
 ERROR:  arguments must resolve to an integer
 -- end of lcm()
 --
+-- age_setseed
+--
+SELECT * from age_setseed('1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('0.1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('-0.1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('-1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('0.9');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+-- should return null
+SELECT * from age_setseed(null);
+ age_setseed 
+-------------
+ 
+(1 row)
+
+-- fails
+SELECT * from age_setseed('2');
+ERROR:  setseed parameter 2 is out of allowed range [-1,1]
+SELECT * from age_setseed('-3');
+ERROR:  setseed parameter -3 is out of allowed range [-1,1]
+SELECT * from age_setseed('1.1');
+ERROR:  setseed parameter 1.1 is out of allowed range [-1,1]
+-- end of age_setseed
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
@@ -5445,6 +5493,36 @@ SELECT * FROM age_trim_scale(null);
 SELECT * FROM age_trim_scale();
 ERROR:  function age_trim_scale() does not exist
 LINE 1: SELECT * FROM age_trim_scale();
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+--
+-- min_scale()
+--
+SELECT min_scale = results FROM cypher('expr', $$
+    RETURN min_scale(0.1100)
+$$) AS (results agtype), min_scale(0.1100);
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT min_scale = age_min_scale FROM min_scale(0.1100), age_min_scale(agtype_in('0.1100'));
+ ?column? 
+----------
+ t
+(1 row)
+
+-- should return null
+SELECT * FROM age_min_scale(null);
+ age_min_scale 
+---------------
+ 
+(1 row)
+
+-- should fail
+SELECT * FROM age_min_scale();
+ERROR:  function age_min_scale() does not exist
+LINE 1: SELECT * FROM age_min_scale();
                       ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
