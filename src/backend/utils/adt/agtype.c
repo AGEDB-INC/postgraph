@@ -8063,6 +8063,29 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_width_bucket);
+
+Datum age_width_bucket(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    bool is_null = true;
+    
+    Numeric	operand = get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0), AGTYPEOID, "width_bucket", &is_null, NULL);
+    Numeric	bound1 = get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(1), AGTYPEOID, "width_bucket", &is_null, NULL);
+    Numeric	bound2 = get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(2), AGTYPEOID, "width_bucket", &is_null, NULL);
+    int64 count = get_int64_from_int_datums(AG_GET_ARG_AGTYPE_P(3), AGTYPEOID, "width_bucket", &is_null);
+    
+    agtv_result.val.int_value = DatumGetInt32(DirectFunctionCall4(width_bucket_numeric,
+                                                NumericGetDatum(operand),
+                                                NumericGetDatum(bound1),
+                                                NumericGetDatum(bound2),
+                                                Int64GetDatum(count)));
+    agtv_result.type = AGTV_INTEGER;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+
+}
+
 /*
  * Converts an agtype object or array to a binary agtype_value.
  */
