@@ -5135,6 +5135,54 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 ERROR:  sqrt() unsupported argument agtype 1
 --
+-- age_setseed
+--
+SELECT * from age_setseed('1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('0.1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('-0.1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('-1');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+SELECT * from age_setseed('0.9');
+ age_setseed 
+-------------
+ 
+(1 row)
+
+-- should return null
+SELECT * from age_setseed(null);
+ age_setseed 
+-------------
+ 
+(1 row)
+
+-- fails
+SELECT * from age_setseed('2');
+ERROR:  setseed parameter 2 is out of allowed range [-1,1]
+SELECT * from age_setseed('-3');
+ERROR:  setseed parameter -3 is out of allowed range [-1,1]
+SELECT * from age_setseed('1.1');
+ERROR:  setseed parameter 1.1 is out of allowed range [-1,1]
+-- end of age_setseed
+--
 -- user defined function expressions - using pg functions for these tests
 --
 SELECT * from cypher('expr', $$
