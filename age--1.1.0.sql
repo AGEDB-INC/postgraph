@@ -3874,6 +3874,13 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+-- gcd function
+CREATE FUNCTION ag_catalog.age_gcd(agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
 
 --
 -- aggregate function components for stdev(internal, agtype)

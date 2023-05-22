@@ -5457,6 +5457,101 @@ LINE 1: SELECT * FROM age_min_scale();
                       ^
 HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 --
+-- gcd()
+--
+-- correct result
+SELECT * FROM age_gcd('25', '20');
+  age_gcd   
+------------
+ 5::numeric
+(1 row)
+
+SELECT * FROM age_gcd('120', '200');
+   age_gcd   
+-------------
+ 40::numeric
+(1 row)
+
+SELECT * FROM age_gcd('0', '0');
+  age_gcd   
+------------
+ 0::numeric
+(1 row)
+
+SELECT * FROM age_gcd('1', '1');
+  age_gcd   
+------------
+ 1::numeric
+(1 row)
+
+SELECT * FROM age_gcd('-10', '20');
+   age_gcd   
+-------------
+ 10::numeric
+(1 row)
+
+SELECT * FROM age_gcd('-12', '-5');
+  age_gcd   
+------------
+ 1::numeric
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(5, 7)
+$$) as (result agtype);
+   result   
+------------
+ 1::numeric
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(30, 25)
+$$) as (result agtype);
+   result   
+------------
+ 5::numeric
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(10, 10)
+$$) as (result agtype);
+   result    
+-------------
+ 10::numeric
+(1 row)
+
+-- incorrect calling
+SELECT * FROM age_gcd(10, 20);
+ERROR:  function age_gcd(integer, integer) does not exist
+LINE 1: SELECT * FROM age_gcd(10, 20);
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM age_gcd(1);
+ERROR:  function age_gcd(integer) does not exist
+LINE 1: SELECT * FROM age_gcd(1);
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM age_gcd('16', 20);
+ERROR:  function age_gcd(unknown, integer) does not exist
+LINE 1: SELECT * FROM age_gcd('16', 20);
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM cypher('expr', $$
+    RETURN gcd()
+$$) as (result agtype);
+ERROR:  function ag_catalog.age_gcd() does not exist
+LINE 2:     RETURN gcd()
+                   ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM cypher('expr', $$
+    RETURN gcd('expr', 0)
+$$) as (result agtype);
+ERROR:  arguments must resolve to an integer
+SELECT * FROM cypher('expr', $$
+    RETURN gcd(1.5, 2.5)
+$$) as (result agtype);
+ERROR:  arguments must resolve to an integer
+--
 -- aggregate functions avg(), sum(), count(), & count(*)
 --
 SELECT create_graph('UCSC');
