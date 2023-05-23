@@ -8031,6 +8031,31 @@ Datum age_min_scale(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_fact);
+
+Datum age_fact(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    int64 arg;
+    Numeric numeric_result;
+    bool is_null = true;
+
+    /*
+     * fact() supports agtype integer.
+     */
+    arg = get_int64_from_int_datums(AG_GET_ARG_AGTYPE_P(0), AGTYPEOID, "fact", &is_null);
+
+    /* We need the input as a numeric so that we can pass it off to PG */
+    numeric_result = DatumGetNumeric(DirectFunctionCall1(numeric_fac,
+                                                         NumericGetDatum(arg)));
+
+    /* build the result */
+    agtv_result.type = AGTV_NUMERIC;
+    agtv_result.val.numeric = numeric_result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_setseed);
 
 Datum age_setseed(PG_FUNCTION_ARGS)

@@ -2148,6 +2148,28 @@ SELECT * from cypher('expr', $$
     RETURN sqrt("1")
 $$) as (result agtype);
 
+
+--
+-- fact()
+--
+-- Factorial function tests age_fact()
+-- 0! = 1
+SELECT * FROM age_fact('0');
+-- 1! = 1
+SELECT * FROM age_fact('1');
+-- 5! = 120
+SELECT * FROM age_fact('5');
+-- 10! = 3628800
+SELECT * FROM age_fact('100');
+-- 20! = 2432902008176640000
+SELECT * FROM age_fact('500');
+
+
+-- Overflow test
+SELECT * FROM age_fact('32178');
+
+-- End of factorial function tests
+
 --
 -- age_setseed
 --
