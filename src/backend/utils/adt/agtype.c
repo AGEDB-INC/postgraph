@@ -8063,6 +8063,33 @@ Datum age_timestamp(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+PG_FUNCTION_INFO_V1(age_trunc);
+
+Datum age_trunc(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    Numeric result;
+    bool is_null = true;
+    Numeric numeric_input;
+    int32 scale_input;
+
+    /*
+     * trunc supports agtype integer, float,
+     * and numeric for the input
+     */
+    numeric_input = get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "trunc", &is_null, NULL);
+    scale_input = get_int64_from_int_datums(AG_GET_ARG_AGTYPE_P(1) , AGTYPEOID, "trunc", &is_null);
+
+    result = DatumGetNumeric(DirectFunctionCall2(numeric_trunc,
+                                                NumericGetDatum(numeric_input),
+                                                Int32GetDatum(scale_input)));
+
+    agtv_result.type = AGTV_NUMERIC;
+    agtv_result.val.numeric = result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_width_bucket);
 
 Datum age_width_bucket(PG_FUNCTION_ARGS)

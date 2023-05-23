@@ -3809,6 +3809,16 @@ IMMUTABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+-- age_trunc
+CREATE FUNCTION ag_catalog.age_trunc(agtype, agtype DEFAULT '0')
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+-- end of age_trunc
+
 CREATE FUNCTION ag_catalog.age_timestamp()
 RETURNS agtype
 LANGUAGE c

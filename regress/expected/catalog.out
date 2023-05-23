@@ -408,8 +408,8 @@ SELECT create_graph_if_not_exists('new_g');
 SELECT * FROM ag_catalog.ag_graph;
  graphid | name  | namespace 
 ---------+-------+-----------
-   17713 | g     | g
-   17753 | new_g | new_g
+   17715 | g     | g
+   17755 | new_g | new_g
 (2 rows)
 
 -- dropping the graph
