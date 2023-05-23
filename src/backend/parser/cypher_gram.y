@@ -86,7 +86,7 @@
                  HOUR
                  IN INTERVAL IS
                  JULIAN
-                 LIMIT
+                 LIMIT LOCAL_TIMESTAMP
                  MATCH MERGE MICROSECONDS MILLENIUM MILLISECONDS MINUTE MONTH
                  NOT NULL_P
                  OPTIONAL OR ORDER OVERLAPS
@@ -1634,6 +1634,10 @@ time_ident:
         | INTERVAL
         {
               $$ = pnstrdup($1, 8);
+        }
+        | LOCAL_TIMESTAMP
+        {
+            $$ = pnstrdup($1, 15);
         }
         | TIMESTAMP
         {
