@@ -7397,6 +7397,42 @@ Datum age_round(PG_FUNCTION_ARGS)
     PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
 }
 
+
+PG_FUNCTION_INFO_V1(age_ceiling);
+
+Datum age_ceiling(PG_FUNCTION_ARGS)
+{
+    agtype_value agtv_result;
+    Numeric arg;
+    Numeric numeric_result;
+    float8 float_result;
+    bool is_null = true;
+
+
+    /*
+     * ceil() supports integer, float, and numeric or the agtype integer,
+     * float, and numeric for the input expression.
+     */
+    arg = get_numeric_compatible_arg(AG_GET_ARG_AGTYPE_P(0) , AGTYPEOID, "ceiling", &is_null, NULL);
+
+
+    /* check for a agtype null input */
+    if (is_null)
+        PG_RETURN_NULL();
+
+    /* We need the input as a numeric so that we can pass it off to PG */
+    numeric_result = DatumGetNumeric(DirectFunctionCall1(numeric_ceil,
+                                                         NumericGetDatum(arg)));
+
+    float_result = DatumGetFloat8(DirectFunctionCall1(numeric_float8_no_overflow,
+                                                      NumericGetDatum(numeric_result)));
+    /* build the result */
+    agtv_result.type = AGTV_FLOAT;
+    agtv_result.val.float_value = float_result;
+
+    PG_RETURN_POINTER(agtype_value_to_agtype(&agtv_result));
+}
+
 PG_FUNCTION_INFO_V1(age_ceil);
 
 Datum age_ceil(PG_FUNCTION_ARGS)

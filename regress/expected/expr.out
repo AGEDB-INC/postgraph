@@ -5351,6 +5351,58 @@ $$) as (result agtype);
 ERROR:  schema "contains" does not exist
 LINE 2:     RETURN contains.age_cbrt(25)
                                     ^
+---
+--
+-- ceiling
+--
+SELECT * from age_ceiling('1.5');
+ age_ceiling 
+-------------
+ 2.0
+(1 row)
+
+SELECT * from age_ceiling('100.521321');
+ age_ceiling 
+-------------
+ 101.0
+(1 row)
+
+SELECT * from age_ceiling('-100.521321');
+ age_ceiling 
+-------------
+ -100.0
+(1 row)
+
+SELECT * from age_ceiling('0');
+ age_ceiling 
+-------------
+ 0.0
+(1 row)
+
+SELECT * from age_ceiling('0.0');
+ age_ceiling 
+-------------
+ 0.0
+(1 row)
+
+SELECT * from age_ceiling('0.1');
+ age_ceiling 
+-------------
+ 1.0
+(1 row)
+
+SELECT * from age_ceiling();
+ERROR:  function age_ceiling() does not exist
+LINE 1: SELECT * from age_ceiling();
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * from age_ceiling(null);
+ age_ceiling 
+-------------
+ 
+(1 row)
+
+---
 --
 -- tanh()
 --
