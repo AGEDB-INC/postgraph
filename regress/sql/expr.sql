@@ -2173,6 +2173,26 @@ SELECT * from age_setseed('1.1');
 
 -- end of age_setseed
 
+-- age_width_bucket
+SELECT * from age_width_bucket('5.35', '0.024', '10.06', '5');
+-- Test Case 2: Upper Bound
+SELECT * from age_width_bucket('10.06', '0.024', '10.06', '5');
+-- Test Case 3: Middle Value
+SELECT age_width_bucket('7.0', '0.024', '10.06', '5');
+
+-- Test Case 4: Value Outside Range
+SELECT age_width_bucket('15.0', '0.024', '10.06', '5');
+
+-- Test Case 5: Range of 1
+SELECT age_width_bucket('5.5', '5.5', '5.5', '1');
+
+-- Test Case 6: Negative Values
+SELECT age_width_bucket('-5.0', '-10.0', '0.0', '5');
+
+-- Test Case 7: Decimal Values
+SELECT age_width_bucket('1.23', '0.1', '2.0', '10');
+
+
 --
 -- user defined function expressions - using pg functions for these tests
 --

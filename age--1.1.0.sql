@@ -3884,6 +3884,13 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.age_width_bucket(agtype, agtype, agtype, agtype) 
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
 
 --
 -- aggregate function components for stdev(internal, agtype)
