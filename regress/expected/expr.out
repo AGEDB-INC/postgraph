@@ -5135,6 +5135,75 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 ERROR:  sqrt() unsupported argument agtype 1
 --
+-- lcm()
+--
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1, 2)
+$$) as (result agtype);
+   result   
+------------
+ 2::numeric
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(10, 30)
+$$) as (result agtype);
+   result    
+-------------
+ 30::numeric
+(1 row)
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(0, 0)
+$$) as (result agtype);
+   result   
+------------
+ 0::numeric
+(1 row)
+
+SELECT * FROM age_lcm('1', '2');
+  age_lcm   
+------------
+ 2::numeric
+(1 row)
+
+SELECT * FROM age_lcm('25', '125');
+   age_lcm    
+--------------
+ 125::numeric
+(1 row)
+
+SELECT * FROM age_lcm('0', '0');
+  age_lcm   
+------------
+ 0::numeric
+(1 row)
+
+SELECT * FROM age_lcm('10', '25');
+   age_lcm   
+-------------
+ 50::numeric
+(1 row)
+
+-- should fail
+SELECT * FROM cypher('expr', $$
+    RETURN lcm()
+$$) as (result agtype);
+ERROR:  function ag_catalog.age_lcm() does not exist
+LINE 2:     RETURN lcm()
+                   ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1)
+$$) as (result agtype);
+ERROR:  function ag_catalog.age_lcm(agtype) does not exist
+LINE 2:     RETURN lcm(1)
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+SELECT * FROM age_lcm('1.5', '2');
+ERROR:  arguments must resolve to an integer
+-- end of lcm()
+--
 -- age_setseed
 --
 SELECT * from age_setseed('1');

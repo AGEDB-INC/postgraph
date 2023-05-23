@@ -2149,6 +2149,43 @@ SELECT * from cypher('expr', $$
 $$) as (result agtype);
 
 --
+-- lcm()
+--
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1, 2)
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(10, 30)
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(0, 0)
+$$) as (result agtype);
+
+SELECT * FROM age_lcm('1', '2');
+
+SELECT * FROM age_lcm('25', '125');
+
+SELECT * FROM age_lcm('0', '0');
+
+SELECT * FROM age_lcm('10', '25');
+
+-- should fail
+SELECT * FROM cypher('expr', $$
+    RETURN lcm()
+$$) as (result agtype);
+
+SELECT * FROM cypher('expr', $$
+    RETURN lcm(1)
+$$) as (result agtype);
+
+SELECT * FROM age_lcm('1.5', '2');
+
+-- end of lcm()
+
+--
 -- age_setseed
 --
 
@@ -2165,11 +2202,6 @@ SELECT * from age_setseed(null);
 SELECT * from age_setseed('2');
 SELECT * from age_setseed('-3');
 SELECT * from age_setseed('1.1');
-
-
-
-
-
 
 -- end of age_setseed
 

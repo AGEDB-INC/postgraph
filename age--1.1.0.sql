@@ -3866,6 +3866,15 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+-- lcm function
+CREATE FUNCTION ag_catalog.age_lcm(agtype, agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+STRICT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION ag_catalog.age_min_scale(agtype) 
 RETURNS agtype
 LANGUAGE c
