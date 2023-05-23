@@ -4181,6 +4181,18 @@ STABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.age_create_barabasi_albert_graph(graph_name name, 
+                                                            num_vertices int,
+                                                            num_edges int,
+                                                            node_label name = NULL,
+                                                            edge_label name = NULL,
+                                                            bidirectional bool = true)
+RETURNS void
+LANGUAGE c
+CALLED ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 --
 -- End
 --
