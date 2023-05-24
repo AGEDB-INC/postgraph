@@ -574,12 +574,13 @@ Datum age_create_barabasi_albert_graph(PG_FUNCTION_ARGS)
                     list_head = next_GraphIdNode(list_head);
                 }
 
-                // Fetch the vertex_contet according to the random graphid. 
+                // Fetch the vertex_content according to the random graphid. 
                 for (int a = 0; a <= graph_c->total_vertices; a++)
                 {
                     if (graph_c->vertices[a].oid == current_graphid)
                     {
-                        end_vertex = &graph_c->vertices[a];
+                        end_vertex = new_vertex_content(NULL);
+                        *end_vertex = graph_c->vertices[a];
                     }
                 }
 
@@ -615,6 +616,10 @@ Datum age_create_barabasi_albert_graph(PG_FUNCTION_ARGS)
             free_graphid_stack(vertex_content_analysis_list);
         }
     }
+    free(vertex_c);
+    free(current_vertex_c);
+    free(edge_c);
+    free(end_vertex);
     free_graph_content(graph_c);
     free_ListGraphId(vertex_content_analysis_list);
     PG_RETURN_VOID();
