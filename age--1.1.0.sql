@@ -3380,7 +3380,7 @@ RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
-CREATE FUNCTION ag_catalog.age_eq_tilde(agtype, agtype)
+CREATE FUNCTION ag_catalog.agtype_eq_tilde(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
@@ -3436,388 +3436,388 @@ AS 'MODULE_PATHNAME';
 --
 -- Scalar Functions
 --
-CREATE FUNCTION ag_catalog.age_id(agtype)
+CREATE FUNCTION ag_catalog.id(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_id';
 
-CREATE FUNCTION ag_catalog.age_start_id(agtype)
+CREATE FUNCTION ag_catalog.start_id(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_start_id';
 
-CREATE FUNCTION ag_catalog.age_end_id(agtype)
+CREATE FUNCTION ag_catalog.end_id(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_end_id';
 
-CREATE FUNCTION ag_catalog.age_head(agtype)
+CREATE FUNCTION ag_catalog.head(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_head';
 
-CREATE FUNCTION ag_catalog.age_last(agtype)
+CREATE FUNCTION ag_catalog.last(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_last';
 
-CREATE FUNCTION ag_catalog.age_properties(agtype)
+CREATE FUNCTION ag_catalog.properties(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_properties';
 
-CREATE FUNCTION ag_catalog.age_startnode(agtype, agtype)
+CREATE FUNCTION ag_catalog.startnode(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 STABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_startnode';
 
-CREATE FUNCTION ag_catalog.age_endnode(agtype, agtype)
+CREATE FUNCTION ag_catalog.endnode(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 STABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_endnode';
 
-CREATE FUNCTION ag_catalog.age_length(agtype)
+CREATE FUNCTION ag_catalog.length(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_length';
 
-CREATE FUNCTION ag_catalog.age_toboolean(variadic "any")
+CREATE FUNCTION ag_catalog.toboolean(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_toboolean';
 
-CREATE FUNCTION ag_catalog.age_tofloat(variadic "any")
+CREATE FUNCTION ag_catalog.tofloat(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_tofloat';
 
-CREATE FUNCTION ag_catalog.age_tointeger(variadic "any")
+CREATE FUNCTION ag_catalog.tointeger(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_tointeger';
 
-CREATE FUNCTION ag_catalog.age_tostring(variadic "any")
+CREATE FUNCTION ag_catalog.tostring(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_tostring';
 
-CREATE FUNCTION ag_catalog.age_size(variadic "any")
+CREATE FUNCTION ag_catalog.size(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_size';
 
-CREATE FUNCTION ag_catalog.age_type(agtype)
+CREATE FUNCTION ag_catalog.type(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_type';
 
-CREATE FUNCTION ag_catalog.age_label(agtype)
+CREATE FUNCTION ag_catalog.label(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_label';
 
 --
 -- String functions
 --
-CREATE FUNCTION ag_catalog.age_reverse(variadic "any")
+CREATE FUNCTION ag_catalog.reverse(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_reverse';
 
-CREATE FUNCTION ag_catalog.age_toupper(variadic "any")
+CREATE FUNCTION ag_catalog.toupper(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_toupper';
 
-CREATE FUNCTION ag_catalog.age_tolower(variadic "any")
+CREATE FUNCTION ag_catalog.tolower(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_tolower';
 
-CREATE FUNCTION ag_catalog.age_ltrim(variadic "any")
+CREATE FUNCTION ag_catalog.ltrim(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_ltrim';
 
-CREATE FUNCTION ag_catalog.age_rtrim(variadic "any")
+CREATE FUNCTION ag_catalog.rtrim(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_rtrim';
 
-CREATE FUNCTION ag_catalog.age_trim(variadic "any")
+CREATE FUNCTION ag_catalog.trim(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_trim';
 
-CREATE FUNCTION ag_catalog.age_right(variadic "any")
+CREATE FUNCTION ag_catalog.right(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_right';
 
-CREATE FUNCTION ag_catalog.age_left(variadic "any")
+CREATE FUNCTION ag_catalog.left(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_left';
 
-CREATE FUNCTION ag_catalog.age_substring(variadic "any")
+CREATE FUNCTION ag_catalog.substring(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_substring';
 
-CREATE FUNCTION ag_catalog.age_split(variadic "any")
+CREATE FUNCTION ag_catalog.split(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_split';
 
-CREATE FUNCTION ag_catalog.age_replace(variadic "any")
+CREATE FUNCTION ag_catalog.replace(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_replace';
 
 --
 -- Trig functions - radian input
 --
-CREATE FUNCTION ag_catalog.age_sin(variadic "any")
+CREATE FUNCTION ag_catalog.sin(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_sin';
 
-CREATE FUNCTION ag_catalog.age_cos(variadic "any")
+CREATE FUNCTION ag_catalog.cos(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_cos';
 
-CREATE FUNCTION ag_catalog.age_tan(variadic "any")
+CREATE FUNCTION ag_catalog.tan(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_tan';
 
-CREATE FUNCTION ag_catalog.age_cot(variadic "any")
+CREATE FUNCTION ag_catalog.cot(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_cot';
 
-CREATE FUNCTION ag_catalog.age_asin(variadic "any")
+CREATE FUNCTION ag_catalog.asin(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_asin';
 
-CREATE FUNCTION ag_catalog.age_acos(variadic "any")
+CREATE FUNCTION ag_catalog.acos(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_acos';
 
-CREATE FUNCTION ag_catalog.age_atan(variadic "any")
+CREATE FUNCTION ag_catalog.atan(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_atan';
 
-CREATE FUNCTION ag_catalog.age_atan2(variadic "any")
+CREATE FUNCTION ag_catalog.atan2(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_atan2';
 
-CREATE FUNCTION ag_catalog.age_degrees(variadic "any")
+CREATE FUNCTION ag_catalog.degrees(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_degrees';
 
-CREATE FUNCTION ag_catalog.age_radians(variadic "any")
+CREATE FUNCTION ag_catalog.radians(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_radians';
 
-CREATE FUNCTION ag_catalog.age_round(variadic "any")
+CREATE FUNCTION ag_catalog.round(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_round';
 
-CREATE FUNCTION ag_catalog.age_ceil(variadic "any")
+CREATE FUNCTION ag_catalog.ceil(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_ceil';
 
-CREATE FUNCTION ag_catalog.age_floor(variadic "any")
+CREATE FUNCTION ag_catalog.floor(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_floor';
 
-CREATE FUNCTION ag_catalog.age_abs(variadic "any")
+CREATE FUNCTION ag_catalog.abs(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_abs';
 
-CREATE FUNCTION ag_catalog.age_sign(variadic "any")
+CREATE FUNCTION ag_catalog.sign(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_sign';
 
-CREATE FUNCTION ag_catalog.age_log(variadic "any")
+CREATE FUNCTION ag_catalog.log(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_log';
 
-CREATE FUNCTION ag_catalog.age_log10(variadic "any")
+CREATE FUNCTION ag_catalog.log10(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_log10';
 
-CREATE FUNCTION ag_catalog.age_e()
+CREATE FUNCTION ag_catalog.e()
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_e';
 
-CREATE FUNCTION ag_catalog.age_exp(variadic "any")
+CREATE FUNCTION ag_catalog.exp(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_exp';
 
-CREATE FUNCTION ag_catalog.age_sqrt(variadic "any")
+CREATE FUNCTION ag_catalog.sqrt(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_sqrt';
 
-CREATE FUNCTION age_pi()
+CREATE FUNCTION pi()
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_pi';
 
-CREATE FUNCTION age_rand()
+CREATE FUNCTION rand()
 RETURNS agtype
 LANGUAGE c 
 IMMUTABLE 
 PARALLEL SAFE 
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_rand';
 
-CREATE FUNCTION ag_catalog.age_timestamp()
+CREATE FUNCTION ag_catalog.timestamp()
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_timestamp';
 
 --
 -- count aggregate
 --
-CREATE AGGREGATE age_count(*)
+CREATE AGGREGATE count(*)
 (
     stype = int8,
     sfunc = int8inc,
@@ -3828,7 +3828,7 @@ CREATE AGGREGATE age_count(*)
     parallel = safe
 );
 
-CREATE AGGREGATE age_count(agtype)
+CREATE AGGREGATE count(agtype)
 (
     stype = int8,
     sfunc = int8inc_any,
@@ -3844,28 +3844,28 @@ CREATE AGGREGATE age_count(agtype)
 -- and stdevp(internal, agtype)
 --
 -- wrapper for the stdev final function to pass 0 instead of null
-CREATE FUNCTION ag_catalog.age_float8_stddev_samp_aggfinalfn(_float8)
+CREATE FUNCTION ag_catalog.float8_stddev_samp_aggfinalfn(_float8)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_float8_stddev_samp_aggfinalfn';
 
 -- wrapper for the float8_accum to use agtype input
-CREATE FUNCTION ag_catalog.age_agtype_float8_accum(_float8, agtype)
+CREATE FUNCTION ag_catalog.agtype_float8_accum(_float8, agtype)
 RETURNS _float8
 LANGUAGE c
 IMMUTABLE
 STRICT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_agtype_float8_accum';
 
 -- aggregate definition for age_stdev(agtype)
-CREATE AGGREGATE ag_catalog.age_stdev(agtype)
+CREATE AGGREGATE ag_catalog.stdev(agtype)
 (
    stype = _float8,
-   sfunc = ag_catalog.age_agtype_float8_accum,
-   finalfunc = ag_catalog.age_float8_stddev_samp_aggfinalfn,
+   sfunc = ag_catalog.agtype_float8_accum,
+   finalfunc = ag_catalog.float8_stddev_samp_aggfinalfn,
    combinefunc = float8_combine,
    finalfunc_modify = read_only,
    initcond = '{0,0,0}',
@@ -3873,19 +3873,19 @@ CREATE AGGREGATE ag_catalog.age_stdev(agtype)
 );
 
 -- wrapper for the stdevp final function to pass 0 instead of null
-CREATE FUNCTION ag_catalog.age_float8_stddev_pop_aggfinalfn(_float8)
+CREATE FUNCTION ag_catalog.float8_stddev_pop_aggfinalfn(_float8)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_float8_stddev_pop_aggfinalfn';
 
 -- aggregate definition for age_stdevp(agtype)
-CREATE AGGREGATE ag_catalog.age_stdevp(agtype)
+CREATE AGGREGATE ag_catalog.stdevp(agtype)
 (
    stype = _float8,
-   sfunc = age_agtype_float8_accum,
-   finalfunc = ag_catalog.age_float8_stddev_pop_aggfinalfn,
+   sfunc = agtype_float8_accum,
+   finalfunc = ag_catalog.float8_stddev_pop_aggfinalfn,
    combinefunc = float8_combine,
    finalfunc_modify = read_only,
    initcond = '{0,0,0}',
@@ -3896,10 +3896,10 @@ CREATE AGGREGATE ag_catalog.age_stdevp(agtype)
 -- aggregate function components for avg(agtype) and sum(agtype)
 --
 -- aggregate definition for avg(agytpe)
-CREATE AGGREGATE ag_catalog.age_avg(agtype)
+CREATE AGGREGATE ag_catalog.avg(agtype)
 (
    stype = _float8,
-   sfunc = ag_catalog.age_agtype_float8_accum,
+   sfunc = ag_catalog.agtype_float8_accum,
    finalfunc = float8_avg,
    combinefunc = float8_combine,
    finalfunc_modify = read_only,
@@ -3908,20 +3908,20 @@ CREATE AGGREGATE ag_catalog.age_avg(agtype)
 );
 
 -- sum aggtransfn
-CREATE FUNCTION ag_catalog.age_agtype_sum(agtype, agtype)
+CREATE FUNCTION ag_catalog.agtype_sum(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 STRICT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_agtype_sum';
 
 -- aggregate definition for sum(agytpe)
-CREATE AGGREGATE ag_catalog.age_sum(agtype)
+CREATE AGGREGATE ag_catalog.sum(agtype)
 (
    stype = agtype,
-   sfunc = ag_catalog.age_agtype_sum,
-   combinefunc = ag_catalog.age_agtype_sum,
+   sfunc = ag_catalog.agtype_sum,
+   combinefunc = ag_catalog.agtype_sum,
    finalfunc_modify = read_only,
    parallel = safe
 );
@@ -3930,37 +3930,37 @@ CREATE AGGREGATE ag_catalog.age_sum(agtype)
 -- aggregate functions for min(variadic "any") and max(variadic "any")
 --
 -- max transfer function
-CREATE FUNCTION ag_catalog.age_agtype_larger_aggtransfn(agtype, variadic "any")
+CREATE FUNCTION ag_catalog.agtype_larger_aggtransfn(agtype, variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_agtype_larger_aggtransfn';
 
 -- aggregate definition for max(variadic "any")
-CREATE AGGREGATE ag_catalog.age_max(variadic "any")
+CREATE AGGREGATE ag_catalog.max(variadic "any")
 (
    stype = agtype,
-   sfunc = ag_catalog.age_agtype_larger_aggtransfn,
-   combinefunc = ag_catalog.age_agtype_larger_aggtransfn,
+   sfunc = ag_catalog.agtype_larger_aggtransfn,
+   combinefunc = ag_catalog.agtype_larger_aggtransfn,
    finalfunc_modify = read_only,
    parallel = safe
 );
 
 -- min transfer function
-CREATE FUNCTION ag_catalog.age_agtype_smaller_aggtransfn(agtype, variadic "any")
+CREATE FUNCTION ag_catalog.agtype_smaller_aggtransfn(agtype, variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_agtype_smaller_aggtransfn';
 
 -- aggregate definition for min(variadic "any")
-CREATE AGGREGATE ag_catalog.age_min(variadic "any")
+CREATE AGGREGATE ag_catalog.min(variadic "any")
 (
    stype = agtype,
-   sfunc = ag_catalog.age_agtype_smaller_aggtransfn,
-   combinefunc = ag_catalog.age_agtype_smaller_aggtransfn,
+   sfunc = ag_catalog.agtype_smaller_aggtransfn,
+   combinefunc = ag_catalog.agtype_smaller_aggtransfn,
    finalfunc_modify = read_only,
    parallel = safe
 );
@@ -3970,44 +3970,44 @@ CREATE AGGREGATE ag_catalog.age_min(variadic "any")
 -- percentileDisc(internal, agtype)
 --
 -- percentile transfer function
-CREATE FUNCTION ag_catalog.age_percentile_aggtransfn(internal, agtype, agtype)
+CREATE FUNCTION ag_catalog.percentile_aggtransfn(internal, agtype, agtype)
 RETURNS internal
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_percentile_aggtransfn';
 
 -- percentile_cont final function
-CREATE FUNCTION ag_catalog.age_percentile_cont_aggfinalfn(internal)
+CREATE FUNCTION ag_catalog.percentile_cont_aggfinalfn(internal)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_percentile_cont_aggfinalfn';
 
 -- percentile_disc final function
-CREATE FUNCTION ag_catalog.age_percentile_disc_aggfinalfn(internal)
+CREATE FUNCTION ag_catalog.percentile_disc_aggfinalfn(internal)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_percentile_disc_aggfinalfn';
 
 -- aggregate definition for _percentilecont(agtype, agytpe)
-CREATE AGGREGATE ag_catalog.age_percentilecont(agtype, agtype)
+CREATE AGGREGATE ag_catalog.percentilecont(agtype, agtype)
 (
     stype = internal,
-    sfunc = ag_catalog.age_percentile_aggtransfn,
-    finalfunc = ag_catalog.age_percentile_cont_aggfinalfn,
+    sfunc = ag_catalog.percentile_aggtransfn,
+    finalfunc = ag_catalog.percentile_cont_aggfinalfn,
     parallel = safe
 );
 
 -- aggregate definition for percentiledisc(agtype, agytpe)
-CREATE AGGREGATE ag_catalog.age_percentiledisc(agtype, agtype)
+CREATE AGGREGATE ag_catalog.percentiledisc(agtype, agtype)
 (
     stype = internal,
-    sfunc = ag_catalog.age_percentile_aggtransfn,
-    finalfunc = ag_catalog.age_percentile_disc_aggfinalfn,
+    sfunc = ag_catalog.percentile_aggtransfn,
+    finalfunc = ag_catalog.percentile_disc_aggfinalfn,
     parallel = safe
 );
 
@@ -4015,27 +4015,27 @@ CREATE AGGREGATE ag_catalog.age_percentiledisc(agtype, agtype)
 -- aggregate functions for collect(variadic "any")
 --
 -- collect transfer function
-CREATE FUNCTION ag_catalog.age_collect_aggtransfn(internal, variadic "any")
+CREATE FUNCTION ag_catalog.collect_aggtransfn(internal, variadic "any")
 RETURNS internal
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_collect_aggtransfn';
 
 -- collect final function
-CREATE FUNCTION ag_catalog.age_collect_aggfinalfn(internal)
+CREATE FUNCTION ag_catalog.collect_aggfinalfn(internal)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_collect_aggfinalfn';
 
 -- aggregate definition for age_collect(variadic "any")
-CREATE AGGREGATE ag_catalog.age_collect(variadic "any")
+CREATE AGGREGATE ag_catalog.collect(variadic "any")
 (
     stype = internal,
-    sfunc = ag_catalog.age_collect_aggtransfn,
-    finalfunc = ag_catalog.age_collect_aggfinalfn,
+    sfunc = ag_catalog.collect_aggtransfn,
+    finalfunc = ag_catalog.collect_aggfinalfn,
     parallel = safe
 );
 
@@ -4092,7 +4092,7 @@ RETURNS SETOF agtype
 LANGUAGE C
 STABLE
 CALLED ON NULL INPUT
-PARALLEL UNSAFE -- might be safe
+PARALLEL UNSAFE
 AS 'MODULE_PATHNAME';
 
 -- This is an overloaded function definition to allow for the VLE local context
@@ -4104,7 +4104,7 @@ RETURNS SETOF agtype
 LANGUAGE C
 STABLE
 CALLED ON NULL INPUT
-PARALLEL UNSAFE -- might be safe
+PARALLEL UNSAFE
 AS 'MODULE_PATHNAME';
 
 -- function to build an edge for a VLE match
@@ -4161,63 +4161,63 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 -- list functions
-CREATE FUNCTION ag_catalog.age_keys(agtype)
+CREATE FUNCTION ag_catalog.keys(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_keys';
 
-CREATE FUNCTION ag_catalog.age_labels(agtype)
-RETURNS agtype
-LANGUAGE c
-IMMUTABLE
-RETURNS NULL ON NULL INPUT
-PARALLEL SAFE
-AS 'MODULE_PATHNAME';
-
-CREATE FUNCTION ag_catalog.age_nodes(agtype)
+CREATE FUNCTION ag_catalog.labels(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_labels';
 
-CREATE FUNCTION ag_catalog.age_relationships(agtype)
+CREATE FUNCTION ag_catalog.nodes(agtype)
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME', 'agtype_nodes';
+
+CREATE FUNCTION ag_catalog.relationships(agtype)
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_relationships';
 
-CREATE FUNCTION ag_catalog.age_range(variadic "any")
+CREATE FUNCTION ag_catalog.range(variadic "any")
 RETURNS agtype
 LANGUAGE c
 IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_range';
 
-CREATE FUNCTION ag_catalog.age_unnest(agtype, block_types boolean = false)
+CREATE FUNCTION ag_catalog.unnest(agtype, block_types boolean = false)
     RETURNS SETOF agtype
     LANGUAGE c
     IMMUTABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'agtype_unnest';
 
-CREATE FUNCTION ag_catalog.age_vertex_stats(agtype, agtype)
+CREATE FUNCTION ag_catalog.vertex_stats(agtype, agtype)
 RETURNS agtype
 LANGUAGE c
 STABLE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'age_vertex_stats';
 
-CREATE FUNCTION ag_catalog.age_delete_global_graphs(agtype)
+CREATE FUNCTION ag_catalog.delete_global_graphs(agtype)
 RETURNS boolean
 LANGUAGE c
 VOLATILE
 PARALLEL SAFE
-AS 'MODULE_PATHNAME';
+AS 'MODULE_PATHNAME', 'age_delete_global_graphs';
 
 --
 -- End

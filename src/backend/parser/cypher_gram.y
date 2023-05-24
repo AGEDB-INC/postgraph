@@ -1317,7 +1317,7 @@ expr:
         }
     | expr EQ_TILDE expr
         {
-            $$ = (Node *)makeFuncCall(list_make1(makeString("eq_tilde")),
+            $$ = (Node *)makeFuncCall(list_make1(makeString("agtype_eq_tilde")),
                                       list_make2($1, $3), COERCE_SQL_SYNTAX, @2);
         }
     | expr_atom
@@ -2308,7 +2308,7 @@ static cypher_relationship *build_VLE_relation(List *left_arg,
     args = lappend(args, make_int_const(unique_number, -1));
 
     /* build the VLE function node */
-    cr->varlen = (Node *)makeFuncCall(list_make1(makeString("vle")), args, COERCE_SQL_SYNTAX, cr_location); 
+    cr->varlen = (Node *)makeFuncCall(list_make1(makeString("age_vle")), args, COERCE_SQL_SYNTAX, cr_location); 
 
     return cr;
 }

@@ -94,7 +94,7 @@ static Node *transform_CaseExpr(cypher_parsestate *cpstate,
 static Node *transform_CoalesceExpr(cypher_parsestate *cpstate,
                                     CoalesceExpr *cexpr);
 static Node *transform_SubLink(cypher_parsestate *cpstate, SubLink *sublink);
-static Node *transform_FuncCall(cypher_parsestate *cpstate, FuncCall *fn);
+static Node *transform_func_call(cypher_parsestate *cpstate, FuncCall *fn);
 static Node *transform_WholeRowRef(ParseState *pstate, ParseNamespaceItem *pnsi,
                                    int location);
 static Node *transform_column_ref_for_indirection(cypher_parsestate *cpstate, ColumnRef *cr);
@@ -193,7 +193,7 @@ static Node *transform_cypher_expr_recurse(cypher_parsestate *cpstate,
                                  ((ExtensibleNode *)expr)->extnodename)));
         return NULL;
     case T_FuncCall:
-        return transform_FuncCall(cpstate, (FuncCall *)expr);
+        return transform_func_call(cpstate, (FuncCall *)expr);
     case T_SubLink:
         return transform_SubLink(cpstate, (SubLink *)expr);
         break;
@@ -980,97 +980,84 @@ static Node *transform_cypher_typecast(cypher_parsestate *cpstate,
                          ctypecast->location);
 
     /* return the transformed function */
-    return transform_FuncCall(cpstate, fnode);
+    return transform_func_call(cpstate, fnode);
 }
 
-/*
- * Code borrowed from PG's transformFuncCall and updated for AGE
- */
-static Node *transform_FuncCall(cypher_parsestate *cpstate, FuncCall *fn)
+static Node *transform_func_call(cypher_parsestate *cpstate, FuncCall *fn)
 {
-    ParseState *pstate = &cpstate->pstate;
+    ParseState *pstate = (ParseState*)cpstate;
     Node *last_srf = pstate->p_last_srf;
     List *targs = NIL;
     List *fname = NIL;
     ListCell *arg;
-    Node *retval = NULL;
+    Node *retval;
 
-    /* Transform the list of arguments ... */
+    // Transform the list of arguments
     foreach(arg, fn->args)
     {
-        Node *farg = NULL;
+        Node *farg = (Node *)lfirst(arg);
 
-        farg = (Node *)lfirst(arg);
         targs = lappend(targs, transform_cypher_expr_recurse(cpstate, farg));
     }
 
-    /* within group should not happen */
+    // within group should not happen
     Assert(!fn->agg_within_group);
 
     /*
-     * If the function name is not qualified, then it is one of ours. We need to
-     * construct its name, and qualify it, so that PG can find it.
+     * If the function name is not qualified, use ag_catalog, we ignore
+     * the search path in cypher. If the user want something outside the
+     * catalog, they can qualify it with the schema name. 
      */
     if (list_length(fn->funcname) == 1)
     {
-        /* get the name, size, and the ag name allocated */
         char *name = ((Value*)linitial(fn->funcname))->val.str;
-        int pnlen = strlen(name);
-        char *ag_name = palloc(pnlen + 5);
+        char *ag_name = palloc(strlen(name) + 1);
         int i;
 
-        /* copy in the prefix - all AGE functions are prefixed with age_ */
-        strncpy(ag_name, "age_", 4);
+       /*
+        * cypher is case insensitive, postgres is case sensitive, make everything lower 
+        * case.
+        */
+       for (i = 0; i < strlen(name); i++)
+            ag_name[i] = tolower(name[i]);
+        ag_name[i] = '\0';
 
-        /*
-         * All AGE function names are in lower case. So, copy in the name
-         * in lower case.
-         */
-        for (i = 0; i < pnlen; i++)
-            ag_name[i + 4] = tolower(name[i]);
-
-        /* terminate it with 0 */
-        ag_name[i + 4] = 0;
-
-        /* qualify the name with our schema name */
         fname = list_make2(makeString("ag_catalog"), makeString(ag_name));
 
         /*
-         * Currently 3 functions need the graph name passed in as the first
-         * argument - in addition to the other arguments: startNode, endNode,
-         * and vle. So, check for those 3 functions here and that the arg list
-         * is not empty. Then prepend the graph name if necessary.
+         * Some functions need to know the graph the passed in data is for. Considering
+         * that a cypher function only works on one graph, it seems unreasonable to make
+         * the user pass that data in the function itself. Especially sinces its already
+         * the first arguement of the cypher function, plus its not in the spec.
          */
         if ((list_length(targs) != 0) &&
-            (strcmp("startNode", name) == 0 ||
-              strcmp("endNode", name) == 0 ||
-              strcmp("vle", name) == 0 ||
-              strcmp("vertex_stats", name) == 0))
+            (strcmp("startnode", ag_name) == 0 || strcmp("endnode", ag_name) == 0 ||
+              strcmp("age_vle", ag_name) == 0 || strcmp("vertex_stats", ag_name) == 0))
         {
             char *graph_name = cpstate->graph_name;
             Datum d = string_to_agtype(graph_name);
-            Const *c = makeConst(AGTYPEOID, -1, InvalidOid, -1, d, false,
-                                 false);
+            Const *c = makeConst(AGTYPEOID, -1, InvalidOid, -1, d, false, false);
 
             targs = lcons(c, targs);
         }
 
     }
-    /* If it is not one of our functions, pass the name list through */
     else
     {
         fname = fn->funcname;
     }
 
-    /* ... and hand off to ParseFuncOrColumn */
-    retval = ParseFuncOrColumn(pstate, fname, targs, last_srf, fn, false,
-                               fn->location);
+    // give the setup function to postgres to analyze.
+    retval = ParseFuncOrColumn(pstate, fname, targs, last_srf, fn, false, fn->location);
+    Assert(retval);
 
-    /* flag that an aggregate was found during a transform */
-    if (retval != NULL && retval->type == T_Aggref)
-    {
+    /*
+     * if postgres transform logic found our function to be an aggregate, we need to flag
+     * it, since we now need to generate our GROUP BY clause, since cypher figures that
+     * information out for the user.
+     */
+    if (retval->type == T_Aggref)
         cpstate->exprHasAgg = true;
-    }
 
     return retval;
 }
