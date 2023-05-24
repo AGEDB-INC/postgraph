@@ -45,3 +45,30 @@ SELECT * FROM create_complete_graph(NULL,NULL,NULL);
 SELECT drop_graph('gp1', true);
 SELECT drop_graph('gp2', true);
 
+
+-- Tests for the Barabasi-Albert graph generation.
+SELECT age_create_barabasi_albert_graph('barabasi_albert_a', 10, 1, 'BARABASI_VERTEX_A', 'BARABASI_EDGE_A', false);
+SELECT age_create_barabasi_albert_graph('barabasi_albert_b', 10, 2, 'BARABASI_VERTEX_B', 'BARABASI_EDGE_B', true);
+SELECT age_create_barabasi_albert_graph('barabasi_albert_c', 20, 3, 'BARABASI_VERTEX_C', 'BARABASI_EDGE_C');
+
+-- Should return 10 vertices and 9 edges.
+SELECT COUNT(*) FROM barabasi_albert_a."BARABASI_VERTEX_A";
+SELECT COUNT(*) FROM barabasi_albert_a."BARABASI_EDGE_A";
+
+-- Should return 10 vertices and 36 edges.
+SELECT COUNT(*) FROM barabasi_albert_b."BARABASI_VERTEX_B";
+SELECT COUNT(*) FROM barabasi_albert_b."BARABASI_EDGE_B";
+
+-- Should return 20 vertices and 114 edges.
+SELECT COUNT(*) FROM barabasi_albert_c."BARABASI_VERTEX_C";
+SELECT COUNT(*) FROM barabasi_albert_c."BARABASI_EDGE_C";
+
+-- Should throw errors.
+SELECT age_create_barabasi_albert_graph(NULL, NULL, NULL, NULL, NULL, NULL);
+SELECT age_create_barabasi_albert_graph('barabasi_albert_d', NULL, NULL, NULL, NULL, NULL);
+SELECT age_create_barabasi_albert_graph('barabasi_albert_e', 10, NULL, NULL, NULL, NULL);
+
+-- Drop Barabasi-Albert Graphs
+SELECT drop_graph('barabasi_albert_a', true);
+SELECT drop_graph('barabasi_albert_b', true);
+SELECT drop_graph('barabasi_albert_c', true);
