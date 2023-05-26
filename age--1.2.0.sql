@@ -4181,6 +4181,32 @@ STABLE
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+-- Erdos-Renyi G(n,p) Model
+CREATE FUNCTION ag_catalog.age_create_erdos_renyi_graph_gnp(graph_name name, 
+                                                n int, 
+                                                p float,
+                                                vertex_label_name name = NULL,
+                                                edge_label_name name = NULL,
+                                                bidirectional bool = true)
+RETURNS void
+LANGUAGE c
+CALLED ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+-- Erdos-Renyi G(n,m) Model
+CREATE FUNCTION ag_catalog.age_create_erdos_renyi_graph_gnm(graph_name name, 
+                                                n int, 
+                                                m int,
+                                                vertex_label_name name = NULL,
+                                                edge_label_name name = NULL,
+                                                bidirectional bool = true)
+RETURNS void
+LANGUAGE c
+CALLED ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 --
 -- End
 --

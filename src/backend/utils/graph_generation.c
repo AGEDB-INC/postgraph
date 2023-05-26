@@ -18,6 +18,7 @@
  */
 
 #include "postgres.h"
+#include <time.h>
 
 #include "access/xact.h"
 #include "access/genam.h"
@@ -47,6 +48,15 @@
 #include "utils/load/age_load.h"
 #include "utils/load/ag_load_edges.h"
 #include "utils/load/ag_load_labels.h"
+
+
+// Auxiliary struct for the Erdos-Renyi G(n,m) model.
+typedef struct erdos_renyi_edge
+{
+    graphid from_vertex;
+    graphid to_vertex;
+    bool chosen;
+} erdos_renyi_edge;
 
 
 PG_FUNCTION_INFO_V1(create_complete_graph);
@@ -201,3 +211,459 @@ Datum create_complete_graph(PG_FUNCTION_ARGS)
     PG_RETURN_VOID();
 }
 
+PG_FUNCTION_INFO_V1(age_create_erdos_renyi_graph_gnp);
+/*
+    ag_catalog.age_create_erdos_renyi_graph_gnm(graph_name Name, n int, p float
+                                    vertex_label_name Name DEFAULT = NULL,
+                                    edge_label_name Name DEAULT = NULL,
+                                    bidirectional bool DEFAULT = true)
+    
+    The Erdős–Rényi G(n,p) model is a random graph generation model that produces 
+    graphs where each edge has a fixed probability of being present or absent, 
+    independently of the other edges.
+*/
+Datum age_create_erdos_renyi_graph_gnp(PG_FUNCTION_ARGS)
+{
+    Oid graph_id;
+    Oid vertex_seq_id;
+    Oid edge_seq_id;
+    Oid nsp_id;
+
+    graphid object_graph_id;
+    graphid current_graphid; 
+    graphid* vertex_array;
+
+    agtype *props = NULL;
+
+	Name graph_name;
+    Name vertex_label_name;
+    Name vertex_seq_name;
+    Name edge_label_name;
+    Name edge_seq_name;
+
+	char* graph_name_str;
+    char* vertex_label_str;
+    char* vertex_seq_name_str;
+    char* edge_label_str;
+    char* edge_seq_name_str;
+
+    graph_cache_data *graph_cache;
+    label_cache_data *vertex_cache;
+    label_cache_data *edge_cache;
+
+    int64 no_vertices, eid;
+    int64 vid = 1;
+    int32 vertex_label_id;
+    int32 edge_label_id;
+
+    float random_prob;
+    float set_prob;
+    srand(time(NULL));
+
+    bool bidirectional;
+
+
+    // Retrieve the graph name (cannot be null). 
+    if (PG_ARGISNULL(0))
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("Graph name cannot be NULL")));
+    }
+    graph_name = PG_GETARG_NAME(0);
+    graph_name_str = NameStr(*graph_name);
+
+
+    // Check if graph exists. If it doesn't, create the graph.
+    if (!graph_exists(graph_name_str))
+    {
+        DirectFunctionCall1(create_graph, CStringGetDatum(graph_name));
+    }
+    graph_id = get_graph_oid(graph_name_str);
+
+
+    // Get the number of vertices.
+	if (PG_ARGISNULL(1))
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Number of vertices cannot be NULL.")));
+	}
+    no_vertices = PG_GETARG_INT64(1);
+
+
+    // Get the probability for each edge to exist.
+    if (PG_ARGISNULL(2))
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Probability cannot be NULL.")));
+	}
+    set_prob = (float) PG_GETARG_FLOAT8(2);
+
+
+    // Get the vertex label.
+    if (PG_ARGISNULL(3)) 
+    {
+        namestrcpy(vertex_label_name, AG_DEFAULT_LABEL_VERTEX);
+        vertex_label_str = AG_DEFAULT_LABEL_VERTEX;
+    }
+    else 
+    {
+        vertex_label_name = PG_GETARG_NAME(3);
+        vertex_label_str = NameStr(*vertex_label_name);
+    }
+
+
+    // Get the edge label. 
+    if (PG_ARGISNULL(4))
+    {
+        namestrcpy(edge_label_name, AG_DEFAULT_LABEL_EDGE);
+        edge_label_str = AG_DEFAULT_LABEL_EDGE;
+    }
+    else
+    {
+        edge_label_name = PG_GETARG_NAME(4);
+        edge_label_str = NameStr(*edge_label_name);
+    }
+
+
+    // Compare both edge and vertex labels (they cannot be the same).
+    if (strcmp(vertex_label_str, edge_label_str) == 0)
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                errmsg("vertex and edge label can not be same")));
+    }
+
+
+    // If the vertex label does not exist, create the label.
+    if (!label_exists(vertex_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_vlabel, CStringGetDatum(graph_name), CStringGetDatum(vertex_label_name));
+    }
+
+
+    // If the edge label does not exist, create the label. 
+    if (!label_exists(edge_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_elabel, CStringGetDatum(graph_name), CStringGetDatum(edge_label_name));
+    }
+
+
+    // Get the direction of the graph.
+    bidirectional = (PG_GETARG_BOOL(5) == true) ? true : false;
+
+
+    vertex_label_id = get_label_id(vertex_label_str, graph_id);
+    edge_label_id = get_label_id(edge_label_str, graph_id);
+
+    graph_cache = search_graph_name_cache(graph_name_str);
+    vertex_cache = search_label_name_graph_cache(vertex_label_str,graph_id);
+    edge_cache = search_label_name_graph_cache(edge_label_str,graph_id);
+
+    nsp_id = graph_cache->namespace;
+    vertex_seq_name = &(vertex_cache->seq_name);
+    vertex_seq_name_str = NameStr(*vertex_seq_name);
+
+    edge_seq_name = &(edge_cache->seq_name);
+    edge_seq_name_str = NameStr(*edge_seq_name);
+
+    vertex_seq_id = get_relname_relid(vertex_seq_name_str, nsp_id);
+    edge_seq_id = get_relname_relid(edge_seq_name_str, nsp_id);
+
+    vertex_array = (graphid*) malloc(sizeof(graphid) * no_vertices);
+
+
+    // Create the vertices and add them to vertex_array.
+    for (int i = 0; i < no_vertices; i++)
+    {
+        vid = nextval_internal(vertex_seq_id, true);
+        object_graph_id = make_graphid(vertex_label_id, vid);
+        props = create_empty_agtype();
+
+        // Insert the vertex in the graph and in the array.
+        insert_vertex_simple(graph_id, vertex_label_str, object_graph_id, props);
+        vertex_array[i] = object_graph_id;
+    }
+
+
+    /* For each unique pair (i, j), generate a random number. If it's probability is P or grater, create
+       an edge between i and j. 
+     */
+    for (int i = 0; i < no_vertices; i++)
+    {
+        // It starts with (int j = i) because it's a combination of C(n, 2) total edges.
+        for (int j = i; j < no_vertices; j++)
+        {
+            // Generate a random float number between 0 and 1.
+            random_prob = (float) ((float)rand() / (float)RAND_MAX);
+
+            if (random_prob <= set_prob && i != j) // (i != j) doesn't allow edges to the same node.
+            {
+                eid = nextval_internal(edge_seq_id, true);
+                object_graph_id = make_graphid(edge_label_id, eid);
+
+                props = create_empty_agtype();
+
+                insert_edge_simple(graph_id, edge_label_str,
+                                object_graph_id, vertex_array[i],
+                                vertex_array[j], props);
+
+                if (bidirectional == true)
+                {
+                    eid = nextval_internal(edge_seq_id, true);
+                    object_graph_id = make_graphid(edge_label_id, eid);
+
+                    props = create_empty_agtype();
+
+                    insert_edge_simple(graph_id, edge_label_str,
+                                    object_graph_id, vertex_array[j],
+                                    vertex_array[i], props);
+                }
+            }
+        }
+    }
+
+
+    free(vertex_array);
+    PG_RETURN_VOID();
+}
+
+
+PG_FUNCTION_INFO_V1(age_create_erdos_renyi_graph_gnm);
+/*
+    ag_catalog.age_create_erdos_renyi_graph_gnm(graph_name Name, n int, p float
+                                    vertex_label_name Name DEFAULT = NULL,
+                                    edge_label_name Name DEAULT = NULL,
+                                    bidirectional bool DEFAULT = true)
+    
+    The Erdős–Rényi G(n,p) model is a random graph generation model that produces 
+    graphs where each edge has a fixed probability of being present or absent, 
+    independently of the other edges.
+*/
+Datum age_create_erdos_renyi_graph_gnm(PG_FUNCTION_ARGS)
+{
+    Oid graph_id;
+    Oid vertex_seq_id;
+    Oid edge_seq_id;
+    Oid nsp_id;
+
+    graphid from_graphid, to_graphid;
+    graphid object_graph_id;
+    graphid current_graphid; 
+    graphid* vertex_array;
+
+    agtype *props = NULL;
+
+	Name graph_name;
+    Name vertex_label_name;
+    Name vertex_seq_name;
+    Name edge_label_name;
+    Name edge_seq_name;
+
+	char* graph_name_str;
+    char* vertex_label_str;
+    char* vertex_seq_name_str;
+    char* edge_label_str;
+    char* edge_seq_name_str;
+
+    graph_cache_data *graph_cache;
+    label_cache_data *vertex_cache;
+    label_cache_data *edge_cache;
+
+    int64 no_vertices, eid, no_edges;
+    int64 vid = 1;
+    int32 vertex_label_id;
+    int32 edge_label_id;
+    int total_possible_edges;
+    int index_m = 0;
+
+    erdos_renyi_edge* possible_edges;
+    erdos_renyi_edge* edge;
+
+    int random_edge_index;
+    srand(time(NULL));
+
+    bool bidirectional;
+
+
+    // Retrieve the graph name (cannot be null). 
+    if (PG_ARGISNULL(0))
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("Graph name cannot be NULL")));
+    }
+    graph_name = PG_GETARG_NAME(0);
+    graph_name_str = NameStr(*graph_name);
+
+
+    // Check if graph exists. If it doesn't, create the graph.
+    if (!graph_exists(graph_name_str))
+    {
+        DirectFunctionCall1(create_graph, CStringGetDatum(graph_name));
+    }
+    graph_id = get_graph_oid(graph_name_str);
+
+
+    // Get the number of vertices. 
+	if (PG_ARGISNULL(1))
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Number of vertices cannot be NULL.")));
+	}
+    no_vertices = PG_GETARG_INT64(1);
+
+
+    // Get the number of edges. 
+    if (PG_ARGISNULL(2))
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Probability cannot be NULL.")));
+	}
+    no_edges = PG_GETARG_INT64(2);
+
+
+    // Get the vertex label.
+    if (PG_ARGISNULL(3)) 
+    {
+        namestrcpy(vertex_label_name, AG_DEFAULT_LABEL_VERTEX);
+        vertex_label_str = AG_DEFAULT_LABEL_VERTEX;
+    }
+    else 
+    {
+        vertex_label_name = PG_GETARG_NAME(3);
+        vertex_label_str = NameStr(*vertex_label_name);
+    }
+
+
+    // Get the edge label. 
+    if (PG_ARGISNULL(4))
+    {
+        namestrcpy(edge_label_name, AG_DEFAULT_LABEL_EDGE);
+        edge_label_str = AG_DEFAULT_LABEL_EDGE;
+    }
+    else
+    {
+        edge_label_name = PG_GETARG_NAME(4);
+        edge_label_str = NameStr(*edge_label_name);
+    }
+
+
+    // Compare both edge and vertex labels (they cannot be the same).
+    if (strcmp(vertex_label_str, edge_label_str) == 0)
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                errmsg("vertex and edge label can not be same")));
+    }
+
+
+    // If the vertex label does not exist, create the label.
+    if (!label_exists(vertex_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_vlabel, CStringGetDatum(graph_name), CStringGetDatum(vertex_label_name));
+    }
+
+
+    // If the edge label does not exist, create the label. 
+    if (!label_exists(edge_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_elabel, CStringGetDatum(graph_name), CStringGetDatum(edge_label_name));
+    }
+
+
+    // Get the direction of the graph.
+    bidirectional = (PG_GETARG_BOOL(5) == true) ? true : false;
+
+
+    vertex_label_id = get_label_id(vertex_label_str, graph_id);
+    edge_label_id = get_label_id(edge_label_str, graph_id);
+
+    graph_cache = search_graph_name_cache(graph_name_str);
+    vertex_cache = search_label_name_graph_cache(vertex_label_str,graph_id);
+    edge_cache = search_label_name_graph_cache(edge_label_str,graph_id);
+
+    nsp_id = graph_cache->namespace;
+    vertex_seq_name = &(vertex_cache->seq_name);
+    vertex_seq_name_str = NameStr(*vertex_seq_name);
+
+    edge_seq_name = &(edge_cache->seq_name);
+    edge_seq_name_str = NameStr(*edge_seq_name);
+
+    vertex_seq_id = get_relname_relid(vertex_seq_name_str, nsp_id);
+    edge_seq_id = get_relname_relid(edge_seq_name_str, nsp_id);
+
+    total_possible_edges = (no_vertices * (no_vertices - 1))/2; // C(no_vertices, 2)
+    possible_edges = (erdos_renyi_edge*) malloc(sizeof(erdos_renyi_edge) * total_possible_edges);
+
+    vertex_array = (graphid*) malloc(sizeof(graphid) * no_vertices);
+
+
+    // Create the vertices and add them to vertex_array.
+    for (int i = 0; i < no_vertices; i++)
+    {
+        vid = nextval_internal(vertex_seq_id, true);
+        object_graph_id = make_graphid(vertex_label_id, vid);
+        props = create_empty_agtype();
+
+        // Insert the vertex in the graph and in the array.
+        insert_vertex_simple(graph_id, vertex_label_str, object_graph_id, props);
+        vertex_array[i] = object_graph_id;
+    }
+
+    // For each unique pair (i, j), add the corresponding edge to the `possible_edges` array.
+    for (int i = 0; i < no_vertices; i++)
+    {
+        for (int j = i; j < no_vertices; j++)
+        {
+            if (i != j)
+            {
+                edge = &possible_edges[index_m];
+
+                // Modify the members of the edge.
+                edge->from_vertex = vertex_array[i];
+                edge->to_vertex = vertex_array[j];
+                edge->chosen = false;
+
+                index_m++;
+            }
+        }
+    }
+
+    // Get a random edge from the `possible_edges` array until `m` edges are created.
+    index_m = 0;
+    while (index_m < no_edges)
+    {
+        random_edge_index = rand() % total_possible_edges;
+        edge = &possible_edges[random_edge_index];
+        
+        if (edge->chosen == false)
+        {
+            edge->chosen = true;
+            index_m++;
+            from_graphid = edge->from_vertex;
+            to_graphid = edge->to_vertex;
+            
+            eid = nextval_internal(edge_seq_id, true);
+            object_graph_id = make_graphid(edge_label_id, eid);
+
+            props = create_empty_agtype();
+
+            insert_edge_simple(graph_id, edge_label_str,
+                            object_graph_id, from_graphid,
+                            to_graphid, props);
+
+            if (bidirectional == true)
+            {
+                eid = nextval_internal(edge_seq_id, true);
+                object_graph_id = make_graphid(edge_label_id, eid);
+
+                props = create_empty_agtype();
+
+                insert_edge_simple(graph_id, edge_label_str,
+                                object_graph_id, to_graphid,
+                                from_graphid, props);
+            }
+        }
+    }
+
+    free(vertex_array);
+    free(possible_edges);
+    PG_RETURN_VOID();
+}
