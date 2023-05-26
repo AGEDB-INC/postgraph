@@ -18,6 +18,7 @@
  */
 
 #include "postgres.h"
+#include <time.h>
 
 #include "access/xact.h"
 #include "access/genam.h"
@@ -56,28 +57,6 @@ typedef struct erdos_renyi_edge
     graphid to_vertex;
     bool chosen;
 } erdos_renyi_edge;
-
-
-// Function to calculate the factorial of a number.
-int factorial(int num) 
-{
-    int result = 1;
-    for (int i = 1; i <= num; i++) 
-    {
-        result *= i;
-    }
-    return result;
-}
-
-
-// Function to calculate the combination of two numbers (a > b).
-int combination(int a, int b) 
-{
-    int numerator = factorial(a);
-    int denominator = factorial(b) * factorial(a - b);
-    int result = numerator / denominator;
-    return result;
-}
 
 
 PG_FUNCTION_INFO_V1(create_complete_graph);
@@ -466,6 +445,7 @@ Datum age_create_erdos_renyi_graph_gnm(PG_FUNCTION_ARGS)
     Oid edge_seq_id;
     Oid nsp_id;
 
+    graphid from_graphid, to_graphid;
     graphid object_graph_id;
     graphid current_graphid; 
     graphid* vertex_array;
@@ -493,10 +473,12 @@ Datum age_create_erdos_renyi_graph_gnm(PG_FUNCTION_ARGS)
     int32 vertex_label_id;
     int32 edge_label_id;
     int total_possible_edges;
+    int index_m = 0;
 
     erdos_renyi_edge* possible_edges;
+    erdos_renyi_edge* edge;
 
-    float random_prob;
+    int random_edge_index;
     srand(time(NULL));
 
     bool bidirectional;
@@ -607,7 +589,7 @@ Datum age_create_erdos_renyi_graph_gnm(PG_FUNCTION_ARGS)
     vertex_seq_id = get_relname_relid(vertex_seq_name_str, nsp_id);
     edge_seq_id = get_relname_relid(edge_seq_name_str, nsp_id);
 
-    total_possible_edges = combination(no_edges, 2);
+    total_possible_edges = (no_vertices * (no_vertices - 1))/2; // C(no_vertices, 2)
     possible_edges = (erdos_renyi_edge*) malloc(sizeof(erdos_renyi_edge) * total_possible_edges);
 
     vertex_array = (graphid*) malloc(sizeof(graphid) * no_vertices);
@@ -625,7 +607,61 @@ Datum age_create_erdos_renyi_graph_gnm(PG_FUNCTION_ARGS)
         vertex_array[i] = object_graph_id;
     }
 
-    // TODO: For each unique pair (i, j), add the corresponding edge to the `possible_edges` array.
+    // For each unique pair (i, j), add the corresponding edge to the `possible_edges` array.
+    for (int i = 0; i < no_vertices; i++)
+    {
+        for (int j = i; j < no_vertices; j++)
+        {
+            if (i != j)
+            {
+                edge = &possible_edges[index_m];
+
+                // Modify the members of the edge.
+                edge->from_vertex = vertex_array[i];
+                edge->to_vertex = vertex_array[j];
+                edge->chosen = false;
+
+                index_m++;
+            }
+        }
+    }
+
+    // Get a random edge from the `possible_edges` array until `m` edges are created.
+    index_m = 0;
+    while (index_m < no_edges)
+    {
+        random_edge_index = rand() % total_possible_edges;
+        edge = &possible_edges[random_edge_index];
+        
+        if (edge->chosen == false)
+        {
+            edge->chosen = true;
+            index_m++;
+            from_graphid = edge->from_vertex;
+            to_graphid = edge->to_vertex;
+            
+            eid = nextval_internal(edge_seq_id, true);
+            object_graph_id = make_graphid(edge_label_id, eid);
+
+            props = create_empty_agtype();
+
+            insert_edge_simple(graph_id, edge_label_str,
+                            object_graph_id, from_graphid,
+                            to_graphid, props);
+
+            if (bidirectional == true)
+            {
+                eid = nextval_internal(edge_seq_id, true);
+                object_graph_id = make_graphid(edge_label_id, eid);
+
+                props = create_empty_agtype();
+
+                insert_edge_simple(graph_id, edge_label_str,
+                                object_graph_id, to_graphid,
+                                from_graphid, props);
+            }
+        }
+    }
 
     free(vertex_array);
     free(possible_edges);
