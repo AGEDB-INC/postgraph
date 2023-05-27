@@ -342,7 +342,10 @@ Datum age_create_watts_strogatz_graph(PG_FUNCTION_ARGS)
     vertex_label_str = NameStr(*vertex_label_name);
     edge_label_str = NameStr(*edge_label_name);
 
-    /* If no_edges is odd, adds 1 so that dividing by 2 returns an integer */
+    /*
+     * If no_edges is odd, takes 1 so that dividing by 2 
+     * returns an integer (k-1 neighbors if k is odd) 
+     */
     if (no_edges % 2 == 1)
     {
         no_edges -= 1;
