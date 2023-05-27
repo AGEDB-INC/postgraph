@@ -4174,13 +4174,10 @@ CALLED ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
-CREATE FUNCTION ag_catalog.age_create_watts_strogatz_graph(graph_name name,
-                                                           num_nodes int,
-                                                           num_edges int,
-                                                           probability float8,
-                                                           node_label name = NULL,
-                                                           node_properties agtype = NULL,
-                                                           edge_label name = NULL,
+CREATE FUNCTION ag_catalog.age_create_watts_strogatz_graph(graph_name name, n int, k int, p float8,
+                                                           vertex_label_name name = NULL,
+                                                           vertex_properties agtype = NULL,
+                                                           edge_label_name name = NULL,
                                                            edge_properties agtype = NULL,
                                                            bidirectional boolean = true)
 RETURNS void
