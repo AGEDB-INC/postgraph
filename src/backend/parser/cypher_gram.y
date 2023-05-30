@@ -79,7 +79,7 @@
 /* keywords in alphabetical order */
 %token <keyword> ALL ANALYZE AND AS ASC ASCENDING
                  BETWEEN BY
-                 CALL CASE CENTURY COALESCE CONTAINS CREATE CURRENT_TIMESTAMP
+                 CALL CASE CENTURY COALESCE CONTAINS CREATE CURRENT_TIME CURRENT_TIMESTAMP
                  DATE DAY DECADE DELETE DESC DESCENDING DETACH DISTINCT DOW DOY
                  ELSE END_P ENDS EPOCH EXISTS EXPLAIN EXTRACT
                  FALSE_P FROM
@@ -1546,6 +1546,10 @@ expr_func_subexpr:
             c->location = @1;
             $$ = (Node *) c;
         }
+    | CURRENT_TIME
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_time")), NIL, @1);
+	}
     | CURRENT_TIMESTAMP
 	{
 	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), NIL, @1);
@@ -1974,6 +1978,7 @@ safe_keywords:
     | COALESCE          { $$ = pnstrdup($1, 8); }
     | CONTAINS          { $$ = pnstrdup($1, 8); }
     | CREATE            { $$ = pnstrdup($1, 6); }
+    | CURRENT_TIME      { $$ = pnstrdup($1, 12); }
     | CURRENT_TIMESTAMP { $$ = pnstrdup($1, 17); }
     | DELETE            { $$ = pnstrdup($1, 6); }
     | DESC              { $$ = pnstrdup($1, 4); }
