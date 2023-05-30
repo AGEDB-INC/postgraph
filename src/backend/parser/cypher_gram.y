@@ -1550,6 +1550,10 @@ expr_func_subexpr:
 	{
 	    $$ = make_function_expr(list_make1(makeString("current_time")), NIL, @1);
 	}
+    | CURRENT_TIME '(' expr_list ')'
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_time")), $3, @1);
+	}
     | CURRENT_TIMESTAMP
 	{
 	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), NIL, @1);
