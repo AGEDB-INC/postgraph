@@ -79,7 +79,7 @@
 /* keywords in alphabetical order */
 %token <keyword> ALL ANALYZE AND AS ASC ASCENDING
                  BETWEEN BY
-                 CALL CASE CENTURY COALESCE CONTAINS CREATE
+                 CALL CASE CENTURY COALESCE CONTAINS CREATE CURRENT_TIME CURRENT_TIMESTAMP
                  DATE DAY DECADE DELETE DESC DESCENDING DETACH DISTINCT DOW DOY
                  ELSE END_P ENDS EPOCH EXISTS EXPLAIN EXTRACT
                  FALSE_P FROM
@@ -1546,6 +1546,22 @@ expr_func_subexpr:
             c->location = @1;
             $$ = (Node *) c;
         }
+    | CURRENT_TIME
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_time")), NIL, @1);
+	}
+    | CURRENT_TIME '(' expr_list ')'
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_time")), $3, @1);
+	}
+    | CURRENT_TIMESTAMP
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), NIL, @1);
+	}
+    | CURRENT_TIMESTAMP '(' expr_list ')'
+	{
+	    $$ = make_function_expr(list_make1(makeString("current_timestamp")), $3, @1);
+	}
     | EXISTS '(' anonymous_path ')'
         {
             cypher_sub_pattern *sub;
@@ -1953,59 +1969,61 @@ reserved_keyword:
  */
 
 safe_keywords:
-    ALL          { $$ = pnstrdup($1, 3); }
-    | ANALYZE    { $$ = pnstrdup($1, 7); }
-    | AND        { $$ = pnstrdup($1, 3); }
-    | AS         { $$ = pnstrdup($1, 2); }
-    | ASC        { $$ = pnstrdup($1, 3); }
-    | ASCENDING  { $$ = pnstrdup($1, 9); }
-    | BETWEEN    { $$ = pnstrdup($1, 7); }
-    | BY         { $$ = pnstrdup($1, 2); }
-    | CALL       { $$ = pnstrdup($1, 4); }
-    | CASE       { $$ = pnstrdup($1, 4); }
-    | COALESCE   { $$ = pnstrdup($1, 8); }
-    | CONTAINS   { $$ = pnstrdup($1, 8); }
-    | CREATE     { $$ = pnstrdup($1, 6); }
-    | DELETE     { $$ = pnstrdup($1, 6); }
-    | DESC       { $$ = pnstrdup($1, 4); }
-    | DESCENDING { $$ = pnstrdup($1, 10); }
-    | DETACH     { $$ = pnstrdup($1, 6); }
-    | DISTINCT   { $$ = pnstrdup($1, 8); }
-    | ELSE       { $$ = pnstrdup($1, 4); }
-    | ENDS       { $$ = pnstrdup($1, 4); }
-    | EXISTS     { $$ = pnstrdup($1, 6); }
-    | EXPLAIN    { $$ = pnstrdup($1, 7); }
-    | IN         { $$ = pnstrdup($1, 2); }
-    | IS         { $$ = pnstrdup($1, 2); }
-    | LIMIT      { $$ = pnstrdup($1, 6); }
-    | MATCH      { $$ = pnstrdup($1, 6); }
-    | MERGE      { $$ = pnstrdup($1, 6); }
-    | NOT        { $$ = pnstrdup($1, 3); }
-    | OPTIONAL   { $$ = pnstrdup($1, 8); }
-    | OR         { $$ = pnstrdup($1, 2); }
-    | ORDER      { $$ = pnstrdup($1, 5); }
-    | OVERLAPS   { $$ = pnstrdup($1, 8); }
-    | REMOVE     { $$ = pnstrdup($1, 6); }
-    | RETURN     { $$ = pnstrdup($1, 6); }
-    | SET        { $$ = pnstrdup($1, 3); }
-    | SKIP       { $$ = pnstrdup($1, 4); }
-    | STARTS     { $$ = pnstrdup($1, 6); }
-    | SYMMETRIC  { $$ = pnstrdup($1, 9); }
-    | THEN       { $$ = pnstrdup($1, 4); }
-    | UNION      { $$ = pnstrdup($1, 5); }
-    | WHEN       { $$ = pnstrdup($1, 4); }
-    | VERBOSE    { $$ = pnstrdup($1, 7); }
-    | WHERE      { $$ = pnstrdup($1, 5); }
-    | WITH       { $$ = pnstrdup($1, 4); }
-    | XOR        { $$ = pnstrdup($1, 3); }
-    | YIELD      { $$ = pnstrdup($1, 5); }
+    ALL                 { $$ = pnstrdup($1, 3); }
+    | ANALYZE           { $$ = pnstrdup($1, 7); }
+    | AND               { $$ = pnstrdup($1, 3); }
+    | AS                { $$ = pnstrdup($1, 2); }
+    | ASC               { $$ = pnstrdup($1, 3); }
+    | ASCENDING         { $$ = pnstrdup($1, 9); }
+    | BETWEEN           { $$ = pnstrdup($1, 7); }
+    | BY                { $$ = pnstrdup($1, 2); }
+    | CALL              { $$ = pnstrdup($1, 4); }
+    | CASE              { $$ = pnstrdup($1, 4); }
+    | COALESCE          { $$ = pnstrdup($1, 8); }
+    | CONTAINS          { $$ = pnstrdup($1, 8); }
+    | CREATE            { $$ = pnstrdup($1, 6); }
+    | CURRENT_TIME      { $$ = pnstrdup($1, 12); }
+    | CURRENT_TIMESTAMP { $$ = pnstrdup($1, 17); }
+    | DELETE            { $$ = pnstrdup($1, 6); }
+    | DESC              { $$ = pnstrdup($1, 4); }
+    | DESCENDING        { $$ = pnstrdup($1, 10); }
+    | DETACH            { $$ = pnstrdup($1, 6); }
+    | DISTINCT          { $$ = pnstrdup($1, 8); }
+    | ELSE              { $$ = pnstrdup($1, 4); }
+    | ENDS              { $$ = pnstrdup($1, 4); }
+    | EXISTS            { $$ = pnstrdup($1, 6); }
+    | EXPLAIN           { $$ = pnstrdup($1, 7); }
+    | IN                { $$ = pnstrdup($1, 2); }
+    | IS                { $$ = pnstrdup($1, 2); }
+    | LIMIT             { $$ = pnstrdup($1, 6); }
+    | MATCH             { $$ = pnstrdup($1, 6); }
+    | MERGE             { $$ = pnstrdup($1, 6); }
+    | NOT               { $$ = pnstrdup($1, 3); }
+    | OPTIONAL          { $$ = pnstrdup($1, 8); }
+    | OR                { $$ = pnstrdup($1, 2); }
+    | ORDER             { $$ = pnstrdup($1, 5); }
+    | OVERLAPS          { $$ = pnstrdup($1, 8); }
+    | REMOVE            { $$ = pnstrdup($1, 6); }
+    | RETURN            { $$ = pnstrdup($1, 6); }
+    | SET               { $$ = pnstrdup($1, 3); }
+    | SKIP              { $$ = pnstrdup($1, 4); }
+    | STARTS            { $$ = pnstrdup($1, 6); }
+    | SYMMETRIC         { $$ = pnstrdup($1, 9); }
+    | THEN              { $$ = pnstrdup($1, 4); }
+    | UNION             { $$ = pnstrdup($1, 5); }
+    | WHEN              { $$ = pnstrdup($1, 4); }
+    | VERBOSE           { $$ = pnstrdup($1, 7); }
+    | WHERE             { $$ = pnstrdup($1, 5); }
+    | WITH              { $$ = pnstrdup($1, 4); }
+    | XOR               { $$ = pnstrdup($1, 3); }
+    | YIELD             { $$ = pnstrdup($1, 5); }
     ;
 
 conflicted_keywords:
-    END_P     { $$ = pnstrdup($1, 5); }
-    | FALSE_P { $$ = pnstrdup($1, 7); }
-    | NULL_P  { $$ = pnstrdup($1, 6); }
-    | TRUE_P  { $$ = pnstrdup($1, 6); }
+    END_P               { $$ = pnstrdup($1, 5); }
+    | FALSE_P           { $$ = pnstrdup($1, 7); }
+    | NULL_P            { $$ = pnstrdup($1, 6); }
+    | TRUE_P            { $$ = pnstrdup($1, 6); }
     ;
 
 %%
