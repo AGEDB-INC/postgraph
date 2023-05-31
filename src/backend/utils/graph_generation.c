@@ -201,3 +201,211 @@ Datum create_complete_graph(PG_FUNCTION_ARGS)
     PG_RETURN_VOID();
 }
 
+
+PG_FUNCTION_INFO_V1(age_create_tadpole_graph);
+/*
+* A Tadpole Graph is a type of graph consisting of a cycle graph on m (at least 3) and a path graph on n vertices.
+*
+* Syntax:
+* SELECT * FROM ag_catalog.age_create_tadpole_graph('graph_name', m_nodes, n_nodes, 'vertex_label', 'edge_label', true/false);
+*/
+Datum age_create_tadpole_graph(PG_FUNCTION_ARGS)
+{
+    Oid graph_id;
+    Oid vertex_seq_id;
+    Oid edge_seq_id;
+    Oid nsp_id;
+
+    Name graph_name; 
+    Name vertex_label_name;
+    Name vertex_seq_name;
+    Name edge_label_name;
+    Name edge_seq_name;
+
+	char* graph_name_str; 
+    char* vertex_label_str; 
+    char* vertex_seq_name_str;
+    char* edge_label_str;
+    char* edge_seq_name_str;
+
+    graph_cache_data *graph_cache;
+    label_cache_data *vertex_cache;
+    label_cache_data *edge_cache;
+
+    graphid object_graph_id;
+    graphid* vertex_array;
+
+    agtype *props = NULL;
+
+    int64 m_vertices, n_vertices, total_vertices, eid;
+    int64 vid = 1;
+    int32 vertex_label_id, edge_label_id;
+    int i;
+
+    bool bidirectional;
+
+
+    // Retrieve the graph name (cannot be null). 
+    if (PG_ARGISNULL(0))
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                        errmsg("Graph name cannot be NULL")));
+    }
+    graph_name = PG_GETARG_NAME(0);
+    graph_name_str = NameStr(*graph_name);
+
+
+    // Check if graph exists. If it doesn't, create the graph.
+    if (!graph_exists(graph_name_str))
+    {
+        DirectFunctionCall1(create_graph, CStringGetDatum(graph_name));
+    }
+    graph_id = get_graph_oid(graph_name_str);
+
+
+    // Get the number of m vertices for the cycle portion of the graph.
+	if (PG_ARGISNULL(1) || PG_GETARG_INT64(1) < 3)
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Number of vertices for the cycle portion cannot be NULL or less than 3.")));
+	}
+    m_vertices = PG_GETARG_INT64(1);
+
+
+    // Get the number of n vertices for the path portion of the graph.
+    if (PG_ARGISNULL(2) || PG_GETARG_INT64(2) < 1)
+	{
+		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                                errmsg("Number of vertices for the path portion cannot be NULL or less than 1.")));
+	}
+    n_vertices = PG_GETARG_INT64(2);
+
+
+    // Get the vertex label.
+    if (PG_ARGISNULL(3)) 
+    {
+        namestrcpy(vertex_label_name, AG_DEFAULT_LABEL_VERTEX);
+        vertex_label_str = AG_DEFAULT_LABEL_VERTEX;
+    }
+    else 
+    {
+        vertex_label_name = PG_GETARG_NAME(3);
+        vertex_label_str = NameStr(*vertex_label_name);
+    }
+
+
+    // Get the edge label. 
+    if (PG_ARGISNULL(4))
+    {
+        namestrcpy(edge_label_name, AG_DEFAULT_LABEL_EDGE);
+        edge_label_str = AG_DEFAULT_LABEL_EDGE;
+    }
+    else
+    {
+        edge_label_name = PG_GETARG_NAME(4);
+        edge_label_str = NameStr(*edge_label_name);
+    }
+
+
+    // Compare both edge and vertex labels (they cannot be the same).
+    if (strcmp(vertex_label_str, edge_label_str) == 0)
+    {
+        ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+                errmsg("vertex and edge label can not be same")));
+    }
+
+
+    // If the vertex label does not exist, create the label.
+    if (!label_exists(vertex_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_vlabel, CStringGetDatum(graph_name), CStringGetDatum(vertex_label_name));
+    }
+
+
+    // If the edge label does not exist, create the label. 
+    if (!label_exists(edge_label_str, graph_id))
+    {
+        DirectFunctionCall2(create_elabel, CStringGetDatum(graph_name), CStringGetDatum(edge_label_name));
+    }
+
+
+    // Get the direction of the graph.
+    bidirectional = (PG_GETARG_BOOL(5) == true) ? true : false;
+
+
+    vertex_label_id = get_label_id(vertex_label_str, graph_id);
+    edge_label_id = get_label_id(edge_label_str, graph_id);
+
+    graph_cache = search_graph_name_cache(graph_name_str);
+    vertex_cache = search_label_name_graph_cache(vertex_label_str,graph_id);
+    edge_cache = search_label_name_graph_cache(edge_label_str,graph_id);
+
+    nsp_id = graph_cache->namespace;
+    vertex_seq_name = &(vertex_cache->seq_name);
+    vertex_seq_name_str = NameStr(*vertex_seq_name);
+
+    edge_seq_name = &(edge_cache->seq_name);
+    edge_seq_name_str = NameStr(*edge_seq_name);
+
+    vertex_seq_id = get_relname_relid(vertex_seq_name_str, nsp_id);
+    edge_seq_id = get_relname_relid(edge_seq_name_str, nsp_id);
+
+    total_vertices = (m_vertices + n_vertices);
+    vertex_array = (graphid*) malloc(sizeof(graphid) * total_vertices);
+
+
+    // Create the total vertices of the graph and store them in the vertices array.
+    for (i = 0; i < total_vertices; i++)
+    {
+        vid = nextval_internal(vertex_seq_id, true);
+        object_graph_id = make_graphid(vertex_label_id, vid);
+        props = create_empty_agtype();
+        insert_vertex_simple(graph_id, vertex_label_str, object_graph_id, props);
+        vertex_array[i] = object_graph_id;
+    }
+
+
+    // Create the edges for the cycle portion of the graph.
+    for (i = 1; i < total_vertices; i++)
+    {
+        eid = nextval_internal(edge_seq_id, true);
+        object_graph_id = make_graphid(edge_label_id, eid);
+        props = create_empty_agtype();
+        insert_edge_simple(graph_id, edge_label_str,
+                        object_graph_id, vertex_array[i-1],
+                        vertex_array[i], props);
+
+        if (bidirectional == true)
+        {
+            eid = nextval_internal(edge_seq_id, true);
+            object_graph_id = make_graphid(edge_label_id, eid);
+            props = create_empty_agtype();
+            insert_edge_simple(graph_id, edge_label_str,
+                            object_graph_id, vertex_array[i],
+                            vertex_array[i-1], props);
+        }
+
+        // Close the cycle.
+        if (i == m_vertices-1)
+        {
+            eid = nextval_internal(edge_seq_id, true);
+            object_graph_id = make_graphid(edge_label_id, eid);
+            props = create_empty_agtype();
+            insert_edge_simple(graph_id, edge_label_str,
+                            object_graph_id, vertex_array[i],
+                            vertex_array[0], props);
+
+            if (bidirectional == true)
+            {
+                eid = nextval_internal(edge_seq_id, true);
+                object_graph_id = make_graphid(edge_label_id, eid);
+                props = create_empty_agtype();
+                insert_edge_simple(graph_id, edge_label_str,
+                                object_graph_id, vertex_array[0],
+                                vertex_array[i], props);
+            }
+        }
+    }
+    free(vertex_array);
+    PG_RETURN_VOID();
+}
