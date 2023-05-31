@@ -45,3 +45,26 @@ SELECT * FROM create_complete_graph(NULL,NULL,NULL);
 SELECT drop_graph('gp1', true);
 SELECT drop_graph('gp2', true);
 
+
+-- Tests for the Tadpole graph generation algorithm.
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphOne', 3, 4, 'vertex', 'edge', false);
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphTwo', 4, 2, 'vertex', 'edge', true);
+
+SELECT * FROM cypher('TadpoleGraphOne', $$ MATCH (a)-[e]->(b) RETURN e $$) as (n agtype);
+SELECT * FROM cypher('TadpoleGraphTwo', $$ MATCH (a)-[e]->(b) RETURN e $$) as (n agtype);
+
+SELECT COUNT(*) FROM "TadpoleGraphOne"."edge"; -- Should return 7.
+SELECT COUNT(*) FROM "TadpoleGraphTwo"."edge"; -- Should return 12.
+
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphTwo', 5, 1, 'vertex', 'edge', true); -- Creates another one in the same namespace.
+
+SELECT COUNT(*) FROM "TadpoleGraphTwo"."edge"; -- Should return 24.
+
+-- Should throw errors.
+SELECT * FROM ag_catalog.age_create_tadpole_graph(NULL, 4, 2, 'vertex', 'edge', true);
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleError', 2, 2, 'vertex', 'edge', true);
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleError', 3, 0, 'vertex', 'edge', true);
+
+-- Drop graphs
+SELECT drop_graph('TadpoleGraphOne', true);
+SELECT drop_graph('TadpoleGraphTwo', true);

@@ -109,3 +109,109 @@ NOTICE:  graph "gp2" has been dropped
  
 (1 row)
 
+-- Tests for the Tadpole graph generation algorithm.
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphOne', 3, 4, 'vertex', 'edge', false);
+NOTICE:  graph "TadpoleGraphOne" has been created
+NOTICE:  VLabel "vertex" has been created
+NOTICE:  ELabel "edge" has been created
+ age_create_tadpole_graph 
+--------------------------
+ 
+(1 row)
+
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphTwo', 4, 2, 'vertex', 'edge', true);
+NOTICE:  graph "TadpoleGraphTwo" has been created
+NOTICE:  VLabel "vertex" has been created
+NOTICE:  ELabel "edge" has been created
+ age_create_tadpole_graph 
+--------------------------
+ 
+(1 row)
+
+SELECT * FROM cypher('TadpoleGraphOne', $$ MATCH (a)-[e]->(b) RETURN e $$) as (n agtype);
+                                                             n                                                             
+---------------------------------------------------------------------------------------------------------------------------
+ {"id": 1125899906842627, "label": "edge", "end_id": 844424930131969, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842625, "label": "edge", "end_id": 844424930131970, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842626, "label": "edge", "end_id": 844424930131971, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1125899906842628, "label": "edge", "end_id": 844424930131972, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842629, "label": "edge", "end_id": 844424930131973, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842630, "label": "edge", "end_id": 844424930131974, "start_id": 844424930131973, "properties": {}}::edge
+ {"id": 1125899906842631, "label": "edge", "end_id": 844424930131975, "start_id": 844424930131974, "properties": {}}::edge
+(7 rows)
+
+SELECT * FROM cypher('TadpoleGraphTwo', $$ MATCH (a)-[e]->(b) RETURN e $$) as (n agtype);
+                                                             n                                                             
+---------------------------------------------------------------------------------------------------------------------------
+ {"id": 1125899906842626, "label": "edge", "end_id": 844424930131969, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1125899906842631, "label": "edge", "end_id": 844424930131969, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842625, "label": "edge", "end_id": 844424930131970, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842628, "label": "edge", "end_id": 844424930131970, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842627, "label": "edge", "end_id": 844424930131971, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1125899906842630, "label": "edge", "end_id": 844424930131971, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842634, "label": "edge", "end_id": 844424930131972, "start_id": 844424930131973, "properties": {}}::edge
+ {"id": 1125899906842632, "label": "edge", "end_id": 844424930131972, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842629, "label": "edge", "end_id": 844424930131972, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842633, "label": "edge", "end_id": 844424930131973, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842636, "label": "edge", "end_id": 844424930131973, "start_id": 844424930131974, "properties": {}}::edge
+ {"id": 1125899906842635, "label": "edge", "end_id": 844424930131974, "start_id": 844424930131973, "properties": {}}::edge
+(12 rows)
+
+SELECT COUNT(*) FROM "TadpoleGraphOne"."edge"; -- Should return 7.
+ count 
+-------
+     7
+(1 row)
+
+SELECT COUNT(*) FROM "TadpoleGraphTwo"."edge"; -- Should return 12.
+ count 
+-------
+    12
+(1 row)
+
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleGraphTwo', 5, 1, 'vertex', 'edge', true); -- Creates another one in the same namespace.
+ age_create_tadpole_graph 
+--------------------------
+ 
+(1 row)
+
+SELECT COUNT(*) FROM "TadpoleGraphTwo"."edge"; -- Should return 24.
+ count 
+-------
+    24
+(1 row)
+
+-- Should throw errors.
+SELECT * FROM ag_catalog.age_create_tadpole_graph(NULL, 4, 2, 'vertex', 'edge', true);
+ERROR:  Graph name cannot be NULL
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleError', 2, 2, 'vertex', 'edge', true);
+NOTICE:  graph "TadpoleError" has been created
+ERROR:  Number of vertices for the cycle portion cannot be NULL or less than 3.
+SELECT * FROM ag_catalog.age_create_tadpole_graph('TadpoleError', 3, 0, 'vertex', 'edge', true);
+NOTICE:  graph "TadpoleError" has been created
+ERROR:  Number of vertices for the path portion cannot be NULL or less than 1.
+-- Drop graphs
+SELECT drop_graph('TadpoleGraphOne', true);
+NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to table "TadpoleGraphOne"._ag_label_vertex
+drop cascades to table "TadpoleGraphOne"._ag_label_edge
+drop cascades to table "TadpoleGraphOne".vertex
+drop cascades to table "TadpoleGraphOne".edge
+NOTICE:  graph "TadpoleGraphOne" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
+SELECT drop_graph('TadpoleGraphTwo', true);
+NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to table "TadpoleGraphTwo"._ag_label_vertex
+drop cascades to table "TadpoleGraphTwo"._ag_label_edge
+drop cascades to table "TadpoleGraphTwo".vertex
+drop cascades to table "TadpoleGraphTwo".edge
+NOTICE:  graph "TadpoleGraphTwo" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
