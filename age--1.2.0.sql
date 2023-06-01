@@ -4187,6 +4187,18 @@ CALLED ON NULL INPUT
 PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
+CREATE FUNCTION ag_catalog.create_cycle_graph(graph_name name, 
+                                              graph_size int, 
+                                              edge_label name,
+                                              edge_properties agtype = NULL,
+                                              node_label name = NULL,
+                                              node_properties agtype = NULL)
+RETURNS graphid
+LANGUAGE c
+CALLED ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
 CREATE FUNCTION ag_catalog.age_prepare_cypher(cstring, cstring)
 RETURNS boolean
 LANGUAGE c

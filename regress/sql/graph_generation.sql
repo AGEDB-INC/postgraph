@@ -112,3 +112,59 @@ SELECT drop_graph('gp1', true);
 SELECT drop_graph('gp2', true);
 SELECT drop_graph('gp3', true);
 
+
+-- TESTS FOR CYCLE GRAPH GENERATION
+
+SELECT * FROM create_cycle_graph('gp1',3,'edge1','{}','vertex1',NULL);
+SELECT COUNT(*) FROM gp1."vertex1";
+SELECT COUNT(*) FROM gp1."edge1";
+
+SELECT * FROM create_cycle_graph('gp1',5,'edge2','{}','vertex2','{}');
+SELECT COUNT(*) FROM gp1."vertex2";
+SELECT COUNT(*) FROM gp1."edge2";
+
+SELECT * FROM create_cycle_graph('gp1',10,'edge3','{}','vertex3','{}');
+SELECT COUNT(*) FROM gp1."vertex3";
+SELECT COUNT(*) FROM gp1."edge3";
+
+SELECT * FROM create_cycle_graph('gp1',20,'edge4','{}','vertex4','{}');
+SELECT COUNT(*) FROM gp1."vertex4";
+SELECT COUNT(*) FROM gp1."edge4";
+
+-- Counting total vertexes and edges
+SELECT * FROM cypher('gp1', $$MATCH (v) RETURN COUNT(v)$$) as (n agtype);
+SELECT * FROM cypher('gp1', $$MATCH (a)-[e]->(b) RETURN COUNT(e)$$) as (n agtype);
+
+-- List all connections
+SELECT * FROM cypher('gp1', $$MATCH (a)-[e]->(b) RETURN e$$) as (n agtype);
+
+-- creating another graph
+SELECT * FROM create_cycle_graph('gp2',7,'edge1','{}','vertex1','{}');
+
+-- testing vertex NULL labels
+SELECT * FROM create_cycle_graph('gp3',6,'edge','{}',NULL,NULL);
+
+-- SHOULD FAIL
+-- invalid graph name
+SELECT * FROM create_cycle_graph(NULL,6,'edge','{}','node','{}');
+SELECT * FROM create_cycle_graph(NULL,6,'edge');
+
+-- invalid number of vertexes in cycle graphs
+SELECT * FROM create_cycle_graph('ERROR1',0,'edge',NULL,'node',NULL); 
+SELECT * FROM create_cycle_graph('ERROR1',0,'edge',NULL,'node',NULL);
+SELECT * FROM create_cycle_graph('ERROR1',1,'edge',NULL,'node',NULL);
+SELECT * FROM create_cycle_graph('ERROR1',2,'edge',NULL,'node',NULL);
+SELECT * FROM create_cycle_graph('ERROR1',-1,'edge',NULL,'node',NULL);
+
+-- invalid edge label
+SELECT * FROM create_cycle_graph('ERROR2',5,NULL,'{}','vertex2','{}');
+SELECT * FROM create_cycle_graph('ERROR2',5,NULL);
+
+-- same edge and node labels
+SELECT * FROM create_cycle_graph('ERROR',5,'same','{}','same','{}');
+
+
+-- DROPPING GRAPHS
+SELECT drop_graph('gp1', true);
+SELECT drop_graph('gp2', true);
+SELECT drop_graph('gp3', true);

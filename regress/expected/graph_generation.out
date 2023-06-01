@@ -385,3 +385,228 @@ NOTICE:  graph "gp3" has been dropped
  
 (1 row)
 
+-- TESTS FOR CYCLE GRAPH GENERATION
+SELECT * FROM create_cycle_graph('gp1',3,'edge1','{}','vertex1',NULL);
+NOTICE:  graph "gp1" has been created
+NOTICE:  VLabel "vertex1" has been created
+NOTICE:  ELabel "edge1" has been created
+ create_cycle_graph 
+--------------------
+ 844424930131969
+(1 row)
+
+SELECT COUNT(*) FROM gp1."vertex1";
+ count 
+-------
+     3
+(1 row)
+
+SELECT COUNT(*) FROM gp1."edge1";
+ count 
+-------
+     3
+(1 row)
+
+SELECT * FROM create_cycle_graph('gp1',5,'edge2','{}','vertex2','{}');
+NOTICE:  VLabel "vertex2" has been created
+NOTICE:  ELabel "edge2" has been created
+ create_cycle_graph 
+--------------------
+ 1407374883553281
+(1 row)
+
+SELECT COUNT(*) FROM gp1."vertex2";
+ count 
+-------
+     5
+(1 row)
+
+SELECT COUNT(*) FROM gp1."edge2";
+ count 
+-------
+     5
+(1 row)
+
+SELECT * FROM create_cycle_graph('gp1',10,'edge3','{}','vertex3','{}');
+NOTICE:  VLabel "vertex3" has been created
+NOTICE:  ELabel "edge3" has been created
+ create_cycle_graph 
+--------------------
+ 1970324836974593
+(1 row)
+
+SELECT COUNT(*) FROM gp1."vertex3";
+ count 
+-------
+    10
+(1 row)
+
+SELECT COUNT(*) FROM gp1."edge3";
+ count 
+-------
+    10
+(1 row)
+
+SELECT * FROM create_cycle_graph('gp1',20,'edge4','{}','vertex4','{}');
+NOTICE:  VLabel "vertex4" has been created
+NOTICE:  ELabel "edge4" has been created
+ create_cycle_graph 
+--------------------
+ 2533274790395905
+(1 row)
+
+SELECT COUNT(*) FROM gp1."vertex4";
+ count 
+-------
+    20
+(1 row)
+
+SELECT COUNT(*) FROM gp1."edge4";
+ count 
+-------
+    20
+(1 row)
+
+-- Counting total vertexes and edges
+SELECT * FROM cypher('gp1', $$MATCH (v) RETURN COUNT(v)$$) as (n agtype);
+ n  
+----
+ 38
+(1 row)
+
+SELECT * FROM cypher('gp1', $$MATCH (a)-[e]->(b) RETURN COUNT(e)$$) as (n agtype);
+ n  
+----
+ 38
+(1 row)
+
+-- List all connections
+SELECT * FROM cypher('gp1', $$MATCH (a)-[e]->(b) RETURN e$$) as (n agtype);
+                                                              n                                                               
+------------------------------------------------------------------------------------------------------------------------------
+ {"id": 1125899906842627, "label": "edge1", "end_id": 844424930131969, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842625, "label": "edge1", "end_id": 844424930131970, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842626, "label": "edge1", "end_id": 844424930131971, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1688849860263941, "label": "edge2", "end_id": 1407374883553281, "start_id": 1407374883553285, "properties": {}}::edge
+ {"id": 1688849860263937, "label": "edge2", "end_id": 1407374883553282, "start_id": 1407374883553281, "properties": {}}::edge
+ {"id": 1688849860263938, "label": "edge2", "end_id": 1407374883553283, "start_id": 1407374883553282, "properties": {}}::edge
+ {"id": 1688849860263939, "label": "edge2", "end_id": 1407374883553284, "start_id": 1407374883553283, "properties": {}}::edge
+ {"id": 1688849860263940, "label": "edge2", "end_id": 1407374883553285, "start_id": 1407374883553284, "properties": {}}::edge
+ {"id": 2251799813685258, "label": "edge3", "end_id": 1970324836974593, "start_id": 1970324836974602, "properties": {}}::edge
+ {"id": 2251799813685249, "label": "edge3", "end_id": 1970324836974594, "start_id": 1970324836974593, "properties": {}}::edge
+ {"id": 2251799813685250, "label": "edge3", "end_id": 1970324836974595, "start_id": 1970324836974594, "properties": {}}::edge
+ {"id": 2251799813685251, "label": "edge3", "end_id": 1970324836974596, "start_id": 1970324836974595, "properties": {}}::edge
+ {"id": 2251799813685252, "label": "edge3", "end_id": 1970324836974597, "start_id": 1970324836974596, "properties": {}}::edge
+ {"id": 2251799813685253, "label": "edge3", "end_id": 1970324836974598, "start_id": 1970324836974597, "properties": {}}::edge
+ {"id": 2251799813685254, "label": "edge3", "end_id": 1970324836974599, "start_id": 1970324836974598, "properties": {}}::edge
+ {"id": 2251799813685255, "label": "edge3", "end_id": 1970324836974600, "start_id": 1970324836974599, "properties": {}}::edge
+ {"id": 2251799813685256, "label": "edge3", "end_id": 1970324836974601, "start_id": 1970324836974600, "properties": {}}::edge
+ {"id": 2251799813685257, "label": "edge3", "end_id": 1970324836974602, "start_id": 1970324836974601, "properties": {}}::edge
+ {"id": 2814749767106580, "label": "edge4", "end_id": 2533274790395905, "start_id": 2533274790395924, "properties": {}}::edge
+ {"id": 2814749767106561, "label": "edge4", "end_id": 2533274790395906, "start_id": 2533274790395905, "properties": {}}::edge
+ {"id": 2814749767106562, "label": "edge4", "end_id": 2533274790395907, "start_id": 2533274790395906, "properties": {}}::edge
+ {"id": 2814749767106563, "label": "edge4", "end_id": 2533274790395908, "start_id": 2533274790395907, "properties": {}}::edge
+ {"id": 2814749767106564, "label": "edge4", "end_id": 2533274790395909, "start_id": 2533274790395908, "properties": {}}::edge
+ {"id": 2814749767106565, "label": "edge4", "end_id": 2533274790395910, "start_id": 2533274790395909, "properties": {}}::edge
+ {"id": 2814749767106566, "label": "edge4", "end_id": 2533274790395911, "start_id": 2533274790395910, "properties": {}}::edge
+ {"id": 2814749767106567, "label": "edge4", "end_id": 2533274790395912, "start_id": 2533274790395911, "properties": {}}::edge
+ {"id": 2814749767106568, "label": "edge4", "end_id": 2533274790395913, "start_id": 2533274790395912, "properties": {}}::edge
+ {"id": 2814749767106569, "label": "edge4", "end_id": 2533274790395914, "start_id": 2533274790395913, "properties": {}}::edge
+ {"id": 2814749767106570, "label": "edge4", "end_id": 2533274790395915, "start_id": 2533274790395914, "properties": {}}::edge
+ {"id": 2814749767106571, "label": "edge4", "end_id": 2533274790395916, "start_id": 2533274790395915, "properties": {}}::edge
+ {"id": 2814749767106572, "label": "edge4", "end_id": 2533274790395917, "start_id": 2533274790395916, "properties": {}}::edge
+ {"id": 2814749767106573, "label": "edge4", "end_id": 2533274790395918, "start_id": 2533274790395917, "properties": {}}::edge
+ {"id": 2814749767106574, "label": "edge4", "end_id": 2533274790395919, "start_id": 2533274790395918, "properties": {}}::edge
+ {"id": 2814749767106575, "label": "edge4", "end_id": 2533274790395920, "start_id": 2533274790395919, "properties": {}}::edge
+ {"id": 2814749767106576, "label": "edge4", "end_id": 2533274790395921, "start_id": 2533274790395920, "properties": {}}::edge
+ {"id": 2814749767106577, "label": "edge4", "end_id": 2533274790395922, "start_id": 2533274790395921, "properties": {}}::edge
+ {"id": 2814749767106578, "label": "edge4", "end_id": 2533274790395923, "start_id": 2533274790395922, "properties": {}}::edge
+ {"id": 2814749767106579, "label": "edge4", "end_id": 2533274790395924, "start_id": 2533274790395923, "properties": {}}::edge
+(38 rows)
+
+-- creating another graph
+SELECT * FROM create_cycle_graph('gp2',7,'edge1','{}','vertex1','{}');
+NOTICE:  graph "gp2" has been created
+NOTICE:  VLabel "vertex1" has been created
+NOTICE:  ELabel "edge1" has been created
+ create_cycle_graph 
+--------------------
+ 844424930131969
+(1 row)
+
+-- testing vertex NULL labels
+SELECT * FROM create_cycle_graph('gp3',6,'edge','{}',NULL,NULL);
+NOTICE:  graph "gp3" has been created
+NOTICE:  ELabel "edge" has been created
+ create_cycle_graph 
+--------------------
+ 281474976710657
+(1 row)
+
+-- SHOULD FAIL
+-- invalid graph name
+SELECT * FROM create_cycle_graph(NULL,6,'edge','{}','node','{}');
+ERROR:  graph name cannot be NULL
+SELECT * FROM create_cycle_graph(NULL,6,'edge');
+ERROR:  graph name cannot be NULL
+-- invalid number of vertexes in cycle graphs
+SELECT * FROM create_cycle_graph('ERROR1',0,'edge',NULL,'node',NULL); 
+ERROR:  cycle graph size cannot be NULL or lower than 3
+SELECT * FROM create_cycle_graph('ERROR1',0,'edge',NULL,'node',NULL);
+ERROR:  cycle graph size cannot be NULL or lower than 3
+SELECT * FROM create_cycle_graph('ERROR1',1,'edge',NULL,'node',NULL);
+ERROR:  cycle graph size cannot be NULL or lower than 3
+SELECT * FROM create_cycle_graph('ERROR1',2,'edge',NULL,'node',NULL);
+ERROR:  cycle graph size cannot be NULL or lower than 3
+SELECT * FROM create_cycle_graph('ERROR1',-1,'edge',NULL,'node',NULL);
+ERROR:  cycle graph size cannot be NULL or lower than 3
+-- invalid edge label
+SELECT * FROM create_cycle_graph('ERROR2',5,NULL,'{}','vertex2','{}');
+ERROR:  edge label cannot be NULL
+SELECT * FROM create_cycle_graph('ERROR2',5,NULL);
+ERROR:  edge label cannot be NULL
+-- same edge and node labels
+SELECT * FROM create_cycle_graph('ERROR',5,'same','{}','same','{}');
+ERROR:  Vertex and edge label cannot be the same
+-- DROPPING GRAPHS
+SELECT drop_graph('gp1', true);
+NOTICE:  drop cascades to 10 other objects
+DETAIL:  drop cascades to table gp1._ag_label_vertex
+drop cascades to table gp1._ag_label_edge
+drop cascades to table gp1.vertex1
+drop cascades to table gp1.edge1
+drop cascades to table gp1.vertex2
+drop cascades to table gp1.edge2
+drop cascades to table gp1.vertex3
+drop cascades to table gp1.edge3
+drop cascades to table gp1.vertex4
+drop cascades to table gp1.edge4
+NOTICE:  graph "gp1" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
+SELECT drop_graph('gp2', true);
+NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to table gp2._ag_label_vertex
+drop cascades to table gp2._ag_label_edge
+drop cascades to table gp2.vertex1
+drop cascades to table gp2.edge1
+NOTICE:  graph "gp2" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
+SELECT drop_graph('gp3', true);
+NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to table gp3._ag_label_vertex
+drop cascades to table gp3._ag_label_edge
+drop cascades to table gp3.edge
+NOTICE:  graph "gp3" has been dropped
+ drop_graph 
+------------
+ 
+(1 row)
+
