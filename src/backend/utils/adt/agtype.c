@@ -2814,11 +2814,17 @@ Datum float4_array_to_agtype(PG_FUNCTION_ARGS)
         
     arr = PG_GETARG_ARRAYTYPE_P(0);
     int n = (ARR_DIMS(arr))[0]; // assuming a 1-D array for simplicity
+
+    if(n==0)
+        PG_RETURN_NULL();
+
     float4 *data = (float4*) ARR_DATA_PTR(arr);
 
     agtv = palloc(sizeof(agtype_value));
     agtv->type = AGTV_ARRAY;
-    
+
+    if(array_contains_nulls(arr))
+        PG_RETURN_NULL();
     agtv->val.array.raw_scalar = false;
     agtv->val.array.num_elems = n;
     agtv->val.array.elems = palloc(sizeof(agtype_value) * n);
