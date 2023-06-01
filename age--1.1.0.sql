@@ -3247,6 +3247,22 @@ AS 'MODULE_PATHNAME';
 CREATE CAST (float8 AS agtype)
 WITH FUNCTION ag_catalog.float8_to_agtype(float8);
 
+
+-- floa4[] -> agtype (explicit)
+CREATE FUNCTION ag_catalog.float4_array_to_agtype(float4[])
+RETURNS agtype
+LANGUAGE c
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+PARALLEL SAFE
+AS 'MODULE_PATHNAME';
+
+CREATE CAST (float4[] AS agtype)
+WITH FUNCTION ag_catalog.float4_array_to_agtype(float4[]);
+
+
+
+
 -- agtype -> float8 (implicit)
 CREATE FUNCTION ag_catalog.agtype_to_float8(agtype)
 RETURNS float8
@@ -3284,7 +3300,7 @@ CREATE CAST (int8 AS agtype)
 WITH FUNCTION ag_catalog.int8_to_agtype(int8);
 
 -- agtype -> int8
-CREATE FUNCTION ag_catalog.agtype_to_int8(variadic "any")
+CREATE FUNCTION ag_catalog.agtype_to_int8(agtype)
 RETURNS bigint
 LANGUAGE c
 IMMUTABLE
@@ -3293,11 +3309,11 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 CREATE CAST (agtype AS bigint)
-WITH FUNCTION ag_catalog.agtype_to_int8(variadic "any")
+WITH FUNCTION ag_catalog.agtype_to_int8(agtype)
 AS ASSIGNMENT;
 
 -- agtype -> int4
-CREATE FUNCTION ag_catalog.agtype_to_int4(variadic "any")
+CREATE FUNCTION ag_catalog.agtype_to_int4(agtype)
 RETURNS int
 LANGUAGE c
 IMMUTABLE
@@ -3306,10 +3322,10 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 CREATE CAST (agtype AS int)
-WITH FUNCTION ag_catalog.agtype_to_int4(variadic "any");
+WITH FUNCTION ag_catalog.agtype_to_int4(agtype);
 
 -- agtype -> int2
-CREATE FUNCTION ag_catalog.agtype_to_int2(variadic "any")
+CREATE FUNCTION ag_catalog.agtype_to_int2(agtype)
 RETURNS smallint
 LANGUAGE c
 IMMUTABLE
@@ -3318,10 +3334,10 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 CREATE CAST (agtype AS smallint)
-WITH FUNCTION ag_catalog.agtype_to_int2(variadic "any");
+WITH FUNCTION ag_catalog.agtype_to_int2(agtype);
 
 -- agtype -> int4[]
-CREATE FUNCTION ag_catalog.agtype_to_int4_array(variadic "any")
+CREATE FUNCTION ag_catalog.agtype_to_int4_array(agtype)
     RETURNS int[]
     LANGUAGE c
     IMMUTABLE
@@ -3330,7 +3346,7 @@ PARALLEL SAFE
 AS 'MODULE_PATHNAME';
 
 CREATE CAST (agtype AS int[])
-    WITH FUNCTION ag_catalog.agtype_to_int4_array(variadic "any");
+    WITH FUNCTION ag_catalog.agtype_to_int4_array(agtype);
 --
 -- agtype - access operators
 --

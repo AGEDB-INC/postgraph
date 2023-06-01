@@ -845,6 +845,17 @@ SELECT agtype_in('{"name": "container 0", "vertices": [{"vertex_0": {"id": 0, "l
 SELECT agtype_in('{"name": "container 1", "edges": [{"id": 3, "label": "edge 0", "end_id": 1, "start_id": 0, "properties": {}}::edge, {"id": 4, "label": "edge 1", "end_id": 0, "start_id": 1, "properties": {}}::edge]}');
 SELECT agtype_in('{"name": "path 1", "path": [{"id": 0, "label": "vertex 0", "properties": {}}::vertex, {"id": 2, "label": "edge 0", "end_id": 1, "start_id": 0, "properties": {}}::edge, {"id": 1, "label": "vertex 1", "properties": {}}::vertex]}');
 
+
+-- float4[] to agtype
+SELECT float4_array_to_agtype(NULL::float4[]);
+-- should return NULL
+SELECT float4_array_to_agtype('{1.23}'::float4[]);
+-- should return an `agtype` array with a single element equivalent to the input
+SELECT float4_array_to_agtype('{1.23, 4.56, 7.89}'::float4[]);
+-- should return an `agtype` array with elements equivalent to the input
+SELECT float4_array_to_agtype('{NULL, 1.23, NULL}'::float4[]);
+-- should return NULL
+
 -- typecast to path
 SELECT agtype_in('[{"id": 0, "label": "vertex 0", "properties": {}}::vertex, {"id": 2, "label": "edge 0", "end_id": 1, "start_id": 0, "properties": {}}::edge, {"id": 1, "label": "vertex 1", "properties": {}}::vertex]::path');
 SELECT agtype_in('{"Path" : [{"id": 0, "label": "vertex 0", "properties": {}}::vertex, {"id": 2, "label": "edge 0", "end_id": 1, "start_id": 0, "properties": {}}::edge, {"id": 1, "label": "vertex 1", "properties": {}}::vertex]::path}');
