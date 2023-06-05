@@ -110,7 +110,7 @@ NOTICE:  graph "gp2" has been dropped
 (1 row)
 
 -- Tests for watts-strogatz graph generation
-SELECT * FROM age_create_watts_strogatz_graph('gp1',8,2,0.5,'vertices',NULL,'edges',NULL,true);
+SELECT * FROM age_create_watts_strogatz_graph('gp1',8,2,0.0,'vertices',NULL,'edges',NULL,true);
 NOTICE:  graph "gp1" has been created
 NOTICE:  VLabel "vertices" has been created
 NOTICE:  ELabel "edges" has been created
@@ -134,22 +134,22 @@ SELECT COUNT(*) FROM gp1."vertices";
 SELECT * FROM cypher('gp1', $$MATCH (a)-[e]->(b) RETURN e$$) as (n agtype);
                                                              n
 ----------------------------------------------------------------------------------------------------------------------------
- {"id": 1125899906842626, "label": "edges", "end_id": 844424930131969, "start_id": 844424930131972, "properties": {}}::edge
- {"id": 1125899906842628, "label": "edges", "end_id": 844424930131970, "start_id": 844424930131975, "properties": {}}::edge
- {"id": 1125899906842631, "label": "edges", "end_id": 844424930131970, "start_id": 844424930131972, "properties": {}}::edge
- {"id": 1125899906842630, "label": "edges", "end_id": 844424930131971, "start_id": 844424930131973, "properties": {}}::edge
- {"id": 1125899906842625, "label": "edges", "end_id": 844424930131972, "start_id": 844424930131969, "properties": {}}::edge
- {"id": 1125899906842632, "label": "edges", "end_id": 844424930131972, "start_id": 844424930131970, "properties": {}}::edge
- {"id": 1125899906842634, "label": "edges", "end_id": 844424930131973, "start_id": 844424930131976, "properties": {}}::edge
- {"id": 1125899906842629, "label": "edges", "end_id": 844424930131973, "start_id": 844424930131971, "properties": {}}::edge
- {"id": 1125899906842635, "label": "edges", "end_id": 844424930131973, "start_id": 844424930131974, "properties": {}}::edge
- {"id": 1125899906842636, "label": "edges", "end_id": 844424930131974, "start_id": 844424930131973, "properties": {}}::edge
- {"id": 1125899906842637, "label": "edges", "end_id": 844424930131974, "start_id": 844424930131975, "properties": {}}::edge
- {"id": 1125899906842639, "label": "edges", "end_id": 844424930131975, "start_id": 844424930131976, "properties": {}}::edge
- {"id": 1125899906842627, "label": "edges", "end_id": 844424930131975, "start_id": 844424930131970, "properties": {}}::edge
- {"id": 1125899906842638, "label": "edges", "end_id": 844424930131975, "start_id": 844424930131974, "properties": {}}::edge
- {"id": 1125899906842640, "label": "edges", "end_id": 844424930131976, "start_id": 844424930131975, "properties": {}}::edge
- {"id": 1125899906842633, "label": "edges", "end_id": 844424930131976, "start_id": 844424930131973, "properties": {}}::edge
+ {"id": 1125899906842626, "label": "edges", "end_id": 844424930131969, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1125899906842639, "label": "edges", "end_id": 844424930131969, "start_id": 844424930131976, "properties": {}}::edge
+ {"id": 1125899906842625, "label": "edges", "end_id": 844424930131970, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842628, "label": "edges", "end_id": 844424930131970, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842630, "label": "edges", "end_id": 844424930131971, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842627, "label": "edges", "end_id": 844424930131971, "start_id": 844424930131970, "properties": {}}::edge
+ {"id": 1125899906842629, "label": "edges", "end_id": 844424930131972, "start_id": 844424930131971, "properties": {}}::edge
+ {"id": 1125899906842632, "label": "edges", "end_id": 844424930131972, "start_id": 844424930131973, "properties": {}}::edge
+ {"id": 1125899906842634, "label": "edges", "end_id": 844424930131973, "start_id": 844424930131974, "properties": {}}::edge
+ {"id": 1125899906842631, "label": "edges", "end_id": 844424930131973, "start_id": 844424930131972, "properties": {}}::edge
+ {"id": 1125899906842636, "label": "edges", "end_id": 844424930131974, "start_id": 844424930131975, "properties": {}}::edge
+ {"id": 1125899906842633, "label": "edges", "end_id": 844424930131974, "start_id": 844424930131973, "properties": {}}::edge
+ {"id": 1125899906842638, "label": "edges", "end_id": 844424930131975, "start_id": 844424930131976, "properties": {}}::edge
+ {"id": 1125899906842635, "label": "edges", "end_id": 844424930131975, "start_id": 844424930131974, "properties": {}}::edge
+ {"id": 1125899906842640, "label": "edges", "end_id": 844424930131976, "start_id": 844424930131969, "properties": {}}::edge
+ {"id": 1125899906842637, "label": "edges", "end_id": 844424930131976, "start_id": 844424930131975, "properties": {}}::edge
 (16 rows)
 
 SELECT * FROM age_create_watts_strogatz_graph('gp1',8,3,0.5,'vertices',NULL,'edges',NULL);
@@ -170,7 +170,7 @@ SELECT COUNT(*) FROM gp1."vertices";
     16
 (1 row)
 
-SELECT * FROM age_create_watts_strogatz_graph('gp2',8,5,0.5,'vertices',NULL,'edges',NULL,false);
+SELECT * FROM age_create_watts_strogatz_graph('gp2',8,5,0.5,'vertices','{"probability":0.5}','edges','{"type":"edge", "strong":true}',false);
 NOTICE:  graph "gp2" has been created
 NOTICE:  VLabel "vertices" has been created
 NOTICE:  ELabel "edges" has been created
@@ -190,6 +190,27 @@ SELECT COUNT(*) FROM gp2."vertices";
 -------
      8
 (1 row)
+
+SELECT * FROM cypher('gp2', $$MATCH (a)-[e]->(b) RETURN properties(a), properties(e)$$) as (start_vertex_props agtype, edge_props agtype);
+  start_vertex_props  |            edge_props
+----------------------+----------------------------------
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+ {"probability": 0.5} | {"type": "edge", "strong": true}
+(16 rows)
 
 -- SHOULD FAIL
 SELECT * FROM age_create_watts_strogatz_graph(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
