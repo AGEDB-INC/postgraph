@@ -4361,7 +4361,6 @@ Datum agtype_typecast_time(PG_FUNCTION_ARGS)
     if (agtv->type == AGTV_TIMESTAMP)
         AG_RETURN_AGTYPE_P(agt);
         
-    // Assuming float value represent unix timestamp in seconds.
     if (agtv->type == AGTV_FLOAT) 
     {
         double num = agtv->val.float_value;
@@ -4371,7 +4370,6 @@ Datum agtype_typecast_time(PG_FUNCTION_ARGS)
         PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
     }
 
-    // Assuming int value represent unix timestamp in seconds.
     if (agtv->type == AGTV_INTEGER) 
     {
         int64 num = agtv->val.int_value;
