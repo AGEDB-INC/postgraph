@@ -4356,12 +4356,49 @@ Datum agtype_typecast_time(PG_FUNCTION_ARGS)
     Timestamp t;
         
     if (agtv->type == AGTV_NULL)
-        PG_RETURN_NULL();
-    
+        PG_RETURN_NULL();    
     
     if (agtv->type == AGTV_TIMESTAMP)
         AG_RETURN_AGTYPE_P(agt);
         
+    if (agtv->type == AGTV_FLOAT) 
+    {
+        double num = agtv->val.float_value;
+        t = (Timestamp) (num * USECS_PER_SEC);
+        agtv->type = AGTV_TIME;
+        agtv->val.int_value = (int64) t;
+        PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+    }
+
+    if (agtv->type == AGTV_INTEGER) 
+    {
+        int64 num = agtv->val.int_value;
+        t = (Timestamp) (num * USECS_PER_SEC);
+        agtv->type = AGTV_TIME;
+        agtv->val.int_value = (int64) t;
+        PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+    }
+
+    // Converting date type to timestamp.
+    if (agtv->type == AGTV_DATE) {
+        DateADT date = DatumGetDateADT(agtv->val.int_value);
+        Timestamp timestamp;
+
+        if (DATE_NOT_FINITE(date)) {
+            ereport(ERROR,
+                    (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+                    errmsg("date out of range: \"%s\"",
+                            DatumGetCString(DirectFunctionCall1(date_out, DateADTGetDatum(date))))));
+        }
+
+        timestamp = DatumGetTimestamp(DirectFunctionCall1(date_timestamp, DateADTGetDatum(date)));
+
+        agtv->type = AGTV_TIME;
+        agtv->val.int_value = (int64) timestamp;
+
+        PG_RETURN_POINTER(agtype_value_to_agtype(agtv));
+    }
+
     if (agtv->type != AGTV_STRING)
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
