@@ -898,7 +898,15 @@ $$) AS r(result agtype);
 SELECT * FROM cypher('expr', $$
 RETURN 'Wed Dec 17 07:37:16 1997+09'::timestamptz
 $$) AS r(result agtype);
-
+SELECT * FROM cypher('expr', $$
+RETURN 70.0::timestamptz
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN 70::timestamptz
+$$) AS r(result agtype);
+SELECT * FROM cypher('expr', $$
+RETURN '1997-12-17'::date::timestamptz
+$$) AS r(result agtype);
 
 --
 -- date
