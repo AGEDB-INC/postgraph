@@ -2771,6 +2771,52 @@ Datum agtype_to_float8(PG_FUNCTION_ARGS)
     PG_RETURN_FLOAT8(result);
 }
 
+PG_FUNCTION_INFO_V1(agtype_to_float_array);
+
+/*
+ * Cast agtype to float[].
+ */
+Datum agtype_to_float_array(PG_FUNCTION_ARGS)
+{
+    agtype *agtype_in = AG_GET_ARG_AGTYPE_P(0);
+    agtype_value agtv;
+    agtype_iterator_token agtv_token;
+    float8 *array_value;
+    ArrayType *result;
+    int element_size;
+    int i;
+
+    agtype_iterator *agtype_iterator = agtype_iterator_init(&agtype_in->root);
+    agtv_token = agtype_iterator_next(&agtype_iterator, &agtv, false);
+
+    if (agtv.type != AGTV_ARRAY)
+    {
+        cannot_cast_agtype_value(agtv.type, "float[]");
+    }
+
+    element_size = agtv.val.array.num_elems;
+    array_value = (float8 *) palloc(sizeof(float8) * element_size);
+
+    i = 0;
+    while ((agtv_token = agtype_iterator_next(&agtype_iterator, &agtv, true)) != WAGT_END_ARRAY)
+    {
+        if (agtv.type == AGTV_FLOAT)
+            array_value[i++] = agtv.val.float_value;
+        else if (agtv.type == AGTV_INTEGER)
+            array_value[i++] = (float8)agtv.val.int_value;
+        else if (agtv.type == AGTV_NUMERIC)
+            array_value[i++] = DatumGetFloat8(DirectFunctionCall1(numeric_float8,
+                                                                  NumericGetDatum(agtv.val.numeric)));
+        else
+            cannot_cast_agtype_value(agtv.type, "float");
+    }
+
+    result = construct_array((Datum *)array_value, element_size, FLOAT8OID, 8, FLOAT8PASSBYVAL, 'd');
+
+    PG_RETURN_ARRAYTYPE_P(result);
+}
+
+
 PG_FUNCTION_INFO_V1(agtype_to_text);
 
 /*
